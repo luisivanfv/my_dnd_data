@@ -1,7 +1,23 @@
 {
   "asleep": "💤",
+  "blinded": "🕶️",
   "charmed": "💋",
   "confused": "😵‍💫",
   "dazed": "🌀",
-  "poisoned": "💀"
+  "deafened": "👂",
+  "diseased": "💊",
+  "exhausted": "😵",
+  "fatigued": "🫩",
+  "frightened": "😱",
+  "grappled": "💪",
+  "incapacitated": "♿",
+  "invisible": "👁️‍🗨️",
+  "paralyzed": "🥶",
+  "petrified": "🗿",
+  "poisoned": "💀",
+  "prone": "🛏️",
+  "restrained": "⛓️",
+  "silenced": "🤫",
+  "stunned": "⚡",
+  "unconscious": "😴"
 }
