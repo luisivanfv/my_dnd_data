@@ -1,0 +1,12 @@
+{
+  "charmed,charm": "/wikis/charmed",
+  "darkvision": "/wikis/darkvision",
+  "exhaustion,exhausted": "/wikis/exhausted",
+  "frightened,frighten": "/wikis/frightened",
+  "grappled,grapple": "/wikis/grappled",
+  "paralyzed,paralyze": "/wikis/paralyzed",
+  "petrified,petrify": "/wikis/petrified",
+  "poisoned,poison": "/wikis/poisoned",
+  "prone": "/wikis/prone",
+  "restrained,restrain": "/wikis/restrained"
+}
