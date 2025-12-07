@@ -1,13 +1,13 @@
 {
-  "charmed,charm": "/wikis/charmed",
+  "charmed,charm,💋": "/wikis/charmed",
   "darkness": "https://www.dndbeyond.com/spells/2058-darkness",
   "darkvision": "/wikis/darkvision",
-  "exhaustion,exhausted": "/wikis/exhausted",
-  "frightened,frighten": "/wikis/frightened",
-  "grappled,grapple": "/wikis/grappled",
-  "paralyzed,paralyze": "/wikis/paralyzed",
-  "petrified,petrify": "/wikis/petrified",
-  "poisoned,poison": "/wikis/poisoned",
-  "prone": "/wikis/prone",
-  "restrained,restrain": "/wikis/restrained"
+  "exhaustion,exhausted,😵": "/wikis/exhausted",
+  "frightened,frighten,😱": "/wikis/frightened",
+  "grappled,grapple,💪": "/wikis/grappled",
+  "paralyzed,paralyze,🥶": "/wikis/paralyzed",
+  "petrified,petrify,🗿": "/wikis/petrified",
+  "poisoned,poison,💀": "/wikis/poisoned",
+  "prone,🛏️": "/wikis/prone",
+  "restrained,restrain,⛓️": "/wikis/restrained"
 }
