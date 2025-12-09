@@ -1,0 +1,38 @@
+{
+    "creatureType": "Medium Fiend (Demon), Typically Chaotic Evil",
+    "armorClass": "16 (natural armor)",
+    "hitPoints": "82 (11d8 + 33)",
+    "speed": "40 ft.",
+    "str": "19 (+4)",
+    "dex": "16 (+3)",
+    "con": "16 (+3)",
+    "int": "11 (+0)",
+    "wis": "12 (+1)",
+    "cha": "13 (+1)",
+    "savingThrows": "",
+    "skills": "Perception +5, Stealth +5",
+    "damageResistances": "Cold, Fire, Lightning; Bludgeoning, Piercing, and Slashing from Nonmagical Attacks",
+    "damageImmunities": "Poison",
+    "conditionImmunities": "Poisoned",
+    "senses": "Darkvision 120 ft., Passive Perception 15",
+    "languages": "Abyssal",
+    "challenge": "4 (1,100 XP)",
+    "proficiencyBonus": "+2",
+    "traits": [],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The babau makes two Claw attacks. It can replace one attack with a use of Spellcasting or Weakening Gaze."
+        }, {
+            "name": "Claw",
+            "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d4 + 4) slashing damage plus 2 (1d4) acid damage."
+        }, {
+            "name": "Spellcasting",
+            "description": "The babau casts one of the following spells, requiring no material components and using Wisdom as the spellcasting ability (spell save DC 11):</br><br>At will: darkness, dispel magic, fear, heat metal, levitate"
+        }, {
+            "name": "Weakening Gaze",
+            "description": "The babau targets one creature that it can see within 20 feet of it. The target must make a DC 13 Constitution saving throw. On a failed save, the target deals only half damage with weapon attacks that use Strength for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
+        }
+    ],
+    "legendaryActions": []
+}

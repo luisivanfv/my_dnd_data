@@ -10,6 +10,8 @@
     "wis": "6 (-2)",
     "cha": "5 (-3)",
     "savingThrows": "WIS +0",
+    "skills": "",
+    "damageResistances": "",
     "damageImmunities": "Poison",
     "conditionImmunities": "Poisoned",
     "senses": "Darkvision 60 ft., Passive Perception 8",
@@ -27,5 +29,6 @@
             "name": "Slam",
             "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage."
         }
-    ]
+    ],
+    "legendaryActions": []
 }
