@@ -1,0 +1,65 @@
+{
+    "name": "Drider",
+    "creatureType": "Large Monstrosity, Chaotic Evil",
+    "armorClass": "19 (natural armor)",
+    "hitPoints": "123 (13d10 + 52)",
+    "speed": "30 ft., climb 30 ft.",
+    "str": "16",
+    "dex": "16",
+    "con": "18",
+    "int": "13",
+    "wis": "14",
+    "cha": "12",
+    "strSave": "+3",
+    "dexSave": "+3",
+    "conSave": "+4",
+    "intSave": "+1",
+    "wisSave": "+2",
+    "chaSave": "+1",
+    "savingThrows": "",
+    "skills": "Perception +5, Stealth +9",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Darkvision 120 ft., Passive Perception 15",
+    "languages": "Elvish, Undercommon",
+    "challenge": "6 (2,300 XP)",
+    "proficiencyBonus": "+3",
+    "passives": [
+        {
+            "name": "Fey Ancestry",
+            "description": "The drider has advantage on saving throws against being charmed, and magic can’t put the drider to sleep."
+        }, {
+            "name": "Innate Spellcasting",
+            "description": "The drider’s innate spellcasting ability is Wisdom (spell save DC 13). The drider can innately cast the following spells, requiring no material components:<br><br>At will: dancing lights<br><br>1/day each: darkness, faerie fire"
+        }, {
+            "name": "Spider Climb",
+            "description": "The drider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+        }, {
+            "name": "Sunlight Sensitivity",
+            "description": "While in sunlight, the drider has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+        }, {
+            "name": "Web Walker",
+            "description": "The drider ignores movement restrictions caused by webbing."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The drider makes three attacks, either with its longsword or its longbow. It can replace one of those attacks with a bite attack."
+        }, {
+            "name": "Bite",
+            "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 2 (1d4) piercing damage plus 9 (2d8) poison damage."
+        }, {
+            "name": "Longsword",
+            "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands."
+        }, {
+            "name": "Longbow",
+            "description": "Ranged Weapon Attack: +6 to hit, range 150/600 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 4 (1d8) poison damage."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}

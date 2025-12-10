@@ -1,0 +1,61 @@
+{
+    "name": "Death Knight",
+    "creatureType": "Medium Undead, Chaotic Evil",
+    "armorClass": "20 (plate, shield)",
+    "hitPoints": "180 (19d8 + 95)",
+    "speed": "30 ft.",
+    "str": "20",
+    "dex": "11",
+    "con": "20",
+    "int": "12",
+    "wis": "16",
+    "cha": "18",
+    "strSave": "+5",
+    "dexSave": "+6",
+    "conSave": "+5",
+    "intSave": "+1",
+    "wisSave": "+9",
+    "chaSave": "+10",
+    "savingThrows": "DEX +6, WIS +9, CHA +10",
+    "skills": "",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "Necrotic, Poison",
+    "conditionImmunities": "Exhaustion, Frightened, Poisoned",
+    "senses": "Darkvision 120 ft., Passive Perception 13",
+    "languages": "Abyssal, Common",
+    "challenge": "17 (18,000 XP)",
+    "proficiencyBonus": "+6",
+    "passives": [
+        {
+            "name": "Magic Resistance",
+            "description": "The death knight has advantage on saving throws against spells and other magical effects."
+        }, {
+            "name": "Marshal Undead",
+            "description": "Unless the death knight is incapacitated, it and undead creatures of its choice within 60 feet of it have advantage on saving throws against features that turn undead."
+        }, {
+            "name": "Spellcasting",
+            "description": "The death knight is a 19th-level spellcaster. Its spellcasting ability is Charisma (spell save DC 18, +10 to hit with spell attacks). It has the following paladin spells prepared:<br><br>1st level (4 slots): command, compelled duel, searing smite<br><br>2nd level (3 slots): hold person, magic weapon<br><br>3rd level (3 slots): dispel magic, elemental weapon<br><br>4th level (3 slots): banishment, staggering smite<br><br>5th level (2 slots): destructive wave (necrotic)"
+        }
+    ],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The death knight makes three longsword attacks."
+        }, {
+            "name": "Longsword",
+            "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 9 (1d8 + 5) slashing damage, or 10 (1d10 + 5) slashing damage if used with two hands, plus 18 (4d8) necrotic damage."
+        }, {
+            "name": "Hellfire Orb (1/Day)",
+            "description": "The death knight hurls a magical ball of fire that explodes at a point it can see within 120 feet of it. Each creature in a 20-foot-radius sphere centered on that point must make a DC 18 Dexterity saving throw. The sphere spreads around corners. A creature takes 35 (10d6) fire damage and 35 (10d6) necrotic damage on a failed save, or half as much damage on a successful one."
+        }
+    ],
+    "reactions": [
+        {
+            "name": "Parry",
+            "description": "The death knight adds 6 to its AC against one melee attack that would hit it. To do so, the death knight must see the attacker and be wielding a melee weapon."
+        }
+    ],
+    "bonusActions": [],
+    "legendaryActions": []
+}
