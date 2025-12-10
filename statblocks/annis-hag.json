@@ -1,0 +1,51 @@
+{
+    "name": "Annis Hag",
+    "creatureType": "Large Fey, Typically Chaotic Evil",
+    "armorClass": "17 (natural armor)",
+    "hitPoints": "90 (12d10 + 24)",
+    "speed": "40 ft.",
+    "str": "21",
+    "dex": "12",
+    "con": "14",
+    "int": "13",
+    "wis": "14",
+    "cha": "15",
+    "strSave": "+5",
+    "dexSave": "+1",
+    "conSave": "+5",
+    "intSave": "+1",
+    "wisSave": "+2",
+    "chaSave": "+2",
+    "savingThrows": "CON +5",
+    "skills": "Deception +5, Perception +5",
+    "damageVulnerabilities": "",
+    "damageResistances": "Cold",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Darkvision 60 ft., Passive Perception 15",
+    "languages": "Common, Giant, Sylvan",
+    "challenge": "6 (2,300 XP)",
+    "proficiencyBonus": "+3",
+    "passives": [],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The annis makes one Bite attack and two Claw attacks."
+        }, {
+            "name": "Bite",
+            "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) piercing damage."
+        }, {
+            "name": "Claw",
+            "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) slashing damage."
+        }, {
+            "name": "Crushing Hug",
+            "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 36 (9d6 + 5) bludgeoning damage, and the target is grappled (escape DC 15 if it is a Large or smaller creature. Until the grapple ends, the target takes 36 (9d6 + 5) bludgeoning damage at the start of each of the hag’s turns. The hag can’t make attacks while grappling a creature in this way."
+        }, {
+            "name": "Spellcasting",
+            "description": "The hag casts one of the following spells, using Charisma as the spellcasting ability (spell save DC 13):<br><br>3/day each: disguise self (including the form of a Medium Humanoid), fog cloud"
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}

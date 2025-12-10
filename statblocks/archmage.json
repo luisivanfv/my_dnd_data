@@ -1,0 +1,80 @@
+{
+    "name": "Archmage",
+    "creatureType": "Medium Humanoid (Any Race), Any Alignment",
+    "armorClass": "12 (15 with mage armor)",
+    "hitPoints": "99 (18d8 + 18)",
+    "speed": "30 ft.",
+    "str": "10",
+    "dex": "14",
+    "con": "12",
+    "int": "20",
+    "wis": "15",
+    "cha": "16",
+    "strSave": "+0",
+    "dexSave": "+2",
+    "conSave": "+1",
+    "intSave": "+9",
+    "wisSave": "+6",
+    "chaSave": "+3",
+    "savingThrows": "INT +9, WIS +6",
+    "skills": "Arcana +13, History +13",
+    "damageVulnerabilities": "",
+    "damageResistances": "Damage from Spells; Nonmagical Bludgeoning, Piercing, and Slashing (from Stoneskin)",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Any six languages",
+    "languages": "Common, Giant, Sylvan",
+    "challenge": "12 (8,400 XP)",
+    "proficiencyBonus": "+4",
+    "passives": [
+        {
+            "name": "Magic Resistance",
+            "description": "The archmage has advantage on saving throws against spells and other magical effects."
+        }, {
+            "name": "Spellcasting",
+            "description": "The archmage is an 18th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 17, +9 to hit with spell attacks). The archmage can cast disguise self and invisibility at will and has the following wizard spells prepared:"
+        }, {
+            "name": "",
+            "description": "Cantrips (at will): fire bolt, light, mage hand, prestidigitation, shocking grasp"
+        }, {
+            "name": "",
+            "description": "1st level (4 slots): detect magic, identify, mage armor*, magic missile"
+        }, {
+            "name": "",
+            "description": "2nd level (3 slots): detect thoughts, mirror image, misty step"
+        }, {
+            "name": "",
+            "description": "3rd level (3 slots): counterspell, fly, lightning bolt"
+        }, {
+            "name": "",
+            "description": "4th level (3 slots): banishment, fire shield, stoneskin*"
+        }, {
+            "name": "",
+            "description": "5th level (3 slots): cone of cold, scrying, wall of force"
+        }, {
+            "name": "",
+            "description": "6th level (1 slot): globe of invulnerability"
+        }, {
+            "name": "",
+            "description": "7th level (1 slot): teleport"
+        }, {
+            "name": "",
+            "description": "8th level (1 slot): mind blank*"
+        }, {
+            "name": "",
+            "description": "9th level (1 slot): time stop"
+        }, {
+            "name": "",
+            "description": "*The archmage casts these spells on itself before combat."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Dagger",
+            "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}
