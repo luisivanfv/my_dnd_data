@@ -1,16 +1,24 @@
 {
+    "name": "Zombie",
     "creatureType": "Medium Undead, Neutral Evil",
     "armorClass": "8",
     "hitPoints": "22 (3d8+9)",
     "speed": "20 ft.",
-    "str": "13 (+1)",
-    "dex": "6 (-2)",
-    "con": "16 (+3)",
-    "int": "3 (-4)",
-    "wis": "6 (-2)",
-    "cha": "5 (-3)",
+    "str": "13",
+    "dex": "6",
+    "con": "16",
+    "int": "3",
+    "wis": "6",
+    "cha": "5",
+    "strSave": "+1",
+    "dexSave": "-2",
+    "conSave": "+3",
+    "intSave": "-4",
+    "wisSave": "+0",
+    "chaSave": "-3",
     "savingThrows": "WIS +0",
     "skills": "",
+    "damageVulnerabilities": "",
     "damageResistances": "",
     "damageImmunities": "Poison",
     "conditionImmunities": "Poisoned",
@@ -18,7 +26,7 @@
     "languages": "understands the languages it knew in life but can't speak",
     "challenge": "1/4 (50 XP)",
     "proficiencyBonus": "+2",
-    "traits": [
+    "passives": [
         {
             "name": "Undead Fortitude",
             "description": "If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, unless the damage is radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead."
@@ -30,5 +38,7 @@
             "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage."
         }
     ],
+    "reactions": [],
+    "bonusActions": [],
     "legendaryActions": []
 }
