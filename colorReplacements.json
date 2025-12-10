@@ -1,4 +1,14 @@
 {
-    "necrotic": "</p><p style='color: green'>necrotic</p><p>",
-    "Necrotic": "</p><p style='color: green'>Necrotic</p><p>"
+    "necrotic": "</p><p style='color: green;'>necrotic</p><p>",
+    "Necrotic": "</p><p style='color: green;'>Necrotic</p><p>",
+    "cold": "</p><p style='color: lightblue;'>cold</p><p>",
+    "Cold": "</p><p style='color: lightblue;'>Cold</p><p>",
+    "fire": "</p><p style='color: orange;'>fire</p><p>",
+    "Fire": "</p><p style='color: orange;'>Fire</p><p>",
+    "lightning": "</p><p style='color: darkyellow;'>lightning</p><p>",
+    "Lightning": "</p><p style='color: darkyellow;'>Lightning</p><p>",
+    "thunder": "</p><p style='color: purple;'>thunder</p><p>",
+    "Thunder": "</p><p style='color: purple;'>Thunder</p><p>",
+    "acid": "</p><p style='color: #7FFF00;'>acid</p><p>",
+    "Acid": "</p><p style='color: #7FFF00;'>Acid</p><p>"
 }
