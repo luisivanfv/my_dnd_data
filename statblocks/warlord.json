@@ -1,0 +1,67 @@
+{
+    "name": "Warlord",
+    "creatureType": "Medium Humanoid, Any Alignment",
+    "armorClass": "18 (plate)",
+    "hitPoints": "229 (27d8 + 108)",
+    "speed": "30 ft.",
+    "str": "20",
+    "dex": "16",
+    "con": "18",
+    "int": "12",
+    "wis": "12",
+    "cha": "18",
+    "strSave": "+9",
+    "dexSave": "+7",
+    "conSave": "+8",
+    "intSave": "+1",
+    "wisSave": "+1",
+    "chaSave": "+4",
+    "savingThrows": "STR +9, DEX +7, CON +8",
+    "skills": "Athletics +9, Intimidation +8, Perception +5, Persuasion +8",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Passive Perception 15",
+    "languages": "any two languages",
+    "challenge": "12 (8,400 XP)",
+    "proficiencyBonus": "+4",
+    "passives": [
+        {
+            "name": "Indomitable (3/Day)",
+            "description": "The warlord can reroll a saving throw it fails. It must use the new roll."
+        }, {
+            "name": "Survivor",
+            "description": "The warlord regains 10 hit points at the start of its turn if it has fewer than half its hit points but at least 1 hit point."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The warlord makes two Greatsword or Shortbow attacks."
+        }, {
+            "name": "Greatsword",
+            "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage."
+        }, {
+            "name": "Shortbow",
+            "description": "Ranged Weapon Attack: +7 to hit, range 80/320 ft., one target. Hit: 6 (1d6 + 3) piercing damage."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": [
+        {
+            "name": "",
+            "description": "The warlord can take 3 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature’s turn. The warlord regains spent legendary actions at the start of its turn."
+        }, {
+            "name": "Command Ally",
+            "description": "The warlord targets one ally it can see within 30 feet of it. If the target can see or hear the warlord, the target can make one weapon attack as a reaction and gains advantage on the attack roll."
+        }, {
+            "name": "Weapon Attack",
+            "description": "The warlord makes one Greatsword or Shortbow attack."
+        }, {
+            "name": "Frighten Foe (Costs 2 Actions)",
+            "description": "The warlord targets one creature it can see within 30 feet of it. If the target can see or hear it, the target must succeed on a DC 16 Wisdom saving throw or be frightened of the warlord until the end of warlord’s next turn."
+        }
+    ]
+}

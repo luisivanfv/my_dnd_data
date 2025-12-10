@@ -1,0 +1,50 @@
+{
+    "name": "Shadow",
+    "creatureType": "Medium Undead, Chaotic Evil",
+    "armorClass": "12",
+    "hitPoints": "16 (3d8 + 3)",
+    "speed": "40 ft.",
+    "str": "6",
+    "dex": "14",
+    "con": "13",
+    "int": "6",
+    "wis": "10",
+    "cha": "8",
+    "strSave": "-2",
+    "dexSave": "+2",
+    "conSave": "+1",
+    "intSave": "-2",
+    "wisSave": "+0",
+    "chaSave": "-1",
+    "savingThrows": "",
+    "skills": "Stealth +4",
+    "damageVulnerabilities": "Radiant",
+    "damageResistances": "Acid, Cold, Fire, Lightning, Thunder; Bludgeoning, Piercing, and Slashing from Nonmagical Attacks",
+    "damageImmunities": "Necrotic, Poison",
+    "conditionImmunities": "Exhaustion, Frightened, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained",
+    "senses": "Darkvision 60 ft., Passive Perception 10",
+    "languages": "--",
+    "challenge": "1/2 (100 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [
+        {
+            "name": "Amorphous",
+            "description": "The shadow can move through a space as narrow as 1 inch wide without squeezing."
+        }, {
+            "name": "Shadow Stealth",
+            "description": "While in dim light or darkness, the shadow can take the Hide action as a bonus action."
+        }, {
+            "name": "Sunlight Weakness",
+            "description": "While in sunlight, the shadow has disadvantage on attack rolls, ability checks, and saving throws."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Strength Drain",
+            "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) necrotic damage, and the target's Strength score is reduced by 1d4. The target dies if this reduces its Strength to 0. Otherwise, the reduction lasts until the target finishes a short or long rest.<br><br>If a non-evil humanoid dies from this attack, a new shadow rises from the corpse 1d4 hours later."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}
