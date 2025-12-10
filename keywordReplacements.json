@@ -1,0 +1,22 @@
+{
+    "data": [
+        {
+            "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
+            "icons": "💀",
+            "url": null,
+            "color": "#006400"
+        },
+        {
+            "synonyms": ["radiant", "Radiant", "radiant damage", "Radiant damage"],
+            "icons": "☀️",
+            "url": "",
+            "color": "#BDB76B"
+        },
+        {
+            "synonyms": ["charm", "charmed"],
+            "icons": "💋",
+            "url": "/wikis/charmed",
+            "color": null
+        }
+    ]
+}
