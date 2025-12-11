@@ -1,0 +1,13 @@
+{
+    "name": "Detect Magic",
+    "level": "1st",
+    "castingTime": "1 Action (Ritual)",
+    "rangeOrArea": "Self (30 ft. sphere)",
+    "components": "V, S",
+    "duration": "10 Minutes, Concentration",
+    "school": "Divination",
+    "attackOrSave": "None",
+    "damageOrEffect": "Detection",
+    "description": "For the duration, you sense the presence of magic within 30 feet of you. If you sense magic in this way, you can use your action to see a faint aura around any visible creature or object in the area that bears magic, and you learn its school of magic, if any.<br><br>The spell can penetrate most barriers, but it is blocked by 1 foot of stone, 1 inch of common metal, a thin sheet of lead, or 3 feet of wood or dirt.",
+    "availableFor": []
+}
