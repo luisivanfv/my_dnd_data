@@ -1,28 +1,35 @@
 {
     "data": [
         {
-            "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
-            "icons": "💀",
-            "url": null,
-            "color": "#006400"
-        },
-        {
-            "synonyms": ["radiant", "Radiant", "radiant damage", "Radiant damage"],
-            "icons": "☀️",
-            "url": "",
-            "color": "#BDB76B"
-        },
-        {
             "synonyms": ["charmed", "charm"],
             "icons": "💋",
             "url": "/wikis/charmed",
             "color": null
-        },
-        {
+        }, {
+            "synonyms": ["darkvision", "Darkvision"],
+            "icons": null,
+            "url": "/wikis/darkvision",
+            "color": null
+        }, {
+            "synonyms": ["exhausted", "Exhausted", "exhaustion", "Exhaustion"],
+            "icons": null,
+            "url": "/wikis/exhausted",
+            "color": null
+        }, {
+            "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
+            "icons": "💀",
+            "url": null,
+            "color": "#006400"
+        }, {
             "synonyms": ["poison", "poisoned"],
             "icons": "☠️",
             "url": "/wikis/poisoned",
             "color": null
+        }, {
+            "synonyms": ["radiant", "Radiant", "radiant damage", "Radiant damage"],
+            "icons": "☀️",
+            "url": "",
+            "color": "#BDB76B"
         }
     ]
 }
