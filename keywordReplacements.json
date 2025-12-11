@@ -4,7 +4,7 @@
             "synonyms": ["charmed", "charm"],
             "icons": "💋",
             "url": "/wikis/charmed",
-            "color": null
+            "color": "#000000"
         }, {
             "synonyms": ["cold damage", "Cold damage", "cold", "Cold"],
             "icons": null,
@@ -16,9 +16,24 @@
             "url": "/wikis/darkvision",
             "color": "#000000"
         }, {
+            "synonyms": ["disguise self", "Disguise self"],
+            "icons": null,
+            "url": "/wikis/disguise-self",
+            "color": "#000000"
+        }, {
             "synonyms": ["exhausted", "Exhausted", "exhaustion", "Exhaustion"],
             "icons": null,
             "url": "/wikis/exhausted",
+            "color": "#000000"
+        }, {
+            "synonyms": ["fog cloud", "Fog cloud"],
+            "icons": null,
+            "url": "/wikis/fog-cloud",
+            "color": "#000000"
+        }, {
+            "synonyms": ["grappled", "Grappled", "grappling", "Grappling"],
+            "icons": "💪",
+            "url": "/wikis/grappled",
             "color": "#000000"
         }, {
             "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
@@ -35,6 +50,11 @@
             "icons": "☀️",
             "url": "",
             "color": "#BDB76B"
+        }, {
+            "synonyms": ["sylvan", "Sylvan"],
+            "icons": null,
+            "url": "/wikis/sylvan",
+            "color": "#000000"
         }
     ]
 }
