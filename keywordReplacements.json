@@ -31,6 +31,11 @@
             "url": "/wikis/fey",
             "color": "#000000"
         }, {
+            "synonyms": ["fire bolt", "Fire bolt"],
+            "icons": null,
+            "url": "/wikis/fire-bolt",
+            "color": "#000000"
+        }, {
             "synonyms": ["fog cloud", "Fog cloud"],
             "icons": null,
             "url": "/wikis/fog-cloud",
@@ -39,6 +44,16 @@
             "synonyms": ["Grappled", "grappled", "grappling", "Grappling"],
             "icons": "💪",
             "url": "/wikis/grappled",
+            "color": "#000000"
+        }, {
+            "synonyms": ["light", "Light"],
+            "icons": null,
+            "url": "/wikis/light",
+            "color": "#000000"
+        }, {
+            "synonyms": ["mage hand", "Mage hand"],
+            "icons": null,
+            "url": "/wikis/mage-hand",
             "color": "#000000"
         }, {
             "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
@@ -51,10 +66,25 @@
             "url": "/wikis/poisoned",
             "color": "#000000"
         }, {
+            "synonyms": ["prestidigitation", "Prestidigitation"],
+            "icons": null,
+            "url": "/wikis/prestidigitation",
+            "color": "#000000"
+        }, {
             "synonyms": ["radiant", "Radiant", "radiant damage", "Radiant damage"],
             "icons": "☀️",
             "url": "",
             "color": "#BDB76B"
+        }, {
+            "synonyms": ["shocking grasp", "Shocking grasp"],
+            "icons": null,
+            "url": "/wikis/shocking-grasp",
+            "color": "#000000"
+        }, {
+            "synonyms": ["stoneskin", "Stoneskin"],
+            "icons": null,
+            "url": "/wikis/stoneskin",
+            "color": "#000000"
         }, {
             "synonyms": ["sylvan", "Sylvan"],
             "icons": null,
