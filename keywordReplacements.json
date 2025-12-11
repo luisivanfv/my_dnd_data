@@ -9,7 +9,7 @@
             "synonyms": ["darkvision", "Darkvision"],
             "icons": null,
             "url": "/wikis/darkvision",
-            "color": null
+            "color": "#000000"
         }, {
             "synonyms": ["exhausted", "Exhausted", "exhaustion", "Exhaustion"],
             "icons": null,
