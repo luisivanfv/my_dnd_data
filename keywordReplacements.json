@@ -17,6 +17,12 @@
             "icons": "💋",
             "url": "/wikis/charmed",
             "color": null
+        },
+        {
+            "synonyms": ["poison", "poisoned"],
+            "icons": "☠️",
+            "url": "/wikis/poisoned",
+            "color": null
         }
     ]
 }
