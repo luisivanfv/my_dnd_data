@@ -26,12 +26,17 @@
             "url": "/wikis/exhausted",
             "color": "#000000"
         }, {
+            "synonyms": ["fey", "Fey"],
+            "icons": null,
+            "url": "/wikis/fey",
+            "color": "#000000"
+        }, {
             "synonyms": ["fog cloud", "Fog cloud"],
             "icons": null,
             "url": "/wikis/fog-cloud",
             "color": "#000000"
         }, {
-            "synonyms": ["grappled", "Grappled", "grappling", "Grappling"],
+            "synonyms": ["Grappled", "grappled", "grappling", "Grappling"],
             "icons": "💪",
             "url": "/wikis/grappled",
             "color": "#000000"
