@@ -6,6 +6,11 @@
             "url": "/wikis/charmed",
             "color": null
         }, {
+            "synonyms": ["cold damage", "Cold damage", "cold", "Cold"],
+            "icons": null,
+            "url": null,
+            "color": "#008B8B"
+        }, {
             "synonyms": ["darkvision", "Darkvision"],
             "icons": null,
             "url": "/wikis/darkvision",
@@ -14,7 +19,7 @@
             "synonyms": ["exhausted", "Exhausted", "exhaustion", "Exhaustion"],
             "icons": null,
             "url": "/wikis/exhausted",
-            "color": null
+            "color": "#000000"
         }, {
             "synonyms": ["necrotic", "Necrotic", "necrotic damage", "Necrotic damage"],
             "icons": "💀",
@@ -24,7 +29,7 @@
             "synonyms": ["poison", "poisoned"],
             "icons": "☠️",
             "url": "/wikis/poisoned",
-            "color": null
+            "color": "#000000"
         }, {
             "synonyms": ["radiant", "Radiant", "radiant damage", "Radiant damage"],
             "icons": "☀️",
