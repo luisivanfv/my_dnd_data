@@ -16,6 +16,11 @@
             "url": "/wikis/darkvision",
             "color": "#000000"
         }, {
+            "synonyms": ["detect magic", "Detect magic"],
+            "icons": null,
+            "url": "/wikis/detect-magic",
+            "color": "#000000"
+        }, {
             "synonyms": ["disguise self", "Disguise self"],
             "icons": null,
             "url": "/wikis/disguise-self",
@@ -46,9 +51,19 @@
             "url": "/wikis/grappled",
             "color": "#000000"
         }, {
+            "synonyms": ["identify", "Identify"],
+            "icons": null,
+            "url": "/wikis/identify",
+            "color": "#000000"
+        }, {
             "synonyms": ["light", "Light"],
             "icons": null,
             "url": "/wikis/light",
+            "color": "#000000"
+        }, {
+            "synonyms": ["mage armor", "Mage armor"],
+            "icons": null,
+            "url": "/wikis/mage-armor",
             "color": "#000000"
         }, {
             "synonyms": ["mage hand", "Mage hand"],
