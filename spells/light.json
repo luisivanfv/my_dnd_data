@@ -1,5 +1,8 @@
 {
     "name": "Light",
+    "synonyms": ["light", "Light"],
+    "url": "wikis/light",
+    "color": "#000000",
     "level": "Cantrip",
     "castingTime": "1 Action",
     "rangeOrArea": "Touch (20 ft. sphere*)",

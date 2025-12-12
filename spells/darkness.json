@@ -1,5 +1,8 @@
 {
     "name": "Darkness",
+    "synonyms": ["darkness", "Darkness"],
+    "url": "wikis/darkness",
+    "color": "#000000",
     "level": "2nd",
     "castingTime": "1 Action",
     "rangeOrArea": "60 ft. (15 ft. sphere)",

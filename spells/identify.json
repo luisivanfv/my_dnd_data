@@ -1,5 +1,8 @@
 {
     "name": "Identify",
+    "synonyms": ["identify", "Identify"],
+    "url": "wikis/identify",
+    "color": "#000000",
     "level": "1st",
     "castingTime": "1 Minute (Ritual)",
     "rangeOrArea": "Touch",

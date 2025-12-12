@@ -1,5 +1,8 @@
 {
     "name": "Mage Hand",
+    "synonyms": ["mage hand", "Mage hand"],
+    "url": "wikis/mage-hand",
+    "color": "#000000",
     "level": "Cantrip",
     "castingTime": "1 Action",
     "rangeOrArea": "30 ft.",

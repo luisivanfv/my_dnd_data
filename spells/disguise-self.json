@@ -1,5 +1,8 @@
 {
     "name": "Disguise Self",
+    "synonyms": ["disguise self", "Disguise self"],
+    "url": "wikis/disguise-self",
+    "color": "#000000",
     "level": "1st",
     "castingTime": "1 Action",
     "rangeOrArea": "Self",

@@ -1,5 +1,8 @@
 {
     "name": "Detect Magic",
+    "synonyms": ["detect magic", "Detect magic"],
+    "url": "wikis/detect-magic",
+    "color": "#000000",
     "level": "1st",
     "castingTime": "1 Action (Ritual)",
     "rangeOrArea": "Self (30 ft. sphere)",

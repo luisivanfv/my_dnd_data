@@ -1,5 +1,8 @@
 {
     "name": "Stoneskin",
+    "synonyms": ["stoneskin", "Stoneskin"],
+    "url": "wikis/stoneskin",
+    "color": "#000000",
     "level": "4th",
     "castingTime": "1 Action",
     "rangeOrArea": "Touch",
