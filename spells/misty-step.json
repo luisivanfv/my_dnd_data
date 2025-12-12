@@ -1,0 +1,14 @@
+{
+    "name": "Misty Step",
+    "color": "#000000",
+    "level": "2nd",
+    "castingTime": "1 Bonus Action",
+    "rangeOrArea": "Self",
+    "components": "V",
+    "duration": "Instantaneous",
+    "school": "Conjuration",
+    "attackOrSave": "None",
+    "damageOrEffect": "Teleportation",
+    "description": "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see.",
+    "availableFor": []
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Fly",
+    "color": "#000000",
+    "level": "3rd",
+    "castingTime": "1 Action",
+    "rangeOrArea": "Touch",
+    "components": "V, S, M *",
+    "duration": "Concentration 10 Minutes",
+    "school": "Transmutation",
+    "attackOrSave": "None",
+    "damageOrEffect": "Movement",
+    "description": "You touch a willing creature. For the duration, the target gains a Fly Speed of 60 feet and can hover. When the spell ends, the target falls if it is still aloft unless it can stop the fall.<br><br><strong>Using a Higher-Level Spell Slot.</strong> You can target one additional creature for each spell slot level above 3.<br><br>* <i>- (a feather)</i>",
+    "availableFor": []
+}
