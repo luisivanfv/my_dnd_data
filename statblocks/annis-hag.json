@@ -30,7 +30,7 @@
     "actions": [
         {
             "name": "Multiattack",
-            "description": "The annis makes one Bite attack and two Claw attacks."
+            "description": "The hag makes one Bite attack and two Claw attacks."
         }, {
             "name": "Bite",
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) piercing damage."
