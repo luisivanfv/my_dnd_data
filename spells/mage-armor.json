@@ -1,7 +1,6 @@
 {
     "name": "Mage Armor",
     "synonyms": ["mage armor", "Mage armor"],
-    "url": "wikis/mage-armor",
     "color": "#000000",
     "level": "1st",
     "castingTime": "1 Action",

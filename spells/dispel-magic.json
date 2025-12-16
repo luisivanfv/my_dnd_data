@@ -1,7 +1,6 @@
 {
     "name": "Dispel Magic",
     "synonyms": ["dispel magic", "Dispel magic"],
-    "url": "wikis/dispel-magic",
     "color": "#000000",
     "level": "3rd",
     "castingTime": "1 Action",

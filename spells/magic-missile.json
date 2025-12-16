@@ -1,7 +1,6 @@
 {
     "name": "Magic Missile",
     "synonyms": ["magic missile", "Magic missile"],
-    "url": "wikis/magic-missile",
     "color": "#000000",
     "level": "1st",
     "castingTime": "1 Action",

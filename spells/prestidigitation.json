@@ -1,7 +1,6 @@
 {
     "name": "Prestidigitation",
     "synonyms": ["prestidigitation", "Prestidigitation"],
-    "url": "wikis/prestidigitation",
     "color": "#000000",
     "level": "Cantrip",
     "castingTime": "1 Action",

@@ -1,7 +1,6 @@
 {
     "name": "Fire Bolt",
     "synonyms": ["fire bolt", "Fire bolt"],
-    "url": "wikis/fire-bolt",
     "color": "#000000",
     "level": "Cantrip",
     "castingTime": "1 Action",
