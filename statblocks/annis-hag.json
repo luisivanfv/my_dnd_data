@@ -2,7 +2,7 @@
     "name": "Annis Hag",
     "sounds": [
         {
-            "name": null,
+            "name": "Laugh",
             "icon": "vicious_mockery.png",
             "sound": "witch_close"
         }
