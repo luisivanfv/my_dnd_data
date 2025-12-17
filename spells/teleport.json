@@ -3,7 +3,7 @@
     "color": "#000000",
     "level": "7th",
     "castingTime": "1 Action",
-    "rangeOrArea": "10 ft.",
+    "rangeOrArea": "10 ft. distance",
     "components": "V",
     "duration": "Instantaneous",
     "school": "Conjuration",

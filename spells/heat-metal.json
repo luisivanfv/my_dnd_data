@@ -4,7 +4,7 @@
     "color": "#000000",
     "level": "2nd",
     "castingTime": "1 Action",
-    "rangeOrArea": "60 ft.",
+    "rangeOrArea": "60 ft. distance",
     "components": "V, S, M *",
     "duration": "1 Minute",
     "school": "Transmutation",

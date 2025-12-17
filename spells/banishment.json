@@ -1,9 +1,10 @@
 {
     "name": "Banishment",
+    "icon": "banishment.png",
     "color": "#000000",
     "level": "4th",
     "castingTime": "1 Action",
-    "rangeOrArea": "30 ft.",
+    "rangeOrArea": "30 ft. distance",
     "components": "V, S, M *",
     "duration": "Concentration 1 Minute",
     "school": "Abjuration",

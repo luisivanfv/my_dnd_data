@@ -3,7 +3,7 @@
     "color": "#000000",
     "level": "5th",
     "castingTime": "1 Action",
-    "rangeOrArea": "120 ft.",
+    "rangeOrArea": "120 ft. distance",
     "components": "V, S, M *",
     "duration": "Concentration 10 Minutes",
     "school": "Evocation",

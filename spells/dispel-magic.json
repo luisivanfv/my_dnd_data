@@ -4,7 +4,7 @@
     "color": "#000000",
     "level": "3rd",
     "castingTime": "1 Action",
-    "rangeOrArea": "120ft.",
+    "rangeOrArea": "120ft. distance",
     "components": "V, S *",
     "duration": "Instantaneous",
     "school": "Abjuration",
