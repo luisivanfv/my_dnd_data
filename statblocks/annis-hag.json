@@ -36,6 +36,7 @@
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) piercing damage."
         }, {
             "name": "Claw",
+            "sound": "claw",
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) slashing damage."
         }, {
             "name": "Crushing Hug",
