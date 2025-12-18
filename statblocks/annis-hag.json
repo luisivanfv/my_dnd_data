@@ -9,10 +9,6 @@
             "name": "Cauldron",
             "icon": "cauldron",
             "sound": "cauldron"
-        }, {
-            "name": "Monster bite",
-            "icon": "monster_bite",
-            "sound": "monster_bite"
         }
     ],
     "creatureType": "Large Fey, Typically Chaotic Evil",
@@ -48,6 +44,7 @@
             "description": "The hag makes one Bite attack and two Claw attacks."
         }, {
             "name": "Bite",
+            "sound": "monster_bite",
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) piercing damage."
         }, {
             "name": "Claw",
@@ -55,6 +52,7 @@
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) slashing damage."
         }, {
             "name": "Crushing Hug",
+            "sound": "bone_breaking",
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 36 (9d6 + 5) bludgeoning damage, and the target is grappled (escape DC 15 if it is a Large or smaller creature. Until the grapple ends, the target takes 36 (9d6 + 5) bludgeoning damage at the start of each of the hag’s turns. The hag can’t make attacks while grappling a creature in this way."
         }, {
             "name": "Spellcasting",
