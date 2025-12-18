@@ -35,6 +35,7 @@
     "actions": [
         {
             "name": "Bite",
+            "sound": "monster_bite",
             "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 14 (4d6) piercing damage."
         }, {
             "name": "Eye Rays",

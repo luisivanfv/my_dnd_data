@@ -44,6 +44,7 @@
             "description": "The death knight makes three longsword attacks."
         }, {
             "name": "Longsword",
+            "sound": "sword",
             "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 9 (1d8 + 5) slashing damage, or 10 (1d10 + 5) slashing damage if used with two hands, plus 18 (4d8) necrotic damage."
         }, {
             "name": "Hellfire Orb (1/Day)",

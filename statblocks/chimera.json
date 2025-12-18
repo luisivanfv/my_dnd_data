@@ -33,12 +33,14 @@
             "description": "The chimera makes three attacks: one with its bite, one with its horns, and one with its claws. When its fire breath is available, it can use the breath in place of its bite or horns."
         }, {
             "name": "Bite",
+            "sound": "monster_bite",
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) piercing damage."
         }, {
             "name": "Horns",
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) bludgeoning damage."
         }, {
             "name": "Claws",
+            "sound": "claw",
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage."
         }, {
             "name": "Fire Breath (Recharge 5–6)",

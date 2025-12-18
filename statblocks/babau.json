@@ -33,6 +33,7 @@
             "description": "The babau makes two Claw attacks. It can replace one attack with a use of Spellcasting or Weakening Gaze."
         }, {
             "name": "Claw",
+            "sound": "claw",
             "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d4 + 4) slashing damage plus 2 (1d4) acid damage."
         }, {
             "name": "Spellcasting",

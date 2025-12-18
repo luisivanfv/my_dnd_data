@@ -38,6 +38,7 @@
     "actions": [
         {
             "name": "Claws",
+            "sound": "claw",
             "description": "(Hag Form Only). Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage."
         }, {
             "name": "Change Shape",

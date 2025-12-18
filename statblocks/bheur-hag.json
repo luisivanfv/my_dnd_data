@@ -44,12 +44,15 @@
             "description": "The hag makes two Slam or Frost Shard attacks."
         }, {
             "name": "Slam",
+            "sound": "slam",
             "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 10 (2d8 + 1) bludgeoning damage plus 18 (4d8) cold damage."
         }, {
             "name": "Frost Shard",
+            "sound": "frost",
             "description": "Ranged Spell Attack: +6 to hit, range 60 ft., one target. Hit: 30 (6d8 + 3) cold damage, and the target’s speed is reduced by 10 feet until the start of the hag’s next turn."
         }, {
             "name": "Horrific Feast",
+            "sound": "monster_eating",
             "description": "The hag feeds on the corpse of one enemy within reach that died within the past minute. Each creature of the hag’s choice that is within 60 feet and able to see the feeding must succeed on a DC 15 Wisdom saving throw or be frightened of the hag for 1 minute. While frightened in this way, a creature is incapacitated, can’t understand what others say, can’t read, and speaks only in gibberish. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature’s saving throw is successful or the effect ends for it, the creature is immune to the hag’s Horrific Feast for the next 24 hours."
         }, {
             "name": "Spellcasting",
