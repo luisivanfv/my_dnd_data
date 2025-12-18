@@ -9,6 +9,10 @@
             "name": "Cauldron",
             "icon": "cauldron",
             "sound": "cauldron"
+        }, {
+            "name": "Monster bite",
+            "icon": "monster_bite",
+            "sound": "monster_bite"
         }
     ],
     "creatureType": "Large Fey, Typically Chaotic Evil",
