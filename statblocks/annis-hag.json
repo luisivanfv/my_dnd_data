@@ -5,6 +5,10 @@
             "name": "Laugh",
             "icon": "laugh",
             "sound": "witch_close"
+        }, {
+            "name": "Cauldron",
+            "icon": "cauldron",
+            "sound": "cauldron"
         }
     ],
     "creatureType": "Large Fey, Typically Chaotic Evil",
