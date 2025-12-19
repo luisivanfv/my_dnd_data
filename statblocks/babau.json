@@ -1,5 +1,16 @@
 {
     "name": "Babau",
+    "sounds": [
+        {
+            "name": "Running",
+            "icon": "footprint",
+            "sound": "barefoot_running"
+        }, {
+            "name": "Speech",
+            "icon": "speak",
+            "sound": "demon_small"
+        }
+    ],
     "creatureType": "Medium Fiend (Demon), Typically Chaotic Evil",
     "armorClass": "16 (natural armor)",
     "hitPoints": "82 (11d8 + 33)",
@@ -40,6 +51,7 @@
             "description": "The babau casts one of the following spells, requiring no material components and using Wisdom as the spellcasting ability (spell save DC 11):</br><br>At will: darkness, dispel magic, fear, heat metal, levitate"
         }, {
             "name": "Weakening Gaze",
+            "sound": "spooky_organ",
             "description": "The babau targets one creature that it can see within 20 feet of it. The target must make a DC 13 Constitution saving throw. On a failed save, the target deals only half damage with weapon attacks that use Strength for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
         }
     ],
