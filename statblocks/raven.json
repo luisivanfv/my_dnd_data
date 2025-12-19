@@ -1,5 +1,12 @@
 {
     "name": "Raven",
+    "sounds": [
+        {
+            "name": "Caw",
+            "icon": "eagle",
+            "sound": "crow"
+        }
+    ],
     "creatureType": "Tiny Beast, Unaligned",
     "armorClass": "12",
     "hitPoints": "1 (1d4 - 1)",
@@ -35,6 +42,7 @@
     "actions": [
         {
             "name": "Beak",
+            "sound": "beak",
             "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
         }
     ],

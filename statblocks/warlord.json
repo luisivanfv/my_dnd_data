@@ -1,5 +1,20 @@
 {
     "name": "Warlord",
+    "sounds": [
+        {
+            "name": "Horn",
+            "icon": "horn",
+            "sound": "war_horn"
+        }, {
+            "name": "Disarmed",
+            "icon": "disarm",
+            "sound": "sword_disarm"
+        }, {
+            "name": "Walking outside",
+            "icon": "footprint",
+            "sound": "walking_gravel"
+        }
+    ],
     "creatureType": "Medium Humanoid, Any Alignment",
     "armorClass": "18 (plate)",
     "hitPoints": "229 (27d8 + 108)",

@@ -1,5 +1,16 @@
 {
     "name": "Zombie",
+    "sounds": [
+        {
+            "name": "Moan",
+            "icon": "zombie",
+            "sound": "zombie"
+        }, {
+            "name": "Scream",
+            "icon": "zombie",
+            "sound": "zombie_loud"
+        }
+    ],
     "creatureType": "Medium Undead, Neutral Evil",
     "armorClass": "8",
     "hitPoints": "22 (3d8+9)",
