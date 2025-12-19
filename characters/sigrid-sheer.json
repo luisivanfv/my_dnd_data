@@ -1,0 +1,9 @@
+{
+    "name": "Sigrid Sheer",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "night-hag",
+    "description": "Sigrid Sheer es la hermana de Britta Sheer, y vive en el bosque de Kryptgarden"
+}
