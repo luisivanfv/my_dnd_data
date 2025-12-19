@@ -1,5 +1,32 @@
 {
     "name": "Archmage",
+    "sounds": [
+        {
+            "name": "Fiery Spell",
+            "icon": "fiery_spell",
+            "sound": "fiery_spell"
+        }, {
+            "name": "Air Spell",
+            "icon": "wind",
+            "sound": "air_spell"
+        }, {
+            "name": "Earth Spell",
+            "icon": "earth",
+            "sound": "earth_spell"
+        }, {
+            "name": "Lightning Spell",
+            "icon": "lightning_strike",
+            "sound": "lightning_strike"
+        }, {
+            "name": "Cold Spell",
+            "icon": "cold_spell",
+            "sound": "frost"
+        }, {
+            "name": "Walking outside",
+            "icon": "footprint",
+            "sound": "walking_gravel"
+        }
+    ],
     "creatureType": "Medium Humanoid (Any Race), Any Alignment",
     "armorClass": "12 (15 with mage armor)",
     "hitPoints": "99 (18d8 + 18)",
@@ -71,6 +98,7 @@
     "actions": [
         {
             "name": "Dagger",
+            "sound": "dagger_woosh",
             "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage."
         }
     ],

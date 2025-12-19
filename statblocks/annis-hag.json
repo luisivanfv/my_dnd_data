@@ -56,7 +56,7 @@
             "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 36 (9d6 + 5) bludgeoning damage, and the target is grappled (escape DC 15 if it is a Large or smaller creature. Until the grapple ends, the target takes 36 (9d6 + 5) bludgeoning damage at the start of each of the hag’s turns. The hag can’t make attacks while grappling a creature in this way."
         }, {
             "name": "Spellcasting",
-            "description": "The hag casts one of the following spells, using Charisma as the spellcasting ability (spell save DC 13):<br><br>3/day each: disguise self (including the form of a Medium Humanoid), fog cloud"
+            "description": "The hag casts one of the following spells, using Charisma as the spellcasting ability (spell save DC 13):<br><br>3/day each: disguise self (including the form of a Medium Humanoid), fog cloud."
         }
     ],
     "reactions": [],
