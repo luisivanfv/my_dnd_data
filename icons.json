@@ -7,9 +7,11 @@
     "cold": "https://img.icons8.com/ios-filled/50/22C3E6/winter.png||winter",
     "cold_spell": "https://img.icons8.com/ios-filled/50/customColor/winter.png||winter",
     "crystal_ball": "https://img.icons8.com/ios-filled/50/customColor/sparkling--v1.png||sparkling--v1",
+    "disarm": "https://img.icons8.com/ios-filled/50/customColor/hand-side-view.png||hand-side-view",
     "dragon": "https://img.icons8.com/glyph-neue/64/customColor/dragon.png||dragon",
     "earth": "https://img.icons8.com/metro/26/customColor/rock.png||rock",
     "fire": "https://img.icons8.com/ios-glyphs/30/FD7E14/fire-element--v1.png||fire-element--v1",
+    "fire_breath": "https://img.icons8.com/ios-glyphs/30/customColor/fire-element--v1.png||fire-element--v1",
     "fiery_spell": "https://img.icons8.com/external-icongeek26-glyph-icongeek26/64/customColor/external-smoke-magic-and-fairy-tale-icongeek26-glyph-icongeek26.png||external-smoke-magic-and-fairy-tale-icongeek26-glyph-icongeek26",
     "footprint": "https://img.icons8.com/ios-filled/50/customColor/human-footprints.png||human-footprints",
     "force": "https://img.icons8.com/ios-filled/50/831D1D/explosion.png||explosion",
@@ -29,5 +31,6 @@
     "speak": "https://img.icons8.com/ios-filled/50/customColor/voice-recognition-scan.png||voice-recognition-scan",
     "thunder": "https://img.icons8.com/external-vitaliy-gorbachev-fill-vitaly-gorbachev/60/7950F2/external-hurricane-weather-vitaliy-gorbachev-fill-vitaly-gorbachev-1.png||external-hurricane-weather-vitaliy-gorbachev-fill-vitaly-gorbachev-1",
     "wind": "https://img.icons8.com/ios-filled/50/customColor/wind--v1.png||wind--v1",
+    "wing": "https://img.icons8.com/ios-filled/50/customColor/dove.png||dove",
     "_example": "||"
 }

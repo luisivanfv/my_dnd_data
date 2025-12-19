@@ -19,7 +19,7 @@
             "sound": "dragon_roar"
         }, {
             "name": "Dragon Fire",
-            "icon": "fire",
+            "icon": "fire_breath",
             "sound": "dragon_fire_small"
         }
     ],
