@@ -1,5 +1,16 @@
 {
     "name": "Bheur Hag",
+    "sounds": [
+        {
+            "name": "Laugh",
+            "icon": "laugh",
+            "sound": "witch_short"
+        }, {
+            "name": "Cauldron",
+            "icon": "cauldron",
+            "sound": "cauldron"
+        }
+    ],
     "creatureType": "Medium Fey, Typically Chaotic Evil",
     "armorClass": "17 (natural armor)",
     "hitPoints": "91 (14d8 + 28)",
