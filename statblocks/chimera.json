@@ -1,5 +1,28 @@
 {
     "name": "Chimera",
+    "sounds": [
+        {
+            "name": "Lion Moan",
+            "icon": "lion",
+            "sound": "lion_little_roar"
+        }, {
+            "name": "Lion Roar",
+            "icon": "lion",
+            "sound": "lion_big_roar"
+        }, {
+            "name": "Goat",
+            "icon": "goat",
+            "sound": "goat_3"
+        }, {
+            "name": "Dragon Roar",
+            "icon": "dragon",
+            "sound": "dragon_roar"
+        }, {
+            "name": "Dragon Fire",
+            "icon": "fire",
+            "sound": "dragon_fire_small"
+        }
+    ],
     "creatureType": "Large Monstrosity, Chaotic Evil",
     "armorClass": "14 (natural armor)",
     "hitPoints": "114 (12d10 + 48)",
@@ -37,6 +60,7 @@
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) piercing damage."
         }, {
             "name": "Horns",
+            "sound": "slam",
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) bludgeoning damage."
         }, {
             "name": "Claws",
@@ -44,6 +68,7 @@
             "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage."
         }, {
             "name": "Fire Breath (Recharge 5–6)",
+            "sound": "fireball",
             "description": "The dragon head exhales fire in a 15-foot cone. Each creature in that area must make a DC 15 Dexterity saving throw, taking 31 (7d8) fire damage on a failed save, or half as much damage on a successful one."
         }
     ],
