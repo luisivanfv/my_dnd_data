@@ -7,7 +7,7 @@
             "sound": "demon_medium_1"
         }, {
             "name": "Disarmed",
-            "icon": "claw",
+            "icon": "disarm",
             "sound": "sword_disarm"
         }
     ],

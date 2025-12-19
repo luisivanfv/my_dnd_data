@@ -1,5 +1,12 @@
 {
     "name": "Drider",
+    "sounds": [
+        {
+            "name": "Walking",
+            "icon": "spider",
+            "sound": "spider_legs"
+        }
+    ],
     "creatureType": "Large Monstrosity, Chaotic Evil",
     "armorClass": "19 (natural armor)",
     "hitPoints": "123 (13d10 + 52)",
@@ -35,12 +42,14 @@
             "description": "The drider’s innate spellcasting ability is Wisdom (spell save DC 13). The drider can innately cast the following spells, requiring no material components:<br><br>At will: dancing lights<br><br>1/day each: darkness, faerie fire"
         }, {
             "name": "Spider Climb",
+            "sound": "spider_legs",
             "description": "The drider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
         }, {
             "name": "Sunlight Sensitivity",
             "description": "While in sunlight, the drider has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
         }, {
             "name": "Web Walker",
+            "sound": "spider_legs",
             "description": "The drider ignores movement restrictions caused by webbing."
         }
     ],
@@ -54,7 +63,7 @@
             "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 2 (1d4) piercing damage plus 9 (2d8) poison damage."
         }, {
             "name": "Longsword",
-            "sound": "sword",
+            "sound": "longsword",
             "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands."
         }, {
             "name": "Longbow",

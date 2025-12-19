@@ -3,7 +3,7 @@
     "sounds": [
         {
             "name": "Wing Flap",
-            "icon": "lion",
+            "icon": "wing",
             "sound": "wing_flap_medium"
         }
     ],
