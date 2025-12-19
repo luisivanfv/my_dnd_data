@@ -4,7 +4,7 @@
         {
             "name": "Walking",
             "icon": "footprint",
-            "sound": "heavy_character_walking"
+            "sound": "heavy_character_walk"
         }
     ],
     "creatureType": "Large Undead, Typically Chaotic Evil",
