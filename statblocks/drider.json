@@ -5,6 +5,10 @@
             "name": "Walking",
             "icon": "spider",
             "sound": "spider_legs"
+        }, {
+            "name": "Disarmed",
+            "icon": "disarm",
+            "sound": "sword_disarm"
         }
     ],
     "creatureType": "Large Monstrosity, Chaotic Evil",
