@@ -1,0 +1,7 @@
+{
+    "name": "Harpy Ambush",
+    "description": "Harpy Ambush",
+    "location": "Kryptgarden",
+    "map": "Cliff Side",
+    "enemies": ["6 Harpy"]
+}

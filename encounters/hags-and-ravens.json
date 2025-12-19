@@ -1,0 +1,7 @@
+{
+    "name": "Hags and Ravens",
+    "description": "Hags and Ravens",
+    "location": "Kryptgarden",
+    "map": "Dark Forest",
+    "enemies": ["1 Annis Hag", "1 Bheur Hag", "1 Night Hag", "5 Raven"]
+}

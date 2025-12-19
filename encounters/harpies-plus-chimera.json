@@ -1,0 +1,7 @@
+{
+    "name": "Harpies plus Chimera",
+    "description": "Harpies plus Chimera",
+    "location": "Kryptgarden",
+    "map": "Cliff Side",
+    "enemies": ["3 Harpy", "1 Chimera"]
+}

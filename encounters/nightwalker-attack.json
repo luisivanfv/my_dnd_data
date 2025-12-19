@@ -1,0 +1,7 @@
+{
+    "name": "Nightwalker Attack",
+    "description": "Nightwalker Attack",
+    "location": "Kryptgarden",
+    "map": "Dark Swamp",
+    "enemies": ["1 Nightwalker"]
+}
