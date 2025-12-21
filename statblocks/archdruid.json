@@ -1,0 +1,67 @@
+{
+    "name": "Archdruid",
+    "sounds": [
+        {
+            "name": "Vine Growth",
+            "icon": "plant",
+            "sound": "vine_growth"
+        }, {
+            "name": "Walking outside",
+            "icon": "footprint",
+            "sound": "walking_gravel"
+        }
+    ],
+    "creatureType": "Medium Humanoid (Druid), Any Alignment",
+    "armorClass": "14 (hide armor)",
+    "hitPoints": "154 (28d8 + 28)",
+    "speed": "30 ft.",
+    "str": "14",
+    "dex": "14",
+    "con": "12",
+    "int": "12",
+    "wis": "20",
+    "cha": "11",
+    "strSave": "+2",
+    "dexSave": "+2",
+    "conSave": "+1",
+    "intSave": "+5",
+    "wisSave": "+9",
+    "chaSave": "+0",
+    "savingThrows": "INT +5, WIS +9",
+    "skills": "Medicine +9, Nature +5, Perception +9",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Passive Perception 19",
+    "languages": "Druidic plus any two languages",
+    "challenge": "12 (8,400 XP)",
+    "proficiencyBonus": "+4",
+    "passives": [],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The archdruid makes three Staff or Wildfire attacks. It can replace one attack with a use of Spellcasting."
+        }, {
+            "name": "Staff",
+            "sound": "slam",
+            "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage plus 21 (6d6) poison damage."
+        }, {
+            "name": "Wildfire",
+            "sound": "fireball",
+            "description": "Ranged Spell Attack: +9 to hit, range 120 ft., one target. Hit: 26 (6d6 + 5) fire damage, and the target is blinded until the start of the druid’s next turn."
+        }, {
+            "name": "Spellcasting",
+            "description": "The archdruid casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 17):<br><br>At will: beast sense, entangle, speak with animals<br><br>3/day each: animal messenger, dominate beast, faerie fire, tree stride<br><br>1/day each: commune with nature (as an action), mass cure wounds"
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [
+        {
+            "name": "Change Shape (2/Day)",
+            "sound": "polymorph",
+            "description": "The archdruid magically transforms into a Beast or an Elemental with a challenge rating of 6 or less and can remain in that form for up to 9 hours. The archdruid can choose whether its equipment falls to the ground, melds with its new form, or is worn by the new form. The archdruid reverts to its true form if it dies or falls unconscious. The archdruid can revert to its true form using a bonus action.<br><br>While in a new form, the archdruid’s stat block is replaced by the stat block of that form, except the archdruid keeps its current hit points, its hit point maximum, this bonus action, its languages and ability to speak, and its Spellcasting action.<br><br>The new form’s attacks count as magical for the purpose of overcoming resistances and immunity to nonmagical attacks."
+        }
+    ],
+    "legendaryActions": []
+}

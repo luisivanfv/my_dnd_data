@@ -1,0 +1,14 @@
+{
+    "name": "Hold Person",
+    "color": "#000000",
+    "level": "2nd",
+    "castingTime": "1 Action",
+    "rangeOrArea": "60 ft. distance",
+    "components": "V, S, M *",
+    "duration": "Concentration 1 Minute",
+    "school": "Enchantment",
+    "attackOrSave": "WIS Save",
+    "damageOrEffect": "Paralyzed",
+    "description": "Choose a humanoid that you can see within range. The target must succeed on a Wisdom saving throw or be paralyzed for the duration. At the end of each of its turns, the target can make another Wisdom saving throw. On a success, the spell ends on the target.<br><br><strong>At Higher Levels.</strong> When you cast this spell using a spell slot of 3rd level or higher, you can target one additional humanoid for each slot level above 2nd. The humanoids must be within 30 feet of each other when you target them.<br><br>* <i>- (a small, straight piece of iron)</i>",
+    "availableFor": []
+}

@@ -6,7 +6,7 @@
     "castingTime": "1 Action",
     "rangeOrArea": "60 ft. distance",
     "components": "V, S, M *",
-    "duration": "1 Minute",
+    "duration": "Concentration 1 Minute",
     "school": "Transmutation",
     "attackOrSave": "None",
     "damageOrEffect": "Fire",

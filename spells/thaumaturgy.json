@@ -1,0 +1,14 @@
+{
+    "name": "Thaumaturgy",
+    "color": "#000000",
+    "level": "Cantrip",
+    "castingTime": "1 Action",
+    "rangeOrArea": "30 ft. distance",
+    "components": "V",
+    "duration": "1 Minute",
+    "school": "Transmutation",
+    "attackOrSave": "None",
+    "damageOrEffect": "Control",
+    "description": "You manifest a minor wonder, a sign of supernatural power, within range. You create one of the following magical effects within range:<br><br><ul><br><li type='disc'>Your voice booms up to three times as loud as normal for 1 minute.</li><br><li type='disc'>You cause flames to flicker, brighten, dim, or change color for 1 minute.</li><br><li type='disc'>You cause harmless tremors in the ground for 1 minute.</li><br><li type='disc'>You create an instantaneous sound that originates from a point of your choice within range, such as a rumble of thunder, the cry of a raven, or ominous whispers.</li><br><li type='disc'>You instantaneously cause an unlocked door or window to fly open or slam shut.</li><br><li type='disc'>You alter the appearance of your eyes for 1 minute.</li><br></ul><br><br>If you cast this spell multiple times, you can have up to three of its 1-minute effects active at a time, and you can dismiss such an effect as an action.",
+    "availableFor": []
+}

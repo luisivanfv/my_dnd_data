@@ -1,0 +1,53 @@
+{
+    "name": "Archer",
+    "sounds": [],
+    "creatureType": "Medium Humanoid, Any Alignment",
+    "armorClass": "16 (studded leather)",
+    "hitPoints": "75 (10d8 + 30)",
+    "speed": "30 ft.",
+    "str": "11",
+    "dex": "18",
+    "con": "16",
+    "int": "11",
+    "wis": "13",
+    "cha": "10",
+    "strSave": "+0",
+    "dexSave": "+4",
+    "conSave": "+3",
+    "intSave": "+0",
+    "wisSave": "+1",
+    "chaSave": "+0",
+    "savingThrows": "",
+    "skills": "Acrobatics +6, Perception +5",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Passive Perception 15",
+    "languages": "any one language (usually Common)",
+    "challenge": "3 (700 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The archer makes two Shortsword or Longbow attacks."
+        }, {
+            "name": "Shortsword",
+            "sound": "sword",
+            "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage."
+        }, {
+            "name": "Longbow",
+            "sound": "crossbow",
+            "description": "Ranged Weapon Attack: +6 to hit, range 150/600 ft., one target. Hit: 8 (1d8 + 4) piercing damage."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [
+        {
+            "name": "Archer’s Eye (3/Day)",
+            "description": "Immediately after making an attack roll or a damage roll with a ranged weapon, the archer can roll a d10 and add the number rolled to the total."
+        }
+    ],
+    "legendaryActions": []
+}
