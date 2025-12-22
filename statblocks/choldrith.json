@@ -1,0 +1,79 @@
+{
+    "name": "Choldrith",
+    "sounds": [
+        {
+            "name": "Walking",
+            "icon": "spider",
+            "sound": "spider_legs"
+        }, {
+            "name": "Screech",
+            "icon": "insect",
+            "sound": "demon_small"
+        }
+    ],
+    "creatureType": "Medium Monstrosity (Cleric), Typically Chaotic Evil",
+    "armorClass": "15 (natural armor)",
+    "hitPoints": "66 (12d8 + 12)",
+    "speed": "30 ft., climb 30 ft.",
+    "str": "12",
+    "dex": "16",
+    "con": "12",
+    "int": "11",
+    "wis": "14",
+    "cha": "10",
+    "strSave": "+1",
+    "dexSave": "+3",
+    "conSave": "+1",
+    "intSave": "+0",
+    "wisSave": "+2",
+    "chaSave": "+0",
+    "savingThrows": "",
+    "skills": "Athletics +5, Religion +2, Stealth +5",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Darkvision 60 ft., Passive Perception 12",
+    "languages": "Undercommon",
+    "challenge": "3 (700 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [
+        {
+            "name": "Fey Ancestry",
+            "description": "The choldrith has advantage on saving throws against being charmed, and magic can’t put the choldrith to sleep."
+        }, {
+            "name": "Spider Climb",
+            "description": "The choldrith can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+        }, {
+            "name": "Sunlight Sensitivity",
+            "description": "While in sunlight, the choldrith has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+        }, {
+            "name": "Web Sense",
+            "description": "While in contact with a web, the choldrith knows the exact location of any other creature in contact with the same web."
+        }, {
+            "name": "Web Walker",
+            "description": "The choldrith ignores movement restrictions caused by webbing."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Dagger",
+            "sound": "sword",
+            "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage plus 10 (3d6) poison damage."
+        }, {
+            "name": "Spellcasting",
+            "description": "The choldrith casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 12):<br><br>At will: guidance, thaumaturgy<br><br>1/day each: bane, hold person"
+        }, {
+            "name": "Web (Recharge 5–6)",
+            "description": "Ranged Weapon Attack: +5 to hit, range 30/60 ft., one Large or smaller creature. Hit: The target is restrained by webbing. As an action, the restrained target can make a DC 11 Strength check, bursting the webbing on a success. The webbing can also be attacked and destroyed (AC 10; 5 hit points; vulnerability to fire damage; immunity to bludgeoning, poison, and psychic damage)."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [
+        {
+            "name": "Spectral Dagger (Recharges after a Short or Long Rest)",
+            "description": "The choldrith conjures a floating, spectral dagger within 60 feet of itself. The choldrith can make a melee spell attack (+4 to hit against one creature within 5 feet of the dagger. On a hit, the target takes 6 (1d8 + 2) force damage.<br><br>The dagger lasts for 1 minute. As a bonus action on later turns, the choldrith can move the dagger up to 20 feet and repeat the attack against one creature within 5 feet of the dagger."
+        }
+    ],
+    "legendaryActions": []
+}

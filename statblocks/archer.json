@@ -1,6 +1,16 @@
 {
     "name": "Archer",
-    "sounds": [],
+    "sounds": [
+        {
+            "name": "Walking outside",
+            "icon": "footprint",
+            "sound": "walking_gravel"
+        }, {
+            "name": "Disarm",
+            "icon": "disarm",
+            "sound": "drop_wood"
+        }
+    ],
     "creatureType": "Medium Humanoid, Any Alignment",
     "armorClass": "16 (studded leather)",
     "hitPoints": "75 (10d8 + 30)",

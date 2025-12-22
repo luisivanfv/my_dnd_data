@@ -9,6 +9,10 @@
             "name": "Walking outside",
             "icon": "footprint",
             "sound": "walking_gravel"
+        }, {
+            "name": "Disarm",
+            "icon": "disarm",
+            "sound": "drop_wood"
         }
     ],
     "creatureType": "Medium Humanoid (Druid), Any Alignment",

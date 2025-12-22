@@ -1,0 +1,51 @@
+{
+    "name": "Aurochs",
+    "sounds": [
+        {
+            "name": "Moo",
+            "icon": "cow",
+            "sound": "cow"
+        }, {
+            "name": "Big Moo",
+            "icon": "cow",
+            "sound": "big_moo"
+        }
+    ],
+    "creatureType": "Large Beast (Cattle), Unaligned",
+    "armorClass": "11 (natural armor)",
+    "hitPoints": "38 (4d10 + 16)",
+    "speed": "50 ft.",
+    "str": "20",
+    "dex": "10",
+    "con": "19",
+    "int": "2",
+    "wis": "12",
+    "cha": "5",
+    "strSave": "+5",
+    "dexSave": "+0",
+    "conSave": "+4",
+    "intSave": "-4",
+    "wisSave": "+1",
+    "chaSave": "-3",
+    "savingThrows": "",
+    "skills": "",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Passive Perception 11",
+    "languages": "--",
+    "challenge": "2 (450 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [],
+    "actions": [
+        {
+            "name": "Gore",
+            "sound": "gore",
+            "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) piercing damage. If the aurochs moved at least 20 feet straight toward the target immediately before the hit, the target takes an extra 9 (2d8) piercing damage, and the target must succeed on a DC 15 Strength saving throw or be knocked prone if it is a creature."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}

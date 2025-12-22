@@ -1,0 +1,72 @@
+{
+    "name": "Chitine",
+    "sounds": [
+        {
+            "name": "Walking",
+            "icon": "spider",
+            "sound": "spider_legs"
+        }, {
+            "name": "Screech",
+            "icon": "insect",
+            "sound": "demon_small"
+        }, {
+            "name": "Disarm Sword",
+            "icon": "disarm",
+            "sound": "sword_disarm"
+        }
+    ],
+    "creatureType": "Small Monstrosity, Typically Chaotic Evil",
+    "armorClass": "14 (hide armor)",
+    "hitPoints": "18 (4d6 + 4)",
+    "speed": "30 ft., climb 30 ft.",
+    "str": "10",
+    "dex": "14",
+    "con": "12",
+    "int": "10",
+    "wis": "10",
+    "cha": "7",
+    "strSave": "+0",
+    "dexSave": "+2",
+    "conSave": "+1",
+    "intSave": "+0",
+    "wisSave": "+0",
+    "chaSave": "-2",
+    "savingThrows": "",
+    "skills": "Athletics +4, Stealth +4",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Darkvision 60 ft., Passive Perception 10",
+    "languages": "Undercommon",
+    "challenge": "1/2 (100 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [
+        {
+            "name": "Fey Ancestry",
+            "description": "The chitine has advantage on saving throws against being charmed, and magic can’t put the chitine to sleep."
+        }, {
+            "name": "Sunlight Sensitivity",
+            "description": "While in sunlight, the chitine has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."
+        }, {
+            "name": "Web Sense",
+            "description": "While in contact with a web, the chitine knows the exact location of any other creature in contact with the same web."
+        }, {
+            "name": "Web Walker",
+            "description": "The chitine ignores movement restrictions caused by webbing."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The chitine makes three Dagger attacks."
+        }, {
+            "name": "Dagger",
+            "sound": "sword",
+            "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage."
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}

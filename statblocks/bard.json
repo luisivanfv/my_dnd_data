@@ -1,0 +1,74 @@
+{
+    "name": "Bard",
+    "sounds": [
+        {
+            "name": "Walking outside",
+            "icon": "footprint",
+            "sound": "walking_gravel"
+        }, {
+            "name": "Disarm Bow",
+            "icon": "wood",
+            "sound": "drop_wood"
+        }, {
+            "name": "Disarm Sword",
+            "icon": "disarm",
+            "sound": "sword_disarm"
+        }
+    ],
+    "creatureType": "Medium Humanoid, Any Alignment",
+    "armorClass": "15 (chain shirt)",
+    "hitPoints": "44 (8d8 + 8)",
+    "speed": "30 ft.",
+    "str": "11",
+    "dex": "14",
+    "con": "12",
+    "int": "10",
+    "wis": "13",
+    "cha": "14",
+    "strSave": "+0",
+    "dexSave": "+4",
+    "conSave": "+1",
+    "intSave": "+0",
+    "wisSave": "+3",
+    "chaSave": "+2",
+    "savingThrows": "DEX +4, WIS +3",
+    "skills": "Acrobatics +4, Perception +5, Performance +6",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "",
+    "senses": "Passive Perception 15",
+    "languages": "any one language (usually Common)",
+    "challenge": "2 (450 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The bard makes two Shortsword or Shortbow attacks. It can replace one attack with a use of Spellcasting."
+        }, {
+            "name": "Shortsword",
+            "sound": "sword",
+            "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage."
+        }, {
+            "name": "Shortbow",
+            "sound": "bow",
+            "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage."
+        }, {
+            "name": "Cacophony (Recharge 4–6)",
+            "sound": "bard_lute_magic",
+            "description": "Each creature in a 15-foot cube originating from the bard must make a DC 12 Constitution saving throw. On a failed save, a creature takes 9 (2d8) thunder damage and is pushed up to 10 feet away from the bard. On a successful save, a creature takes half as much damage and isn’t pushed."
+        }, {
+            "name": "Spellcasting",
+            "description": "The bard casts one of the following spells, using Charisma as the spellcasting ability (spell save DC 12):<br><br>At will: dancing lights, mage hand, prestidigitation<br><br>1/day each: charm person, invisibility, sleep"
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [
+        {
+            "name": "Taunt (2/Day)",
+            "description": "The bard targets one creature within 30 feet of it. If the target can hear the bard, the target must succeed on a DC 12 Charisma saving throw or have disadvantage on ability checks, attack rolls, and saving throws until the start of the bard’s next turn."
+        }
+    ],
+    "legendaryActions": []
+}

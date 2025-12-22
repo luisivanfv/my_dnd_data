@@ -1,0 +1,65 @@
+{
+    "name": "Deathlock",
+    "sounds": [
+        {
+            "name": "Whisper",
+            "icon": "ghost",
+            "sound": "undead_howl"
+        }
+    ],
+    "creatureType": "Medium Undead (Warlock), Typically Neutral Evil",
+    "armorClass": "12 (15 with mage armor)",
+    "hitPoints": "36 (8d8)",
+    "speed": "30 ft.",
+    "str": "11",
+    "dex": "15",
+    "con": "10",
+    "int": "14",
+    "wis": "12",
+    "cha": "16",
+    "strSave": "+0",
+    "dexSave": "+2",
+    "conSave": "+0",
+    "intSave": "+4",
+    "wisSave": "+1",
+    "chaSave": "+5",
+    "savingThrows": "INT +4, CHA +5",
+    "skills": "Arcana +4, History +4",
+    "damageVulnerabilities": "",
+    "damageResistances": "Necrotic; Bludgeoning, Piercing, and Slashing from Nonmagical Attacks that aren't Silvered",
+    "damageImmunities": "Poison",
+    "conditionImmunities": "Exhaustion, Poisoned",
+    "senses": "Darkvision 60 ft., Passive Perception 11",
+    "languages": "the languages it knew in life",
+    "challenge": "4 (1,100 XP)",
+    "proficiencyBonus": "+2",
+    "passives": [
+        {
+            "name": "Turn Resistance",
+            "description": "The deathlock has advantage on saving throws against any effect that turns Undead."
+        }, {
+            "name": "Unusual Nature",
+            "description": "The deathlock doesn’t require air, food, drink, or sleep."
+        }
+    ],
+    "actions": [
+        {
+            "name": "Multiattack",
+            "description": "The deathlock makes two Deathly Claw or Grave Bolt attacks."
+        }, {
+            "name": "Deathly Claw",
+            "sound": "claw",
+            "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) necrotic damage."
+        }, {
+            "name": "Grave Bolt",
+            "sound": "eldritch_blast",
+            "description": "Ranged Spell Attack: +5 to hit, range 120 ft., one target. Hit: 14 (2d10 + 3) necrotic damage."
+        }, {
+            "name": "Spellcasting",
+            "description": "The deathlock casts one of the following spells, using Charisma as the spellcasting ability (spell save DC 13):<br><br>At will: detect magic, disguise self, mage armor, mage hand<br><br>1/day each: dispel magic, hunger of Hadar, invisibility, spider climb"
+        }
+    ],
+    "reactions": [],
+    "bonusActions": [],
+    "legendaryActions": []
+}

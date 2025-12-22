@@ -6,7 +6,11 @@
             "icon": "ghost",
             "sound": "undead_howl"
         }, {
-            "name": "Disarmed",
+            "name": "Disarm Bow",
+            "icon": "wood",
+            "sound": "drop_wood"
+        }, {
+            "name": "Disarm Sword",
             "icon": "disarm",
             "sound": "sword_disarm"
         }
