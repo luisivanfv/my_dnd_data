@@ -307,6 +307,7 @@ function hideLazyPreview() {
     container.style.display = 'none';
 }
 const toggleModal = (element) => {
+    window.event.preventDefault();
     if(element && !element.innerHTML.trim().startsWith('<'))
         updateModalText(element.innerHTML);
 };
@@ -315,7 +316,7 @@ function addDieModalCaller(str, options = {}) {
         fontColor = 'darkred',
         fontSize = txtSize
     } = options;
-    return `<a onclick="toggleModal(this)" style="cursor: pointer; color: ${fontColor}; font-size: ${fontSize};">${str}</a>`;
+    return `<a oncontextmenu="toggleModal(this)" onclick="toggleModal(this)" style="cursor: pointer; color: ${fontColor}; font-size: ${fontSize};">${str}</a>`;
 }
 function replaceFormulasWithLinks(text, options = {}) {
     return text.replace(/\b(\d+d\d+(?:\s*[+-]\s*\d+)?)\b/g, (match) => {
