@@ -31,6 +31,11 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+function loadPageBackgrounds() {
+    Array.from(document.getElementsByClassName('page-background')).forEach((element) => {
+        element.style.backgroundImage = `url("https://i.pinimg.com/originals/ea/97/ef/ea97ef1a0002ed47e29e3532de801781.jpg")`;
+    });
+}
 function changeElementPropertyIfExists(selector, property, value) {
     const elements = document.querySelectorAll(selector);
     for(let i=0;i<elements.length;i++) {
