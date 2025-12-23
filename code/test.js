@@ -147,6 +147,22 @@ function toUpper(str) {
 async function getKeywordsFromFolder(folderName) {
     return (await getFilenames(folderName)).map(file => file.replace(/\.json$/, '').replaceAll('-', ' '));
 }
+async function getFilenames(path = '') {
+    const apiUrl = `https://api.github.com/repos/luisivanfv/my_dnd_data/contents/${path}`;
+    try {
+        const response = await fetch(apiUrl, { headers: {} });
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data
+            .filter(item => item.type === 'file')  // Only files, not folders
+            .map(item => item.name);
+    } catch (error) {
+        console.error('Error fetching GitHub files:', error);
+        return [];
+    }
+}
 function keywordToUrl(txt, color, url, fontSize) {
     if (!url) return color ? `<span style="color:${color}">${txt}</span>` : txt;
     return getImagePreview(url, txt, color, fontSize);
