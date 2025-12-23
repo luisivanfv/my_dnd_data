@@ -5,6 +5,9 @@ const actionTitleTxtSize = '14px';
 const characters = null;
 const colors = null;
 
+console.log('External script loaded. Document readyState:', document.readyState);
+console.log('DOMContentLoaded already fired?', document.readyState !== 'loading');
+
 const DataManager = (function() {
     const data = {
         colors: new Map()
@@ -2181,14 +2184,11 @@ function handleImagePreviewMouseLeave(event, previewId) {
     }, 0);
 }
 
-window.initializeExternalScript = async function() {
-    // Your initialization code here
-    console.log('External script initializing on demand...');
-    
+async function initializeEverything() {
     try {
         document.body.classList.add('loading');
         initLazyPreviews();
-        // ... all your initialization functions ...
+        // ... ALL your initialization function calls ...
         await Promise.all(
             mapKeys.map(async (key) => {
                 window[key] = await getMap(key);
@@ -2217,12 +2217,12 @@ window.initializeExternalScript = async function() {
     } catch (error) {
         console.error('Failed to initialize: ', error);
     }
-};
+}
 
 // Check document state and initialize appropriately
 if (document.readyState === 'loading') {
     document.addEventListener("DOMContentLoaded", initializeEverything);
 } else {
     // Document already loaded, run immediately
-    await initializeEverything();
+    initializeEverything();
 }
