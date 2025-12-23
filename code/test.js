@@ -31,6 +31,16 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+function getUrlParameter(name) {
+    try {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get(name);
+        return value !== null ? value : null;
+    } catch (error) {
+        console.error("Invalid URL or parameter error:", error);
+        return null;
+    }
+}
 async function getJsonMap(url) {
     const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     const jsonObject = await response.json()
