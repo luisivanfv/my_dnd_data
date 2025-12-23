@@ -472,6 +472,11 @@ async function recolor() {
     changeElementPropertyIfExists('.wiki-page-name', 'color', window.colors.get('gambobe'));
     changeElementPropertyIfExists('.character-name', 'color', window.colors.get('gambobe'));
 }
+async function fetchIfNotSet(key) {
+    if(!window[key])
+        window[key] = await getJson(key);
+    return window[key];
+}
 async function fetchMapIfNotSet(key) {
     if(!window[key])
         window[key] = await getJsonMap(key);
