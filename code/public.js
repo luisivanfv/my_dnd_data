@@ -1,3 +1,15 @@
+console.log('🔵 EXTERNAL SCRIPT LOADED!', new Date().toISOString());
+console.log('Window location:', window.location.href);
+
+// Create a visible marker
+setTimeout(function() {
+    var marker = document.createElement('div');
+    marker.id = 'external-script-marker';
+    marker.style.cssText = 'position: fixed; top: 50px; left: 10px; background: blue; color: white; padding: 10px; z-index: 99999; font-weight: bold; border-radius: 5px;';
+    marker.textContent = 'EXTERNAL SCRIPT LOADED - ' + new Date().toLocaleTimeString();
+    document.body.appendChild(marker);
+    console.log('External script marker added');
+}, 500);
 // ===== ADD THIS AT THE VERY TOP OF public.js =====
 console.log('=== PUBLIC.JS STARTING ===', new Date().toISOString());
 console.log('Window location:', window.location.href);
