@@ -355,7 +355,7 @@ async function loadStatblocks() {
                 <hr class="orange-border" />
                 <div class="section-left">
                     <div class="creature-heading">
-                        ${getImagePreview(window.githubRoot + 'images/monsters/' + creatureSearched + ".jpeg", toUpper(creatureSearched.replace('-', ' ')), null, '26px')}
+                        ${getImagePreview(window.githubRoot + 'images/monsters/' + creatureSearched + ".jpeg", toUpper(creatureSearched.replaceAll('-', ' ')), null, '26px')}
                         <h2 style="font-size: 15px;">${await enrichText(creatureInfo.creatureType, allReplacements, { fontColor: 'black' })}</h2>
                         <div class="soundboard">${await getSoundboardForCreature(creatureInfo.sounds)}</div>
                     </div>
