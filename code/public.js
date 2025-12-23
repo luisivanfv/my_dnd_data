@@ -1,12 +1,23 @@
-const websiteRoot = 'https://blindingdarkness.obsidianportal.com';const mapKeys = ['colorReplacements', 'keywordReplacements'];
+// === ADD THIS AT THE VERY TOP ===
+console.log('External script STARTING...');
+
+// Define the missing githubRoot variable
+const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
+const mapKeys = ['colorReplacements', 'keywordReplacements'];
 const txtSize = '16px';
 const lookerTxtSize = '16px';
 const actionTitleTxtSize = '14px';
-const characters = null;
-const colors = null;
 
 console.log('External script loaded. Document readyState:', document.readyState);
 console.log('DOMContentLoaded already fired?', document.readyState !== 'loading');
+
+// === ADD THIS - Make initialization available to main script ===
+window.initializeExternalScript = async function() {
+    console.log('External script initialization called by main script');
+    await initializeEverything();
+    return true;
+};
 
 const DataManager = (function() {
     const data = {
