@@ -17,7 +17,7 @@ function loadExternalScript(url) {
   try {
     // Load your main logic from GitHub/GitLab/Raw URL
     await loadExternalScript(`${githubRoot}code/public.js?t=${Date.now()}`);
-    await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
+    //await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
   } catch (error) {
     console.error('Error loading external script:', error);
   }
