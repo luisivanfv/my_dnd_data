@@ -1,3 +1,4 @@
+const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // Load external JavaScript from a repository
 function loadExternalScript(url) {
   return new Promise((resolve, reject) => {
