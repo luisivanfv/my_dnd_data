@@ -5,6 +5,7 @@ const iconColor = '8B0000';
 const damageTypeIconSize = "20";
 const txtSize = '16px';
 const lookerTxtSize = '16px';
+const specialTextColor = 'FAB005';
 const actionTitleTxtSize = '14px';
 const secondsPopupShown = 5;
 const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
