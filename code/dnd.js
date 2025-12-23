@@ -150,11 +150,7 @@ function makeSavingThrow(title, mod) {
     window.event.preventDefault();
     mod = parseInt(mod);
     let roll = rollDie(20);
-    if(roll == 1)
-        popup.show(colorText('Nat 1', 'red'));
-    else if(roll == 20)
-        popup.show('Nat 20!');
-    else if(mod != 0) {
+    if(mod != 0) {
         let symbol = mod > 0 ? '+' : '-';
         popup.show(`${colorText(`${title} check = ${roll.toString()} ${symbol} ${Math.abs(mod).toString()} = `, 'white')}${Math.max((roll + mod), 1).toString()}`);
     } else
