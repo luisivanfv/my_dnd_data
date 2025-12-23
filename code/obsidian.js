@@ -1,4 +1,3 @@
-const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // Load external JavaScript from a repository
 function loadExternalScript(url) {
   return new Promise((resolve, reject) => {
@@ -16,7 +15,7 @@ function loadExternalScript(url) {
 (async function() {
   try {
     // Load your main logic from GitHub/GitLab/Raw URL
-    await loadExternalScript(`${githubRoot}code/public.js?t=${Date.now()}`);
+    await loadExternalScript(`https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=${Date.now()}`);
     //await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
   } catch (error) {
     console.error('Error loading external script:', error);
