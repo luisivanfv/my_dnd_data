@@ -1,4 +1,4 @@
-console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
+//console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
 
 // Create visible element
 var testMarker = document.createElement('div');
@@ -11,17 +11,10 @@ if (!window.githubRoot)
     window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // Expose a simple function
 window.initializeExternalScript = function() {
-    console.log('🎯 TEST initializeExternalScript calleddd!');
-    console.log('Using githubRoot:', window.githubRoot);
+    //console.log('🎯 TEST initializeExternalScript calleddd!');
+    //console.log('Using githubRoot:', window.githubRoot);
     
-    var resultDiv = document.createElement('div');
-    resultDiv.id = 'test-result';
-    resultDiv.style.cssText = 'position: fixed; top: 90px; left: 10px; background: green; color: white; padding: 10px; z-index: 99997;';
-    resultDiv.textContent = 'TEST INITIALIZATION SUCCESSSSS!';
-    document.body.appendChild(resultDiv);
-    
-    return Promise.resolve('Test successful');
 };
 
-console.log('✅ Test script functions exposed');
-console.log('window.initializeExternalScript:', typeof window.initializeExternalScript);
+//console.log('✅ Test script functions exposed');
+//console.log('window.initializeExternalScript:', typeof window.initializeExternalScript);

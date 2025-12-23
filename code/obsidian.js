@@ -2,7 +2,17 @@ window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 
 console.log('=== MAIN SCRIPT STARTING ===', new Date().toISOString());
 console.log('githubRoot:', window.githubRoot);
-
+async function getLatestCommitHash() {
+    try {
+        // Fetch latest commit info from GitHub API
+        const response = await fetch('https://api.github.com/repos/luisivanfv/my_dnd_data/commits/main');
+        const data = await response.json();
+        return data.sha.substring(0, 8); // Short hash
+    } catch (error) {
+        console.error('Failed to fetch commit hash:', error);
+        return 'main'; // Fallback
+    }
+}
 // Create visible indicator immediately
 var debugDiv = document.createElement('div');
 debugDiv.id = 'debug-indicator';
@@ -80,7 +90,7 @@ async function initializeApp() {
     try {
         // Use jsDelivr (confirmed working)
         //const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
-        const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@latest/code/test.js?v=1.0.' + Date.now();
+        const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/test.js`;
         console.log('Attempting to load external script...');
         updateDebug('Fetching script...', '#3498db');
         await loadExternalScript(scriptUrl);
