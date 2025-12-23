@@ -3,6 +3,9 @@ const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
 const iconColor = '8B0000';
 const damageTypeIconSize = "20";
+const txtSize = '16px';
+const lookerTxtSize = '16px';
+const actionTitleTxtSize = '14px';
 const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
 // Create visible element
 var testMarker = document.createElement('div');
