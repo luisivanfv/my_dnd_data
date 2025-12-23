@@ -301,6 +301,10 @@ function updateModalText(formula) {
         }
     }
 }
+function hideLazyPreview() {
+    const container = document.getElementById('global-preview-container');
+    container.style.display = 'none';
+}
 const toggleModal = (element) => {
     if(element && !element.innerHTML.trim().startsWith('<'))
         updateModalText(element.innerHTML);
