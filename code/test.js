@@ -163,6 +163,15 @@ async function getFilenames(path = '') {
         return [];
     }
 }
+function styleFormat(str, keywords, tag) {
+    if(!str) return '';
+    for(let i=0;i<keywords.length;i++)
+        if(str.includes(keywords[i])) {
+            let pieces = str.split(keywords[i]);
+            str = pieces[0] + '<'+tag+'>' + keywords[i] + '</'+tag+'>' + pieces[1];
+        }
+    return str;
+}
 function addTextStyling(str) {
     let keywords_to_italic = ['Hit:', 'Melee Weapon Attack:', 'Melee Spell Attack', 'Ranged Weapon Attack:', 'Ranged Spell Attack'];
     let keywords_to_bold = [];
