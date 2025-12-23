@@ -163,6 +163,58 @@ async function getFilenames(path = '') {
         return [];
     }
 }
+function colorText(txt, color) {
+    return `<span style="color: ${color}">${txt}</span>`;
+}
+function rollDie(dieSize) {
+    return Math.floor(Math.random() * dieSize) + 1;
+}
+function updateModalText(formula) {
+    if(formula.includes('d')) {
+        let numberOfDie = parseInt(formula.split('d')[0].trim());
+        let remainingFormula = formula.split('d')[1].trim();
+        let dieSize = 0;
+        let extra = 0;
+        if(remainingFormula.includes('+')) {
+            dieSize = parseInt(remainingFormula.split('+')[0].trim());
+            extra = parseInt(remainingFormula.split('+')[1].trim());
+        } else if(remainingFormula.includes('-')) {
+            dieSize = parseInt(remainingFormula.split('-')[0].trim());
+            extra = parseInt(remainingFormula.split('-')[1].trim()) * -1;
+        } else
+            dieSize = parseInt(formula.split('d')[1].trim());
+        let result = 0;
+        for(let i=0;i<numberOfDie;i++) result += rollDie(dieSize);
+        popup.show(`${colorText(`${formula} = `, 'white')}${Math.max((result + extra), 1).toString()}`);
+    } else if(formula.includes('to hit')) {
+        let newFormula = formula;
+        let numberStr = newFormula.replace('to hit', '').trim();
+        if(numberStr.includes('+')) {
+            numberStr = numberStr.replace('+', '').trim();
+            let number = parseInt(numberStr);
+            let roll = rollDie(20);
+            if(roll == 1) popup.show(colorText('Nat 1', 'red'));
+            else if(roll == 20) popup.show('Nat 20!');
+            else popup.show(`${colorText(`${roll.toString()} + ${number.toString()} = `, 'white')}${(roll + number).toString()}`);
+        }
+    }
+}
+const toggleModal = (element) => {
+    if(element && !element.innerHTML.trim().startsWith('<'))
+        updateModalText(element.innerHTML);
+};
+function addDieModalCaller(str, options = {}) {
+    const {
+        fontColor = 'darkred',
+        fontSize = txtSize
+    } = options;
+    return `<a onclick="toggleModal(this)" style="cursor: pointer; color: ${fontColor}; font-size: ${fontSize};">${str}</a>`;
+}
+function replaceFormulasWithLinks(text, options = {}) {
+    return text.replace(/\b(\d+d\d+(?:\s*[+-]\s*\d+)?)\b/g, (match) => {
+        return addDieModalCaller(match, options);
+    });
+}
 function styleFormat(str, keywords, tag) {
     if(!str) return '';
     for(let i=0;i<keywords.length;i++)
