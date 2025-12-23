@@ -1344,37 +1344,7 @@ document.addEventListener('mousemove', (event) => {
     window.lastPreviewMouseEvent = event;
 });
 document.addEventListener("DOMContentLoaded", async function(event) { 
-    try {
-        document.body.classList.add('loading');
-        initLazyPreviews();
-        await Promise.all(
-            mapKeys.map(async (key) => {
-                window[key] = await getMap(key);
-            })
-        );
-        Array.from(document.getElementsByClassName('text_to_beautify')).forEach(async (element) => {
-            element.outerHTML = await enrichText(element.outerHTML, { fontColor: "#FFD700" });
-        });
-        await loadEncounterTables();
-        loadEncounterLoaders();
-        loadCustomAccordions();
-        loadPageBackgrounds();
-        await recolor();
-        await fetchFolderDataSequentially();
-        await loadStatblocks();
-        await loadSpells();
-        await loadCharacters();
-        await loadEncounters();
-        await loadLocations();
-        await loadSearchBoxes();
-        await loadWikiLists();
-        await loadLookers();
-        await renameWikisWithNames();
-        document.body.classList.remove('loading');
-        document.body.classList.add('loaded');
-    } catch (error) {
-        console.error('Failed to initialize: ', error);
-    }
+    
 });
 ///////////////////////
 function calculateD20PlusModifier(modifier) {
@@ -2212,4 +2182,55 @@ function handleImagePreviewMouseLeave(event, previewId) {
             window.imagePreviewState.isPreviewVisible = false;
         }
     }, 0);
+}
+
+async function initializeEverything() {
+    try {
+        document.body.classList.add('loading');
+        initLazyPreviews();
+        // ... ALL your initialization function calls ...
+        try {
+        document.body.classList.add('loading');
+        initLazyPreviews();
+        await Promise.all(
+            mapKeys.map(async (key) => {
+                window[key] = await getMap(key);
+            })
+        );
+        Array.from(document.getElementsByClassName('text_to_beautify')).forEach(async (element) => {
+            element.outerHTML = await enrichText(element.outerHTML, { fontColor: "#FFD700" });
+        });
+        await loadEncounterTables();
+        loadEncounterLoaders();
+        loadCustomAccordions();
+        loadPageBackgrounds();
+        await recolor();
+        await fetchFolderDataSequentially();
+        await loadStatblocks();
+        await loadSpells();
+        await loadCharacters();
+        await loadEncounters();
+        await loadLocations();
+        await loadSearchBoxes();
+        await loadWikiLists();
+        await loadLookers();
+        await renameWikisWithNames();
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+    } catch (error) {
+        console.error('Failed to initialize: ', error);
+    }
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+    } catch (error) {
+        console.error('Failed to initialize: ', error);
+    }
+}
+
+// Check document state and initialize appropriately
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", initializeEverything);
+} else {
+    // Document already loaded, run immediately
+    await initializeEverything();
 }

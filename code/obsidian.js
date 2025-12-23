@@ -11,13 +11,25 @@ function loadExternalScript(url) {
   });
 }
 
-// Usage
-(async function() {
+async function loadAndInitialize() {
   try {
-    // Load your main logic from GitHub/GitLab/Raw URL
-    await loadExternalScript(`https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=${Date.now()}`);
-    //await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
+    await loadExternalScript(`${githubRoot}code/public.js?t=${Date.now()}`);
+    await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
+    
+    // Signal the external script to initialize
+    if (typeof window.initializeExternalScript === 'function') {
+      window.initializeExternalScript();
+    }
+    
+    console.log('External script loaded and initialized!');
   } catch (error) {
     console.error('Error loading external script:', error);
   }
-})();
+}
+
+// Run when main document is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAndInitialize);
+} else {
+  loadAndInitialize();
+}
