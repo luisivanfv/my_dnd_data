@@ -2,7 +2,7 @@
 console.log('=== PUBLIC.JS STARTING ===', new Date().toISOString());
 
 // CRITICAL: Define githubRoot BEFORE anything uses it
-const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+//const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 console.log('githubRoot defined:', githubRoot);
 
 // Your existing code continues below...

@@ -1,3 +1,4 @@
+const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // MAIN SCRIPT - Use this in your website
 async function loadExternalScript(url) {
     return new Promise((resolve, reject) => {
