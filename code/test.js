@@ -40,6 +40,14 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+function findParentWithClass(element, className) {
+    while (element && element !== document) {
+        if (element.classList && element.classList.contains(className))
+            return element;
+        element = element.parentNode;
+    }
+    return null;
+}
 function initLazyPreviews() {
     const previewContainer = document.createElement('div');
     previewContainer.id = 'global-preview-container';
