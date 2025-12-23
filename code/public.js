@@ -1,30 +1,42 @@
-console.log('🔵 EXTERNAL SCRIPT LOADED!', new Date().toISOString());
-console.log('Window location:', window.location.href);
+// ===== DEBUG VERSION - ADD TO TOP OF public.js =====
+console.log('🔵 PUBLIC.JS STARTING DEBUG VERSION');
 
-// Create a visible marker
-setTimeout(function() {
-    var marker = document.createElement('div');
-    marker.id = 'external-script-marker';
-    marker.style.cssText = 'position: fixed; top: 50px; left: 10px; background: blue; color: white; padding: 10px; z-index: 99999; font-weight: bold; border-radius: 5px;';
-    marker.textContent = 'EXTERNAL SCRIPT LOADED - ' + new Date().toLocaleTimeString();
-    document.body.appendChild(marker);
-    console.log('External script marker added');
-}, 500);
-// ===== ADD THIS AT THE VERY TOP OF public.js =====
-console.log('=== PUBLIC.JS STARTING ===', new Date().toISOString());
-console.log('Window location:', window.location.href);
-
-// CRITICAL: Check if githubRoot is already defined by main script
-if (typeof githubRoot === 'undefined') {
-    console.warn('⚠️ githubRoot not defined by main script, setting default...');
-    // Define a fallback - use the same one from your main script
-    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
-} else {
-    console.log('✓ githubRoot provided by main script:', githubRoot);
-    window.githubRoot = githubRoot; // Make it available globally
+// Create immediate visible feedback
+try {
+    var debugDiv = document.createElement('div');
+    debugDiv.id = 'public-js-debug';
+    debugDiv.style.cssText = 'position: fixed; top: 130px; left: 10px; background: blue; color: white; padding: 10px; z-index: 99996; font-weight: bold;';
+    debugDiv.textContent = 'PUBLIC.JS LOADED';
+    document.body.appendChild(debugDiv);
+    console.log('✅ Debug div created');
+} catch (e) {
+    console.error('Failed to create debug div:', e);
 }
 
+// Make sure githubRoot is available
+if (typeof githubRoot === 'undefined') {
+    console.warn('githubRoot not defined, setting default');
+    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+} else {
+    window.githubRoot = githubRoot;
+}
 console.log('Using githubRoot:', window.githubRoot);
+
+// Define a simple test function immediately
+window.initializeExternalScript = function() {
+    console.log('🎯 PUBLIC.JS initializeExternalScript called');
+    
+    var initDiv = document.createElement('div');
+    initDiv.id = 'public-js-init';
+    initDiv.style.cssText = 'position: fixed; top: 170px; left: 10px; background: darkgreen; color: white; padding: 10px; z-index: 99995;';
+    initDiv.textContent = 'PUBLIC.JS INITIALIZED';
+    document.body.appendChild(initDiv);
+    
+    return Promise.resolve();
+};
+
+console.log('✅ PUBLIC.JS debug setup complete');
+console.log('window.initializeExternalScript:', typeof window.initializeExternalScript);
 
 // Your existing code continues below...
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';

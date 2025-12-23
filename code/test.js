@@ -16,6 +16,7 @@ window.initializeExternalScript = function() {
     resultDiv.style.cssText = 'position: fixed; top: 90px; left: 10px; background: green; color: white; padding: 10px; z-index: 99997;';
     resultDiv.textContent = 'TEST INITIALIZATION SUCCESS!';
     document.body.appendChild(resultDiv);
+    console.log('Using githubRoot:', window.githubRoot);
     
     return Promise.resolve('Test successful');
 };
