@@ -31,6 +31,11 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+async function getJsonMap(url) {
+    const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
+    const jsonObject = await response.json()
+    return new Map(Object.entries(jsonObject));
+}
 function addSavingThrowField(title, value, modifier) {
     return `<div class="ability-${title.toLowerCase()}">
         <h3 style="font-weight: bold;" oncontextmenu="makeSavingThrow('${title}', '${modifier}');" onclick="makeSavingThrow('${title}', '${modifier}'); ">${title}</h3>
