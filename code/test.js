@@ -13,21 +13,12 @@ if (!window.githubRoot)
 window.initializeExternalScript = async function() {
     document.body.classList.add('loading');
         initLazyPreviews();
-        // ... ALL your initialization function calls ...
-        /*await Promise.all(
-            mapKeys.map(async (key) => {
-                window[key] = await getMap(key);
-            })
-        );
-        Array.from(document.getElementsByClassName('text_to_beautify')).forEach(async (element) => {
-            element.outerHTML = await enrichText(element.outerHTML, { fontColor: "#FFD700" });
-        });
-        await loadEncounterTables();
-        loadEncounterLoaders();
-        loadCustomAccordions();
+        //await loadEncounterTables();
+        //loadEncounterLoaders();
+        //loadCustomAccordions();
         loadPageBackgrounds();
         await recolor();
-        await fetchFolderDataSequentially();
+        /*await fetchFolderDataSequentially();
         await loadStatblocks();
         await loadSpells();
         await loadCharacters();
@@ -40,6 +31,41 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+function changeElementPropertyIfExists(selector, property, value) {
+    const elements = document.querySelectorAll(selector);
+    for(let i=0;i<elements.length;i++) {
+        if(property.trim() == 'outerHTML')
+            elements[i].outerHTML = value;
+        else if(property.trim() == 'innerHTML')
+            elements[i].innerHTML = value;
+        else
+            elements[i].style[property.trim()] = value;
+    }
+}
+async function recolor() {
+    await fetchMapIfNotSet('colors');
+    changeElementPropertyIfExists('.post-section', 'background', window.colors.get('dark jungle green'));
+    changeElementPropertyIfExists('.post-section> div > p', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.post-section > div > h3', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.post-section > div > ul > li', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.description > h6', 'color', window.colors.get('light gray'));
+    changeElementPropertyIfExists('.description > .content > p', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.op_accordion > h3', 'background', window.colors.get('dark jungle green'));
+    changeElementPropertyIfExists('.op_accordion > h3', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.ui-accordion-content', 'background', window.colors.get('dark jungle green'));
+    changeElementPropertyIfExists('.ui-accordion-content > ul > li', 'color', window.colors.get('anti-flash white'));
+    changeElementPropertyIfExists('.property-line', 'color', 'darkred');
+    changeElementPropertyIfExists('.property-line', 'font-size', '14px');
+    changeElementPropertyIfExists('.property-line > p', 'font-size', '14px');
+    changeElementPropertyIfExists('#character-details', 'background', window.colors.get('dark jungle green'));
+    changeElementPropertyIfExists('.wiki-page-name', 'color', window.colors.get('gambobe'));
+    changeElementPropertyIfExists('.character-name', 'color', window.colors.get('gambobe'));
+}
+async function fetchMapIfNotSet(key) {
+    if(!window[key])
+        window[key] = await getJsonMap(key);
+    return window[key];
+}
 function findParentWithClass(element, className) {
     while (element && element !== document) {
         if (element.classList && element.classList.contains(className))
