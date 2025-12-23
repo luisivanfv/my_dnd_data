@@ -14,8 +14,8 @@ function loadExternalScript(url) {
 (async function() {
   try {
     // Load your main logic from GitHub/GitLab/Raw URL
-    await loadExternalScript(`${githubRoot}/public.js`);
-    await loadExternalScript(`${githubRoot}/private.js`);
+    await loadExternalScript(`${githubRoot}/public.js?t=${Date.now()}`);
+    await loadExternalScript(`${githubRoot}/private.js?t=${Date.now()}`);
     
     // Now you can use functions from the external script
     if (typeof myExternalFunction === 'function') {
