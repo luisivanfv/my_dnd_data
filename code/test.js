@@ -163,6 +163,11 @@ async function getFilenames(path = '') {
         return [];
     }
 }
+function addTextStyling(str) {
+    let keywords_to_italic = ['Hit:', 'Melee Weapon Attack:', 'Melee Spell Attack', 'Ranged Weapon Attack:', 'Ranged Spell Attack'];
+    let keywords_to_bold = [];
+    return styleFormat(styleFormat(str, keywords_to_italic, 'i'), keywords_to_bold, 'b');
+}
 function keywordToUrl(txt, color, url, fontSize) {
     if (!url) return color ? `<span style="color:${color}">${txt}</span>` : txt;
     return getImagePreview(url, txt, color, fontSize);
