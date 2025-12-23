@@ -6,6 +6,8 @@ function loadExternalScript(url) {
     script.src = url;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+    console.log('script:');
+    console.log(script);
     document.head.appendChild(script);
   });
 }
@@ -16,13 +18,6 @@ function loadExternalScript(url) {
     // Load your main logic from GitHub/GitLab/Raw URL
     await loadExternalScript(`${githubRoot}code/public.js?t=${Date.now()}`);
     await loadExternalScript(`${githubRoot}code/private.js?t=${Date.now()}`);
-    
-    // Now you can use functions from the external script
-    if (typeof myExternalFunction === 'function') {
-      myExternalFunction();
-    }
-    
-    console.log('External script loaded successfully!');
   } catch (error) {
     console.error('Error loading external script:', error);
   }
