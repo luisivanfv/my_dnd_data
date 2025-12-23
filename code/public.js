@@ -1343,9 +1343,6 @@ document.addEventListener('mousemove', (event) => {
     }
     window.lastPreviewMouseEvent = event;
 });
-document.addEventListener("DOMContentLoaded", async function(event) { 
-    
-});
 ///////////////////////
 function calculateD20PlusModifier(modifier) {
     let d20result = Math.floor(Math.random() * 21);
@@ -2184,14 +2181,14 @@ function handleImagePreviewMouseLeave(event, previewId) {
     }, 0);
 }
 
-async function initializeEverything() {
+window.initializeExternalScript = async function() {
+    // Your initialization code here
+    console.log('External script initializing on demand...');
+    
     try {
         document.body.classList.add('loading');
         initLazyPreviews();
-        // ... ALL your initialization function calls ...
-        try {
-        document.body.classList.add('loading');
-        initLazyPreviews();
+        // ... all your initialization functions ...
         await Promise.all(
             mapKeys.map(async (key) => {
                 window[key] = await getMap(key);
@@ -2220,12 +2217,7 @@ async function initializeEverything() {
     } catch (error) {
         console.error('Failed to initialize: ', error);
     }
-        document.body.classList.remove('loading');
-        document.body.classList.add('loaded');
-    } catch (error) {
-        console.error('Failed to initialize: ', error);
-    }
-}
+};
 
 // Check document state and initialize appropriately
 if (document.readyState === 'loading') {
