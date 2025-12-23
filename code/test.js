@@ -169,6 +169,20 @@ function colorText(txt, color) {
 function rollDie(dieSize) {
     return Math.floor(Math.random() * dieSize) + 1;
 }
+function addToHitFormulas(str, options = {}) {
+    let foundInstances = [];
+    for(let i=0;i<str.length;i++) {
+        if(i<str.length - ' to hit'.length) {
+            let followingStr = str.substring(i+1);
+            if(followingStr.startsWith(' to hit'))
+                if(is_numeric(str[i]) && str[i-1] == '+')
+                    foundInstances.push(str.substring(i-1,i+1) + ' to hit');
+        }
+    }
+    for(let i=0;i<foundInstances.length;i++)
+        str = str.replace(foundInstances[i], addDieModalCaller(foundInstances[i], options));
+    return str;
+}
 function updateModalText(formula) {
     if(formula.includes('d')) {
         let numberOfDie = parseInt(formula.split('d')[0].trim());
