@@ -13,13 +13,6 @@ try {
     console.error('Failed to create debug div:', e);
 }
 
-// Make sure githubRoot is available
-if (typeof githubRoot === 'undefined') {
-    console.warn('githubRoot not defined, setting default');
-    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
-} else {
-    window.githubRoot = githubRoot;
-}
 console.log('Using githubRoot:', window.githubRoot);
 
 // Define a simple test function immediately
@@ -66,7 +59,7 @@ const DataManager = (function() {
     
     async function loadAllData() {
         const urls = Object.fromEntries(
-            mapKeys.map(key => [key, `${githubRoot}${key}.json?t=${Date.now()}`])
+            mapKeys.map(key => [key, `${window.githubRoot}${key}.json?t=${Date.now()}`])
         );
         try {
             const promises = Object.entries(urls).map(async ([key, url]) => {
@@ -161,7 +154,7 @@ async function fetchFolderDataSequentially() {
             const itemMap = new Map();
             for (const itemName of itemNames)
                 try {
-                    const itemUrl = `${githubRoot}${folder}/${itemName}${format}`;
+                    const itemUrl = `${window.githubRoot}${folder}/${itemName}${format}`;
                     const itemResponse = await fetch(itemUrl);
                     if (itemResponse.ok) {
                         if(value.isBinary) {
@@ -348,7 +341,7 @@ async function dataToHtml(data, format, number, creaturesStats) {
 }
 function playSoundIfPossible(soundUrl) {
     window.event.preventDefault();
-    AudioManager.playSound(`${githubRoot}sound_effects/${soundUrl}.mp3`, {volume: 0.5});
+    AudioManager.playSound(`${window.githubRoot}sound_effects/${soundUrl}.mp3`, {volume: 0.5});
 }
 async function toActionSection(actions, replacements, title, options) {
     if(!actions || actions.length == 0) return '';
@@ -1779,11 +1772,11 @@ function addSpellComponentIcons(txt) {
     return replaceIcons(txt, replacements);
 }
 async function getJson(url) {
-    const response = await fetch(`${githubRoot}${url}.json?t=${Date.now()}`);
+    const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     return await response.json();
 }
 async function getJsonMap(url) {
-    const response = await fetch(`${githubRoot}${url}.json?t=${Date.now()}`);
+    const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     const jsonObject = await response.json()
     return new Map(Object.entries(jsonObject));
 }
@@ -1888,7 +1881,7 @@ async function loadStatblocks() {
                 <hr class="orange-border" />
                 <div class="section-left">
                     <div class="creature-heading">
-                        ${getImagePreview(githubRoot + 'images/monsters/' + creatureSearched + ".jpeg", toUpper(creatureSearched.replace('-', ' ')), null, '26px')}
+                        ${getImagePreview(window.githubRoot + 'images/monsters/' + creatureSearched + ".jpeg", toUpper(creatureSearched.replace('-', ' ')), null, '26px')}
                         <h2 style="font-size: 15px;">${await enrichText(creatureInfo.creatureType, allReplacements, { fontColor: 'black' })}</h2>
                         <div class="soundboard">${await getSoundboardForCreature(creatureInfo.sounds)}</div>
                     </div>

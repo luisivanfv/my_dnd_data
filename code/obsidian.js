@@ -1,7 +1,7 @@
-const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 
 console.log('=== MAIN SCRIPT STARTING ===', new Date().toISOString());
-console.log('githubRoot:', githubRoot);
+console.log('githubRoot:', window.githubRoot);
 
 // Create visible indicator immediately
 var debugDiv = document.createElement('div');
@@ -80,7 +80,7 @@ async function initializeApp() {
     try {
         // Use jsDelivr (confirmed working)
         //const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
-        const scriptUrl = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/code/test.js?v=1.0.' + Date.now();
+        const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@latest/code/test.js?v=1.0.' + Date.now();
         console.log('Attempting to load external script...');
         updateDebug('Fetching script...', '#3498db');
         await loadExternalScript(scriptUrl);
