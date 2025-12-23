@@ -38,6 +38,9 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+function is_numeric(str){
+    return /^\d+$/.test(str);
+}
 function getUrlParameter(name) {
     try {
         const url = new URL(window.location.href);
