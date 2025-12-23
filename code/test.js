@@ -1,5 +1,6 @@
 //console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
-
+const keywordColorInStatblock = '#997300';
+const keywordSizeInStatblock = '14px';
 // Create visible element
 var testMarker = document.createElement('div');
 testMarker.id = 'test-script-marker';
