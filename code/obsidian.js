@@ -6,7 +6,7 @@ function loadExternalScript(url) {
     script.src = url;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
-    console.log('script:');
+    console.log('script:' + url);
     console.log(script);
     document.head.appendChild(script);
   });
