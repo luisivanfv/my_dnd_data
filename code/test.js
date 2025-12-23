@@ -11,10 +11,121 @@ if (!window.githubRoot)
     window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // Expose a simple function
 window.initializeExternalScript = async function() {
-    //console.log('🎯 TEST initializeExternalScript calleddd!');
-    console.log('Using githubRoot:', window.githubRoot);
-    
+    document.body.classList.add('loading');
+        initLazyPreviews();
+        // ... ALL your initialization function calls ...
+        /*await Promise.all(
+            mapKeys.map(async (key) => {
+                window[key] = await getMap(key);
+            })
+        );
+        Array.from(document.getElementsByClassName('text_to_beautify')).forEach(async (element) => {
+            element.outerHTML = await enrichText(element.outerHTML, { fontColor: "#FFD700" });
+        });
+        await loadEncounterTables();
+        loadEncounterLoaders();
+        loadCustomAccordions();
+        loadPageBackgrounds();
+        await recolor();
+        await fetchFolderDataSequentially();
+        await loadStatblocks();
+        await loadSpells();
+        await loadCharacters();
+        await loadEncounters();
+        await loadLocations();
+        await loadSearchBoxes();
+        await loadWikiLists();
+        await loadLookers();
+        await renameWikisWithNames();
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');*/
 };
-
-//console.log('✅ Test script functions exposed');
-//console.log('window.initializeExternalScript:', typeof window.initializeExternalScript);
+function initLazyPreviews() {
+    const previewContainer = document.createElement('div');
+    previewContainer.id = 'global-preview-container';
+    previewContainer.style.cssText = `
+        position: fixed; display: none; z-index: 9999; background: white; border: 2px solid #333; border-radius: 8px 0 0 8px; padding: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3); pointer-events: auto; overflow-y: auto; top: 0; bottom: 0;`;
+    document.body.appendChild(previewContainer);
+    let hoverTimer;
+    let isPreviewVisible = false;
+    let currentHoveredLink = null;
+    let previewHideTimer;
+    document.addEventListener('click', function(e) {
+        const link = findParentWithClass(e.target, 'lazy-preview-link');
+        if (link) {
+            clearTimeout(hoverTimer);
+            clearTimeout(previewHideTimer);
+            hideLazyPreview();
+            isPreviewVisible = false;
+        }
+    }, true);
+    document.addEventListener('contextmenu', function(e) {
+        const link = findParentWithClass(e.target, 'lazy-preview-link');
+        if (link) {
+            e.preventDefault();
+            currentHoveredLink = link;
+            clearTimeout(hoverTimer);
+            clearTimeout(previewHideTimer);
+            
+            hoverTimer = setTimeout(() => {
+                if (currentHoveredLink === link) {
+                    showLazyPreview(link, e);
+                    isPreviewVisible = true;
+                }
+            }, 0);
+        }
+    }, true);
+    document.addEventListener('mouseleave', function(e) {
+        const link = findParentWithClass(e.target, 'lazy-preview-link');
+        const preview = findParentWithClass(e.target, '#global-preview-container');
+        if (link || preview)
+            clearTimeout(previewHideTimer);
+        if (link && !preview) {
+            previewHideTimer = setTimeout(() => {
+                if (!isMouseOverPreview()) {
+                    hideLazyPreview();
+                    isPreviewVisible = false;
+                    currentHoveredLink = null;
+                }
+            }, 100);
+        }
+        if (preview && !link) {
+            previewHideTimer = setTimeout(() => {
+                if (!isMouseOverLink()) {
+                    hideLazyPreview();
+                    isPreviewVisible = false;
+                    currentHoveredLink = null;
+                }
+            }, 300);
+        }
+    }, true);
+    document.addEventListener('mouseout', function(e) {
+        if (!e.relatedTarget && isPreviewVisible) {
+            hideLazyPreview();
+            isPreviewVisible = false;
+            currentHoveredLink = null;
+        }
+    });
+    function isMouseOverPreview() {
+        const preview = document.getElementById('global-preview-container');
+        const hovered = document.querySelector(':hover');
+        return preview && (hovered === preview || preview.contains(hovered));
+    }
+    function isMouseOverLink() {
+        const hovered = document.querySelector(':hover');
+        return hovered && hovered.classList.contains('lazy-preview-link');
+    }
+    previewContainer.addEventListener('mouseenter', function() {
+        clearTimeout(previewHideTimer);
+    });
+    previewContainer.addEventListener('mouseleave', function(e) {
+        if (!isMouseOverLink()) {
+            previewHideTimer = setTimeout(() => {
+                hideLazyPreview();
+                isPreviewVisible = false;
+                currentHoveredLink = null;
+            }, 300);
+        }
+    });
+}
