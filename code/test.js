@@ -9,7 +9,7 @@ document.body.appendChild(testMarker);
 
 // Expose a simple function
 window.initializeExternalScript = function() {
-    console.log('🎯 TEST initializeExternalScript called!');
+    console.log('🎯 TEST initializeExternalScript calleddd!');
     console.log('Using githubRoot:', window.githubRoot);
     
     var resultDiv = document.createElement('div');
