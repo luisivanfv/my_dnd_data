@@ -1,129 +1,95 @@
-// Test loading first
-async function testScriptLoading() {
-    try {
-        console.log('=== STARTING SCRIPT LOAD TEST ===');
-        
-        // Try loading the minimal test script
-        const testUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/health-check.js?t=' + Date.now();
+// MAIN SCRIPT - Use this in your website
+async function loadExternalScript(url) {
+    return new Promise((resolve, reject) => {
+        console.log('Loading:', url);
         
         const script = document.createElement('script');
+        script.src = url;
         
-        return new Promise((resolve, reject) => {
-            script.src = testUrl;
-            script.onload = () => {
-                console.log('✅ Test script LOADED successfully');
-                console.log('Checking if testFunction exists:', typeof window.testFunction);
-                
-                if (typeof window.testFunction === 'function') {
-                    const result = window.testFunction();
-                    console.log('✅ Test function executed:', result);
-                    resolve(true);
-                } else {
-                    console.warn('⚠ Test function not found');
-                    resolve(false);
-                }
-            };
-            
-            script.onerror = (error) => {
-                console.error('❌ Test script FAILED to load:', error);
-                reject(error);
-            };
-            
-            console.log('Attempting to load:', testUrl);
-            document.head.appendChild(script);
-        });
+        // Set BOTH event handlers
+        script.onload = () => {
+            console.log('✅ Script loaded successfully:', url);
+            resolve();
+        };
         
-    } catch (error) {
-        console.error('Test failed:', error);
-        return false;
-    }
-}
-
-// Main loading function
-async function loadAndInitialize() {
-    console.log('=== MAIN SCRIPT STARTING ===');
-    
-    // First test with minimal script
-    const testPassed = await testScriptLoading();
-    
-    if (!testPassed) {
-        console.error('❌ TEST FAILED - Basic script loading is broken');
-        return;
-    }
-    
-    console.log('✅ Basic script loading works, now trying main script...');
-    
-    // Now try your main script
-    try {
-        const mainUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=${Date.now()}`;
+        script.onerror = (event) => {
+            console.error('❌ Script failed to load:', url, event);
+            reject(new Error(`Failed to load: ${url}`));
+        };
         
-        const script = document.createElement('script');
-        
-        return new Promise((resolve, reject) => {
-            script.src = mainUrl;
-            
-            // Add error handler to catch syntax errors
-            script.onload = () => {
-                console.log('✅ Main script loaded (onload fired)');
-                console.log('Checking DataManager:', typeof window.DataManager);
-                console.log('Checking initializeExternalScript:', typeof window.initializeExternalScript);
-                
-                // Try to call initialization
-                setTimeout(() => {
-                    if (typeof window.initializeExternalScript === 'function') {
-                        console.log('Calling initializeExternalScript...');
-                        window.initializeExternalScript().then(() => {
-                            console.log('✅ Main script initialized');
-                            resolve();
-                        }).catch(err => {
-                            console.error('Initialization error:', err);
-                            resolve();
-                        });
-                    } else {
-                        console.warn('initializeExternalScript not found, script may have errors');
-                        resolve();
-                    }
-                }, 500);
-            };
-            
-            script.onerror = (error) => {
-                console.error('❌ Main script FAILED to load (network/syntax error):', error);
-                // Check if script partially loaded
-                console.log('Checking for partial load - DataManager exists?', typeof window.DataManager);
-                reject(error);
-            };
-            
-            // Add to document
-            document.head.appendChild(script);
-            console.log('Main script element added to DOM');
-        });
-        
-    } catch (error) {
-        console.error('Error in main load:', error);
-    }
-}
-
-// Add a global error handler to catch any script errors
-window.addEventListener('error', function(event) {
-    console.error('GLOBAL ERROR CAUGHT:', {
-        message: event.message,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-        error: event.error
+        // Add to document
+        document.head.appendChild(script);
+        console.log('Script element appended to DOM');
     });
-    return false;
-});
+}
 
-// Start everything
-console.log('Initializing... Document readyState:', document.readyState);
+// Main initialization
+async function initializeApp() {
+    console.log('=== STARTING APPLICATION ===');
+    console.log('Document readyState:', document.readyState);
+    
+    try {
+        // Use jsDelivr (confirmed working)
+        const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
+        
+        console.log('Attempting to load external script...');
+        await loadExternalScript(scriptUrl);
+        
+        // Check if our script loaded successfully
+        console.log('Checking loaded functions...');
+        console.log('- DataManager exists?', typeof window.DataManager);
+        console.log('- getMap exists?', typeof window.getMap);
+        console.log('- initializeEverything exists?', typeof window.initializeEverything);
+        
+        // Try to initialize - check which function exists
+        if (typeof window.initializeExternalScript === 'function') {
+            console.log('Found initializeExternalScript, calling it...');
+            await window.initializeExternalScript();
+        } else if (typeof window.initializeEverything === 'function') {
+            console.log('Found initializeEverything, calling it...');
+            await window.initializeEverything();
+        } else {
+            console.warn('No initialization function found. Script may auto-initialize.');
+            // Wait a bit in case script auto-initializes
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        
+        console.log('✅ Application initialization complete!');
+        
+    } catch (error) {
+        console.error('❌ Initialization failed:', error);
+        
+        // Fallback: Try direct GitHub raw URL
+        console.log('Trying fallback with raw.githubusercontent.com...');
+        try {
+            const fallbackUrl = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/code/public.js?t=' + Date.now();
+            await loadExternalScript(fallbackUrl);
+            console.log('✅ Fallback script loaded');
+        } catch (fallbackError) {
+            console.error('Fallback also failed:', fallbackError);
+        }
+    }
+}
 
+// Start everything with proper timing
+console.log('Script loader starting...');
+
+// Use DOMContentLoaded OR run immediately based on readyState
+function startApp() {
+    console.log('Starting app initialization...');
+    initializeApp().catch(err => {
+        console.error('Unhandled error in app:', err);
+    });
+}
+
+// Check document state
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded fired, starting load');
-        loadAndInitialize();
-    });
+    console.log('Document still loading, waiting for DOMContentLoaded...');
+    document.addEventListener('DOMContentLoaded', startApp);
 } else {
-    console.log('Document already loaded, starting immediately');
-    loadAndInitialize();
+    console.log('Document already loaded, starting immediately...');
+    startApp();
 }
+
+// Optional: Expose manual trigger
+window.manuallyInitializeApp = startApp;

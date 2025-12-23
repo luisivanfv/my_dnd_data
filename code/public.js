@@ -1,10 +1,15 @@
-// === ADD THIS AT THE VERY TOP ===
-console.log('External script STARTING...');
+// ===== ADD THIS AT THE VERY TOP OF public.js =====
+console.log('=== PUBLIC.JS STARTING ===', new Date().toISOString());
 
-// Define the missing githubRoot variable
+// CRITICAL: Define githubRoot BEFORE anything uses it
 const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+console.log('githubRoot defined:', githubRoot);
+
+// Your existing code continues below...
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const mapKeys = ['colorReplacements', 'keywordReplacements'];
+
+// Define the missing githubRoot variable
 const txtSize = '16px';
 const lookerTxtSize = '16px';
 const actionTitleTxtSize = '14px';
