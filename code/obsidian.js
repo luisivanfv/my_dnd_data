@@ -80,7 +80,7 @@ async function initializeApp() {
     try {
         // Use jsDelivr (confirmed working)
         //const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
-        const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/test.js?t=' + Date.now();
+        const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/test.js?v=1.0.' + Date.now();
         console.log('Attempting to load external script...');
         updateDebug('Fetching script...', '#3498db');
         await loadExternalScript(scriptUrl);

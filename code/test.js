@@ -15,7 +15,7 @@ window.initializeExternalScript = function() {
     var resultDiv = document.createElement('div');
     resultDiv.id = 'test-result';
     resultDiv.style.cssText = 'position: fixed; top: 90px; left: 10px; background: green; color: white; padding: 10px; z-index: 99997;';
-    resultDiv.textContent = 'TEST INITIALIZATION SUCCESS!';
+    resultDiv.textContent = 'TEST INITIALIZATION SUCCESSSSS!';
     document.body.appendChild(resultDiv);
     
     return Promise.resolve('Test successful');
