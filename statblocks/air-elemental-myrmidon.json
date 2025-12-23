@@ -1,0 +1,51 @@
+{
+  "name": "Air Elemental Myrmidon",
+  "sounds": [],
+  "creatureType": "Medium Elemental, Typically Neutral",
+  "armorClass": "18 (plate)",
+  "hitPoints": "117 (18d8 + 36)",
+  "speed": "30 ft., fly 30 ft. (hover)",
+  "str": "18",
+  "dex": "14",
+  "con": "14",
+  "int": "9",
+  "wis": "10",
+  "cha": "10",
+  "strSave": "+4",
+  "dexSave": "+2",
+  "conSave": "+2",
+  "intSave": "-1",
+  "wisSave": "+0",
+  "chaSave": "+0",
+  "savingThrows": "",
+  "skills": "",
+  "damageVulnerabilities": "",
+  "damageResistances": "Lightning, Thunder; Bludgeoning, Piercing, and Slashing from Nonmagical Attacks",
+  "damageImmunities": "Poison",
+  "conditionImmunities": "Paralyzed, Petrified, Poisoned, Prone",
+  "senses": "Darkvision 60 ft., Passive Perception 10",
+  "languages": "Auran, one language of its creator’s choice",
+  "challenge": "7 (2,900 XP)",
+  "proficiencyBonus": "+3",
+  "passives": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The myrmidon makes three flail attacks.",
+      "sound": null
+    },
+    {
+      "name": "Flail",
+      "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) force damage.",
+      "sound": null
+    },
+    {
+      "name": "Lightning Strike (Recharge 6)",
+      "description": "The myrmidon makes one flail attack. On a hit, the target takes an extra 18 (4d8) lightning damage, and the target must succeed on a DC 13 Constitution saving throw or be stunned until the end of the myrmidon’s next turn.",
+      "sound": null
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}

@@ -1,0 +1,62 @@
+{
+  "name": "Draegloth",
+  "sounds": [],
+  "creatureType": "Large Fiend (Demon), Typically Chaotic Evil",
+  "armorClass": "15 (natural armor)",
+  "hitPoints": "123 (13d10 + 52)",
+  "speed": "30 ft.",
+  "str": "20",
+  "dex": "15",
+  "con": "18",
+  "int": "13",
+  "wis": "11",
+  "cha": "11",
+  "strSave": "+5",
+  "dexSave": "+2",
+  "conSave": "+4",
+  "intSave": "+1",
+  "wisSave": "+0",
+  "chaSave": "+0",
+  "savingThrows": "",
+  "skills": "Perception +3, Stealth +5",
+  "damageVulnerabilities": "",
+  "damageResistances": "Cold, Fire, Lightning",
+  "damageImmunities": "Poison",
+  "conditionImmunities": "Poisoned",
+  "senses": "Darkvision 120 ft., Passive Perception 13",
+  "languages": "Abyssal, Elvish, Undercommon",
+  "challenge": "7 (2,900 XP)",
+  "proficiencyBonus": "+3",
+  "passives": [
+    {
+      "name": "Fey Ancestry",
+      "description": "The draegloth has advantage on saving throws against being charmed , and magic can’t put it to sleep.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The draegloth makes one Bite attack and two Claw attacks.",
+      "sound": null
+    },
+    {
+      "name": "Bite",
+      "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one creature. Hit: 16 (2d10 + 5) piercing damage.",
+      "sound": null
+    },
+    {
+      "name": "Claw",
+      "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) slashing damage.",
+      "sound": null
+    },
+    {
+      "name": "Spellcasting",
+      "description": "The draegloth casts one of the following spells, requiring no material components and using Charisma as the spellcasting ability (spell save DC 11):<br><br>At will: dancing lights , darkness<br><br>1/day each: confusion , faerie fire",
+      "sound": null
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}

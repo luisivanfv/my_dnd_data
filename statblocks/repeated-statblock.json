@@ -1,0 +1,81 @@
+[
+  {
+    "name": "Drow Inquisitor",
+    "sounds": [],
+    "creatureType": "Medium Humanoid (Cleric, Elf), Typically Neutral Evil",
+    "armorClass": "16 (breastplate)",
+    "hitPoints": "149 (23d8 + 46)",
+    "speed": "30 ft.",
+    "str": "11",
+    "dex": "15",
+    "con": "14",
+    "int": "16",
+    "wis": "21",
+    "cha": "20",
+    "strSave": "+0",
+    "dexSave": "+2",
+    "conSave": "+7",
+    "intSave": "+3",
+    "wisSave": "+10",
+    "chaSave": "+10",
+    "savingThrows": "CON +7, WIS +10, CHA +10",
+    "skills": "Insight +10, Perception +10, Religion +8, Stealth +7",
+    "damageVulnerabilities": "",
+    "damageResistances": "",
+    "damageImmunities": "",
+    "conditionImmunities": "Frightened",
+    "senses": "Darkvision 120 ft., Passive Perception 20",
+    "languages": "Elvish, Undercommon",
+    "challenge": "14 (11,500 XP)",
+    "proficiencyBonus": "+5",
+    "passives": [
+      {
+        "name": "Discern Lie",
+        "description": "The drow discerns when a creature in earshot speaks a lie in a language the drow knows.",
+        "sound": null
+      },
+      {
+        "name": "Fey Ancestry",
+        "description": "The drow has advantage on saving throws against being charmed , and magic can’t put the drow to sleep.",
+        "sound": null
+      },
+      {
+        "name": "Sunlight Sensitivity",
+        "description": "While in sunlight, the drow has disadvantage on attack rolls, as well as on Wisdom ( Perception ) checks that rely on sight.",
+        "sound": null
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The drow makes three Death Lance attacks.",
+        "sound": null
+      },
+      {
+        "name": "Death Lance",
+        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 8 (1d6 + 5) piercing damage plus 18 (4d8) necrotic damage. The target’s hit point maximum is reduced by an amount equal to the necrotic damage taken. This reduction lasts until the target finishes a long rest. The target dies if its hit point maximum is reduced to 0.",
+        "sound": null
+      },
+      {
+        "name": "Spellcasting",
+        "description": "The drow casts one of the following spells, requiring no material components and using Charisma as the spellcasting ability (spell save DC 18):<br><br>At will: dancing lights , detect magic , message , thaumaturgy<br><br>1/day each: clairvoyance , darkness , detect thoughts , dispel magic , faerie fire , levitate (self only), silence , suggestion , true seeing",
+        "sound": null
+      }
+    ],
+    "reactions": [],
+    "bonusActions": [
+      {
+        "name": "Spectral Dagger (Recharges after a Short or Long Rest)",
+        "description": "The drow conjures a floating, spectral dagger within 60 feet of itself. The drow can make a melee spell attack ( +10 to hit) against one creature within 5 feet of the dagger. On a hit, the target takes 9 (1d8 + 5) force damage.",
+        "sound": null
+      },
+      {
+        "name": "The dagger lasts for 1 minute",
+        "description": "As a bonus action on later turns, the drow can move the dagger up to 20 feet and repeat the attack against one creature within 5 feet of the dagger.",
+        "sound": null
+      }
+    ],
+    "legendaryActions": [],
+    "originalFileName": "drow-inquisitor.json"
+  }
+]

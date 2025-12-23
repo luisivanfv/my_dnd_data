@@ -1,0 +1,63 @@
+{
+  "name": "Fire Elemental Myrmidon",
+  "sounds": [],
+  "creatureType": "Medium Elemental, Typically Neutral",
+  "armorClass": "18 (plate)",
+  "hitPoints": "123 (19d8 + 38)",
+  "speed": "40 ft.",
+  "str": "13",
+  "dex": "18",
+  "con": "15",
+  "int": "9",
+  "wis": "10",
+  "cha": "10",
+  "strSave": "+1",
+  "dexSave": "+4",
+  "conSave": "+2",
+  "intSave": "-1",
+  "wisSave": "+0",
+  "chaSave": "+0",
+  "savingThrows": "",
+  "skills": "",
+  "damageVulnerabilities": "",
+  "damageResistances": "Bludgeoning, Piercing, and Slashing from Nonmagical Attacks",
+  "damageImmunities": "Fire, Poison",
+  "conditionImmunities": "Paralyzed, Petrified, Poisoned, Prone",
+  "senses": "Darkvision 60 ft., Passive Perception 10",
+  "languages": "Ignan, one language of its creator’s choice",
+  "challenge": "7 (2,900 XP)",
+  "proficiencyBonus": "+3",
+  "description": "Elemental myrmidons are Elementals conjured and bound by magic into ritually created suits of plate armor. In this form, they possess no recollection of their former existence as free Elementals. They exist only to follow the commands of their creators.",
+  "passives": [
+    {
+      "name": "Illumination",
+      "description": "The myrmidon sheds bright light in a 20-foot radius and dim light in a 40-foot radius.",
+      "sound": null
+    },
+    {
+      "name": "Water Susceptibility",
+      "description": "For every 5 feet the myrmidon moves in 1 foot or more of water, it takes 2 (1d4) cold damage.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The myrmidon makes three Scimitar attacks.",
+      "sound": null
+    },
+    {
+      "name": "Scimitar",
+      "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) force damage.",
+      "sound": null
+    },
+    {
+      "name": "Fiery Strikes (Recharge 6)",
+      "description": "The myrmidon uses Multiattack. Each attack that hits deals an extra 7 (2d6) fire damage.",
+      "sound": null
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}

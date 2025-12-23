@@ -1,0 +1,52 @@
+{
+  "name": "Earth Elemental Myrmidon",
+  "sounds": [],
+  "creatureType": "Medium Elemental, Typically Neutral",
+  "armorClass": "18 (plate)",
+  "hitPoints": "127 (17d8 + 51)",
+  "speed": "30 ft.",
+  "str": "18",
+  "dex": "10",
+  "con": "17",
+  "int": "8",
+  "wis": "10",
+  "cha": "10",
+  "strSave": "+4",
+  "dexSave": "+0",
+  "conSave": "+3",
+  "intSave": "-1",
+  "wisSave": "+0",
+  "chaSave": "+0",
+  "savingThrows": "",
+  "skills": "",
+  "damageVulnerabilities": "",
+  "damageResistances": "Bludgeoning, Piercing, and Slashing from Nonmagical Attacks",
+  "damageImmunities": "Poison",
+  "conditionImmunities": "Paralyzed, Petrified, Poisoned, Prone",
+  "senses": "Darkvision 60 ft., Passive Perception 10",
+  "languages": "Terran, one language of its creator’s choice",
+  "challenge": "7 (2,900 XP)",
+  "proficiencyBonus": "+3",
+  "description": "Elemental myrmidons are Elementals conjured and bound by magic into ritually created suits of plate armor. In this form, they possess no recollection of their former existence as free Elementals. They exist only to follow the commands of their creators.",
+  "passives": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The myrmidon makes two Maul attacks.",
+      "sound": null
+    },
+    {
+      "name": "Maul",
+      "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) force damage.",
+      "sound": null
+    },
+    {
+      "name": "Thunderous Strike (Recharge 6)",
+      "description": "The myrmidon makes one Maul attack. On a hit, the target takes an extra 22 (4d10) thunder damage, and the target must succeed on a DC 14 Strength saving throw or be knocked prone .",
+      "sound": null
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}
