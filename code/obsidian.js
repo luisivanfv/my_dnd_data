@@ -1,3 +1,6 @@
+try {
+console.log('=== MAIN SCRIPT STARTING ===', new Date().toISOString());
+console.log('Script location:', document.currentScript ? document.currentScript.src : 'inline');
 async function initializeApp() {
     console.log('=== STARTING APPLICATION ===');
     console.log('Document readyState:', document.readyState);
@@ -91,3 +94,16 @@ window.testMyScript = function() {
 };
 
 console.log('Test function available: window.testMyScript()');
+
+} catch (error) {
+    console.error('❌❌❌ MAIN SCRIPT FAILED TO LOAD/EXECUTE:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    // Create visible error on page
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: red; color: white; padding: 20px; z-index: 999999;';
+    errorDiv.innerHTML = `Script Error: ${error.message}`;
+    document.body.appendChild(errorDiv);
+}
