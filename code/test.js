@@ -1,6 +1,7 @@
 //console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
 const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
+const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
 // Create visible element
 var testMarker = document.createElement('div');
 testMarker.id = 'test-script-marker';
