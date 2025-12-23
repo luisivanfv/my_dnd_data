@@ -446,6 +446,59 @@ function isMovingBetweenLinkAndPreview(event, previewId) {
     
     return false;
 }
+function showImagePreview(id, url, txt, event) {
+    const preview = document.getElementById(id);
+    if (!preview) return;
+    
+    // Store the event for resize handling
+    window.lastImagePreviewEvent = event;
+    
+    // Position the preview first
+    positionImagePreview(preview, event);
+    
+    // Show the preview
+    preview.style.display = 'block';
+    window.imagePreviewState.isPreviewVisible = true;
+    
+    // Add mouseenter event to the preview container
+    preview.addEventListener('mouseenter', function() {
+        // Clear any hide timer when mouse enters preview
+        if (window.imagePreviewState.hideTimer) {
+            clearTimeout(window.imagePreviewState.hideTimer);
+            window.imagePreviewState.hideTimer = null;
+        }
+    });
+    
+    // Add mouseleave event to the preview container
+    preview.addEventListener('mouseleave', function(previewEvent) {
+        // Check if we're moving back to the link
+        const relatedTarget = previewEvent.relatedTarget;
+        const link = document.querySelector(`[data-preview-id="${id}"]`);
+        
+        if (relatedTarget && link && (link === relatedTarget || link.contains(relatedTarget))) {
+            // We're moving back to the link, don't hide
+            return;
+        }
+        
+        // Set hide timer when leaving preview
+        window.imagePreviewState.hideTimer = setTimeout(() => {
+            hideImagePreview(id);
+            window.imagePreviewState.currentPreviewId = null;
+            window.imagePreviewState.isPreviewVisible = false;
+        }, 300);
+    });
+    
+    // Check if image is already loaded
+    const img = preview.querySelector('.preview-image');
+    if (img && img.complete) {
+        // Image already loaded
+    } else if (img) {
+        // Wait for image to load
+        img.onload = function() {
+            // Image loaded
+        };
+    }
+}
 function handleImagePreviewMouseEnter(event, previewId, url, txt) {
     event.preventDefault();
     const preview = document.getElementById(previewId);

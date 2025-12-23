@@ -1,7 +1,5 @@
 window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 
-console.log('=== MAIN SCRIPT STARTING ===', new Date().toISOString());
-console.log('githubRoot:', window.githubRoot);
 async function getLatestCommitHash() {
     try {
         // Fetch latest commit info from GitHub API
@@ -27,7 +25,6 @@ function updateDebug(status, color) {
     }
     console.log('DEBUG:', status);
 }
-
 updateDebug('Initializing...', '#ff6b6b');
 
 // MAIN SCRIPT - Use this in your website
@@ -90,17 +87,11 @@ async function initializeApp() {
     try {
         // Use jsDelivr (confirmed working)
         //const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
-        const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/test.js`;
-        console.log('Attempting to load external script...');
-        updateDebug('Fetching script...', '#3498db');
+        const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/dnd.js`;
         await loadExternalScript(scriptUrl);
         
         // Give script time to execute
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Check if our script loaded successfully
-        console.log('Checking loaded functions...');
-        updateDebug('Checking functions...', '#9b59b6');
         
         // List ALL window properties to debug
         var initFunctions = [];
@@ -109,31 +100,16 @@ async function initializeApp() {
                 initFunctions.push(key);
             }
         }
-        console.log('All init functions found:', initFunctions);
-        
-        console.log('- DataManager exists?', typeof window.DataManager);
-        console.log('- getMap exists?', typeof window.getMap);
-        console.log('- initializeEverything exists?', typeof window.initializeEverything);
-        console.log('- initializeExternalScript exists?', typeof window.initializeExternalScript);
         
         // Try to initialize - check which function exists
         if (typeof window.initializeExternalScript === 'function') {
-            console.log('Found initializeExternalScript, calling it...');
             updateDebug('Calling initializeExternalScript...', '#2ecc71');
             await window.initializeExternalScript();
         } else if (typeof window.initializeEverything === 'function') {
-            console.log('Found initializeEverything, calling it...');
             updateDebug('Calling initializeEverything...', '#2ecc71');
             await window.initializeEverything();
         } else {
-            console.warn('No initialization function found.');
             updateDebug('No init function found', '#e74c3c');
-            
-            // Try to manually trigger by checking if script created any elements
-            console.log('Checking if script auto-initialized...');
-            console.log('Body classes:', document.body.className);
-            console.log('Elements with class "loaded":', document.querySelectorAll('.loaded').length);
-            
             // Create a test to see if we can call anything
             if (window.DataManager && typeof window.DataManager.waitForLoad === 'function') {
                 console.log('Trying DataManager.waitForLoad()...');
