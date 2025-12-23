@@ -38,6 +38,84 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');*/
 };
+class PopupManager {
+    constructor() {
+        this.element = null;
+        this.timeout = null;
+        this.defaultDuration = secondsPopupShown * 1000;
+    }
+    
+    show(message, seconds = secondsPopupShown) {
+        // Clear existing timeout
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        
+        // Create or update popup
+        if (!this.element) {
+            this.element = this.createPopup();
+            document.body.appendChild(this.element);
+            
+            // Fade in
+            setTimeout(() => {
+                this.element.style.opacity = '1';
+            }, 10);
+        }
+        
+        // Update content
+        this.element.innerHTML = message;
+        
+        // Set new timeout
+        this.timeout = setTimeout(() => this.hide(), seconds * 1000);
+    }
+    
+    createPopup() {
+        const element = document.createElement('div');
+        Object.assign(element.style, {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: '#333',
+            color: '#' + specialTextColor,
+            padding: '12px 20px',
+            borderRadius: '6px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            zIndex: '9999',
+            fontSize: '18px',
+            fontWeight: '500',
+            maxWidth: '300px',
+            pointerEvents: 'none',
+            cursor: 'default',
+            opacity: '0',
+            transition: 'opacity 0.3s ease'
+        });
+        return element;
+    }
+    
+    hide() {
+        if (!this.element) return;
+        
+        this.element.style.opacity = '0';
+        
+        setTimeout(() => {
+            if (this.element && document.body.contains(this.element)) {
+                document.body.removeChild(this.element);
+                this.element = null;
+            }
+        }, 300);
+    }
+    
+    // Optional: Force immediate hide
+    hideNow() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        this.hide();
+    }
+}
+const popup = new PopupManager();
 function is_numeric(str){
     return /^\d+$/.test(str);
 }
