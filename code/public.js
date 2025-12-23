@@ -1,6 +1,6 @@
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const mapKeys = ['colorReplacements', 'keywordReplacements'];
-const githubRoot = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/';
+//const githubRoot = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/';
 const txtSize = '16px';
 const lookerTxtSize = '16px';
 const actionTitleTxtSize = '14px';
