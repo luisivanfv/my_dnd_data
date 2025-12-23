@@ -10,9 +10,9 @@ document.body.appendChild(testMarker);
 if (!window.githubRoot) 
     window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 // Expose a simple function
-window.initializeExternalScript = function() {
+window.initializeExternalScript = async function() {
     //console.log('🎯 TEST initializeExternalScript calleddd!');
-    //console.log('Using githubRoot:', window.githubRoot);
+    console.log('Using githubRoot:', window.githubRoot);
     
 };
 
