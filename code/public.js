@@ -1,9 +1,18 @@
 // ===== ADD THIS AT THE VERY TOP OF public.js =====
 console.log('=== PUBLIC.JS STARTING ===', new Date().toISOString());
+console.log('Window location:', window.location.href);
 
-// CRITICAL: Define githubRoot BEFORE anything uses it
-//const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
-console.log('githubRoot defined:', githubRoot);
+// CRITICAL: Check if githubRoot is already defined by main script
+if (typeof githubRoot === 'undefined') {
+    console.warn('⚠️ githubRoot not defined by main script, setting default...');
+    // Define a fallback - use the same one from your main script
+    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+} else {
+    console.log('✓ githubRoot provided by main script:', githubRoot);
+    window.githubRoot = githubRoot; // Make it available globally
+}
+
+console.log('Using githubRoot:', window.githubRoot);
 
 // Your existing code continues below...
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
@@ -2235,10 +2244,32 @@ async function initializeEverything() {
     }
 }
 
-// Check document state and initialize appropriately
-if (document.readyState === 'loading') {
-    document.addEventListener("DOMContentLoaded", initializeEverything);
-} else {
-    // Document already loaded, run immediately
-    initializeEverything();
-}
+// Make sure initialization function exists globally
+window.initializeExternalScript = async function() {
+    console.log('🎯 External script initialization CALLED by main script');
+    console.log('Document readyState:', document.readyState);
+    
+    try {
+        await initializeEverything();
+        console.log('✅ External script initialization complete!');
+        return true;
+    } catch (error) {
+        console.error('❌ External script initialization failed:', error);
+        throw error;
+    }
+};
+
+// Don't auto-initialize - let the main script control timing
+// Just define the function but don't call it automatically
+console.log('External script loaded. Functions available:');
+console.log('- initializeExternalScript:', typeof window.initializeExternalScript);
+console.log('- initializeEverything:', typeof window.initializeEverything);
+console.log('- DataManager:', typeof window.DataManager);
+
+// Remove the auto-initialization at the bottom of the file
+// DELETE these lines:
+// if (document.readyState === 'loading') {
+//     document.addEventListener("DOMContentLoaded", initializeEverything);
+// } else {
+//     initializeEverything();
+// }

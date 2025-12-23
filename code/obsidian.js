@@ -1,46 +1,31 @@
-const githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
-// MAIN SCRIPT - Use this in your website
-async function loadExternalScript(url) {
-    return new Promise((resolve, reject) => {
-        console.log('Loading:', url);
-        
-        const script = document.createElement('script');
-        script.src = url;
-        
-        // Set BOTH event handlers
-        script.onload = () => {
-            console.log('✅ Script loaded successfully:', url);
-            resolve();
-        };
-        
-        script.onerror = (event) => {
-            console.error('❌ Script failed to load:', url, event);
-            reject(new Error(`Failed to load: ${url}`));
-        };
-        
-        // Add to document
-        document.head.appendChild(script);
-        console.log('Script element appended to DOM');
-    });
-}
-
-// Main initialization
 async function initializeApp() {
     console.log('=== STARTING APPLICATION ===');
     console.log('Document readyState:', document.readyState);
+    console.log('Window loaded?', window.loaded);
     
     try {
         // Use jsDelivr (confirmed working)
         const scriptUrl = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/code/public.js?t=' + Date.now();
         
-        console.log('Attempting to load external script...');
+        console.log('Attempting to load external script from:', scriptUrl);
         await loadExternalScript(scriptUrl);
         
+        // Give it a moment to execute
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Check if our script loaded successfully
-        console.log('Checking loaded functions...');
+        console.log('=== Checking loaded functions ===');
         console.log('- DataManager exists?', typeof window.DataManager);
         console.log('- getMap exists?', typeof window.getMap);
         console.log('- initializeEverything exists?', typeof window.initializeEverything);
+        console.log('- initializeExternalScript exists?', typeof window.initializeExternalScript);
+        
+        // List ALL window properties to see what loaded
+        console.log('All window functions containing "init":', 
+            Object.keys(window).filter(key => 
+                key.toLowerCase().includes('init') && typeof window[key] === 'function'
+            )
+        );
         
         // Try to initialize - check which function exists
         if (typeof window.initializeExternalScript === 'function') {
@@ -50,15 +35,26 @@ async function initializeApp() {
             console.log('Found initializeEverything, calling it...');
             await window.initializeEverything();
         } else {
-            console.warn('No initialization function found. Script may auto-initialize.');
-            // Wait a bit in case script auto-initializes
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.warn('No initialization function found. Checking if script auto-initialized...');
+            // Check if initialization already happened
+            if (document.body.classList.contains('loaded')) {
+                console.log('Script appears to have auto-initialized (body has "loaded" class)');
+            } else {
+                console.warn('Script did not auto-initialize');
+                // Try to manually trigger any initialization
+                if (window.DataManager && typeof window.DataManager.waitForLoad === 'function') {
+                    console.log('Waiting for DataManager to load...');
+                    await window.DataManager.waitForLoad();
+                }
+            }
         }
         
         console.log('✅ Application initialization complete!');
+        console.log('Body classes:', document.body.className);
         
     } catch (error) {
         console.error('❌ Initialization failed:', error);
+        console.error('Stack trace:', error.stack);
         
         // Fallback: Try direct GitHub raw URL
         console.log('Trying fallback with raw.githubusercontent.com...');
@@ -66,31 +62,32 @@ async function initializeApp() {
             const fallbackUrl = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/code/public.js?t=' + Date.now();
             await loadExternalScript(fallbackUrl);
             console.log('✅ Fallback script loaded');
+            // Give fallback time to execute
+            await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (fallbackError) {
             console.error('Fallback also failed:', fallbackError);
         }
     }
 }
 
-// Start everything with proper timing
-console.log('Script loader starting...');
+// Add at the end of your main script:
+window.testMyScript = function() {
+    console.log('=== TEST FUNCTION CALLED ===');
+    console.log('githubRoot:', window.githubRoot);
+    console.log('DataManager:', window.DataManager);
+    console.log('initializeEverything:', window.initializeEverything);
+    console.log('Body classes:', document.body.className);
+    
+    if (typeof window.initializeEverything === 'function') {
+        console.log('Calling initializeEverything...');
+        window.initializeEverything().then(() => {
+            console.log('Test initialization completed!');
+        }).catch(err => {
+            console.error('Test initialization failed:', err);
+        });
+    } else {
+        console.error('initializeEverything not found!');
+    }
+};
 
-// Use DOMContentLoaded OR run immediately based on readyState
-function startApp() {
-    console.log('Starting app initialization...');
-    initializeApp().catch(err => {
-        console.error('Unhandled error in app:', err);
-    });
-}
-
-// Check document state
-if (document.readyState === 'loading') {
-    console.log('Document still loading, waiting for DOMContentLoaded...');
-    document.addEventListener('DOMContentLoaded', startApp);
-} else {
-    console.log('Document already loaded, starting immediately...');
-    startApp();
-}
-
-// Optional: Expose manual trigger
-window.manuallyInitializeApp = startApp;
+console.log('Test function available: window.testMyScript()');
