@@ -41,6 +41,10 @@ function getUrlParameter(name) {
         return null;
     }
 }
+async function getJson(url) {
+    const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
+    return await response.json();
+}
 async function getJsonMap(url) {
     const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     const jsonObject = await response.json()
