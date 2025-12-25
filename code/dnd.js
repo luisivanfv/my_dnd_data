@@ -1,4 +1,5 @@
 //console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
+const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
 const iconColor = '8B0000';
