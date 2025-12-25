@@ -41,6 +41,66 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+function positionPreviewNearCursor(event) {
+    const container = document.getElementById('global-preview-container');
+    if (!container || container.style.display === 'none') return;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const spaceOnLeft = event.clientX;
+    const spaceOnRight = windowWidth - event.clientX;
+    container.style.height = windowHeight + 'px';
+    container.style.top = '0';
+    container.style.left = '';
+    container.style.right = '';
+    container.style.width = '';
+    container.style.borderRadius = '';
+    if (spaceOnRight >= spaceOnLeft) {
+        container.style.left = event.clientX + 'px';
+        container.style.right = '0';
+        container.style.width = 'auto';
+        container.style.borderRadius = '8px 0 0 8px';
+    } else {
+        container.style.left = '0';
+        container.style.right = (windowWidth - event.clientX) + 'px';
+        container.style.width = 'auto';
+        container.style.borderRadius = '0 8px 8px 0';
+    }
+    container.style.maxHeight = windowHeight + 'px';
+    container.style.overflowY = 'auto';
+    container.style.position = 'fixed';
+    container.style.zIndex = '9999';
+}
+function showLazyPreview(link, event) {
+    window.lastPreviewMouseEvent = event;
+    const container = document.getElementById('global-preview-container');
+    const url = link.getAttribute('data-url');
+    const text = link.getAttribute('data-text');
+    container.innerHTML = `
+        <div style="padding: 40px; text-align: center; color: #666;">
+            <div style="font-size: 16px; margin-bottom: 10px;">Loading preview...</div>
+            <div style="font-size: 12px;">${text}</div>
+        </div>
+    `;
+    container.style.display = 'block';
+    positionPreviewNearCursor(event);
+    setTimeout(() => {
+        const windowHeight = window.innerHeight;
+        const iframeHeight = windowHeight - 20;
+        container.innerHTML = `
+            <div style="position: relative; height: 100%;">
+                <button onclick="hideLazyPreview()" style="
+                    position: absolute; top: 5px; right: 5px; background: #333; color: white; border: none; border-radius: 50%; width: 25px;
+                    height: 25px; cursor: pointer; z-index: 10000; font-size: 16px; line-height: 1;">x</button>
+                <iframe 
+                    src="${url}" 
+                    style="width: 100%; height: ${iframeHeight}px; border: none; pointer-events: auto;"
+                    loading="lazy"
+                    title="Preview of ${text}">
+                </iframe>
+            </div>
+        `;
+    }, 100);
+}
 async function loadLookers() {
     document.querySelectorAll('.looker').forEach(async (looker) => {
         let fullTxt = looker.innerHTML;
