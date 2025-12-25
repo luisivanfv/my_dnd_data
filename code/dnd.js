@@ -35,12 +35,48 @@ window.initializeExternalScript = async function() {
         //await loadEncounters();
         //await loadLocations();
         //await loadSearchBoxes();
-        //await loadWikiLists();
+        await loadWikiLists();
         await loadLookers();
         //await renameWikisWithNames();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+function toPrettyListName(str) {
+    let result = '';
+    let capitalizeNext = true;
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === '-') {
+            result += ' ';
+            capitalizeNext = true;
+        } else if (capitalizeNext) {
+            result += char.toUpperCase();
+            capitalizeNext = false;
+        } else
+            result += char;
+    }
+    return result;
+}
+async function loadWikiLists() {
+    Array.from(document.getElementsByClassName('wiki_list')).forEach(async (element) => {
+        let html = `<ul>`;
+        let array = await getFilenames(`${element.id}`);
+        let genericWikiName = element.innerHTML;
+        await fetchMapIfNotSet('colors');
+        array.forEach((item) => {
+            if(item != '_example.json') {
+                const articleName = item.replace('.json', '');
+                html += `<li><a class="lazy-preview-link" href="${genericWikiName}?name=${articleName}"
+                            data-url="${genericWikiName}?name=${articleName}"
+                            data-text="${toPrettyListName(articleName)}"
+                            style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+                                ${toPrettyListName(articleName)}
+                            </a></li>`;
+            }
+        });
+        element.innerHTML = `${html}</ul>`;
+    });
+}
 function positionPreviewNearCursor(event) {
     const container = document.getElementById('global-preview-container');
     if (!container || container.style.display === 'none') return;
