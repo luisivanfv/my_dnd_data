@@ -29,17 +29,45 @@ window.initializeExternalScript = async function() {
         await recolor();
         //await fetchFolderDataSequentially();
         await loadStatblocks();
-        /*await loadSpells();
-        await loadCharacters();
-        await loadEncounters();
-        await loadLocations();
-        await loadSearchBoxes();
-        await loadWikiLists();
+        //await loadSpells();
+        //await loadCharacters();
+        //await loadEncounters();
+        //await loadLocations();
+        //await loadSearchBoxes();
+        //await loadWikiLists();
         await loadLookers();
-        await renameWikisWithNames();
+        //await renameWikisWithNames();
         document.body.classList.remove('loading');
-        document.body.classList.add('loaded');*/
+        document.body.classList.add('loaded');
 };
+async function loadLookers() {
+    document.querySelectorAll('.looker').forEach(async (looker) => {
+        let fullTxt = looker.innerHTML;
+        let txt = '';
+        let url = '';
+        if(fullTxt.includes('=')) {
+            if(fullTxt.includes('http')) {
+                url = fullTxt.split('=')[1].trim();
+            } else {
+                if(fullTxt.split('=')[1].includes('/'))
+                    url = `${websiteRoot}/${fullTxt.split('=')[1].trim().toLowerCase().replaceAll(' ', '-')}`;
+                else
+                    url = `${websiteRoot}/wikis/${fullTxt.split('=')[1].trim().toLowerCase().replaceAll(' ', '-')}`;
+            }
+            txt = fullTxt.split('=')[0].trim();
+        } else {
+            url = `${websiteRoot}/wikis/${fullTxt.toLowerCase().trim().replaceAll(' ', '-')}`;
+            txt = fullTxt.trim();
+        }
+        await fetchMapIfNotSet('colors');
+        looker.outerHTML = `<a class="lazy-preview-link" href="${url}"
+           data-url="${url}"
+           data-text="${txt.replace(/"/g, '&quot;')}"
+           style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+            ${txt}
+        </a>`;
+    });
+}
 class PopupManager {
     constructor() {
         this.element = null;
