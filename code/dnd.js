@@ -17,7 +17,7 @@ testMarker.style.cssText = 'position: fixed; top: 50px; left: 10px; background: 
 testMarker.textContent = 'TEST SCRIPT WORKING - ' + new Date().toLocaleTimeString();
 document.body.appendChild(testMarker);
 
-if (!window.githubRoot) 
+//if (!window.githubRoot) 
     window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window.latestCommitHash}/`;
 // Expose a simple function
 window.initializeExternalScript = async function() {
