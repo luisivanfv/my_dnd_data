@@ -837,9 +837,8 @@ function getImagePreview(url, txt, color, fontSize) {
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
     let html = '';
-    console.log('getSoundboardForCreature');
+    console.log(sounds);
     await fetchMapIfNotSet('icons');
-    console.log(window.icons);
     Array.from(sounds).forEach((sound) => {
         console.log(sound);
         let iconData = window.icons.get(sound.icon);
