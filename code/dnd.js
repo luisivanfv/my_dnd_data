@@ -577,6 +577,66 @@ window.imagePreviewState = {
     currentPreviewId: null,
     isPreviewVisible: false
 };
+window.addEventListener('resize', () => {
+    const container = document.getElementById('global-preview-container');
+    if (container && container.style.display === 'block') {
+        if (window.lastPreviewMouseEvent) {
+            positionPreviewNearCursor(window.lastPreviewMouseEvent);
+            const iframe = container.querySelector('iframe');
+            if (iframe)
+                iframe.style.height = (window.innerHeight - 20) + 'px';
+        }
+    }
+    document.querySelectorAll('.image-preview-container').forEach(preview => {
+        if (preview.style.display === 'block' && window.lastImagePreviewEvent) {
+            positionImagePreview(preview, window.lastImagePreviewEvent);
+        }
+    });
+});
+function positionImagePreview(preview, event) {
+    if (!preview) return;
+    
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // Calculate available space on both sides
+    const spaceOnLeft = event.clientX;
+    const spaceOnRight = windowWidth - event.clientX;
+    
+    // Set full vertical height
+    preview.style.height = windowHeight + 'px';
+    preview.style.top = '0';
+    preview.style.maxHeight = windowHeight + 'px';
+    
+    // Reset all positioning properties
+    preview.style.left = '';
+    preview.style.right = '';
+    preview.style.width = '';
+    preview.style.borderRadius = '';
+    
+    if (spaceOnRight >= spaceOnLeft) {
+        // Position on the right side - use all space from cursor to right edge
+        preview.style.left = event.clientX + 'px';
+        preview.style.right = '0';
+        preview.style.width = 'auto';
+        preview.style.borderRadius = '8px 0 0 8px';
+    } else {
+        // Position on the left side - use all space from left edge to cursor
+        preview.style.left = '0';
+        preview.style.right = (windowWidth - event.clientX) + 'px';
+        preview.style.width = 'auto';
+        preview.style.borderRadius = '0 8px 8px 0';
+    }
+    
+    // Center the image vertically and horizontally
+    const imageWrapper = preview.querySelector('.image-wrapper');
+    if (imageWrapper) {
+        imageWrapper.style.display = 'flex';
+        imageWrapper.style.alignItems = 'center';
+        imageWrapper.style.justifyContent = 'center';
+        imageWrapper.style.height = '100%';
+    }
+}
 function showImagePreview(id, url, txt, event) {
     const preview = document.getElementById(id);
     if (!preview) return;
