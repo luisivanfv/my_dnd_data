@@ -637,6 +637,62 @@ function positionImagePreview(preview, event) {
         imageWrapper.style.height = '100%';
     }
 }
+
+const AudioManager = {
+    sounds: new Map(),
+    
+    // Preload sounds (optional, for better performance)
+    preloadSound: function(name, url) {
+        const audio = new Audio();
+        audio.preload = 'auto';
+        audio.src = url;
+        this.sounds.set(name, audio);
+    },
+    
+    // Play a sound by URL
+    playSound: function(url, options = {}) {
+        const audio = new Audio(url);
+        if (options.volume !== undefined) audio.volume = options.volume;
+        if (options.loop) audio.loop = options.loop;
+        if (options.playbackRate !== undefined) audio.playbackRate = options.playbackRate;
+        audio.play().catch(error => {
+            if (error.name === 'NotAllowedError') {
+                console.log('Audio blocked. Will play on next user interaction.');
+            }
+        });
+        if (!options.loop)
+            audio.onended = () => {
+                audio.src = '';
+                audio.remove();
+            };
+        return audio;
+    },
+    
+    // Play a preloaded sound by name
+    playPreloaded: function(name, options = {}) {
+        const audio = this.sounds.get(name);
+        if (!audio) {
+            console.error(`Sound "${name}" not found`);
+            return null;
+        }
+        
+        // Reset audio to start if already playing
+        if (!audio.paused) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        
+        // Set options
+        if (options.volume !== undefined) audio.volume = options.volume;
+        if (options.loop) audio.loop = options.loop;
+        
+        audio.play().catch(error => {
+            console.warn(`Could not play sound "${name}":`, error);
+        });
+        
+        return audio;
+    }
+};
 function showImagePreview(id, url, txt, event) {
     const preview = document.getElementById(id);
     if (!preview) return;
