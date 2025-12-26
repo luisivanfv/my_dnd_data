@@ -470,6 +470,8 @@ async function loadStatblocks() {
         else
             return;
         const creatureInfo = await getJson(`statblocks/${creatureSearched}`);
+        console.log('fafa:');
+        console.log(creatureInfo);
         const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
         if (!creatureInfo) return;
         element.outerHTML = `
