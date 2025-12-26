@@ -571,6 +571,12 @@ function isMovingBetweenLinkAndPreview(event, previewId) {
     
     return false;
 }
+window.imagePreviewState = {
+    hoverTimer: null,
+    hideTimer: null,
+    currentPreviewId: null,
+    isPreviewVisible: false
+};
 function showImagePreview(id, url, txt, event) {
     const preview = document.getElementById(id);
     if (!preview) return;
