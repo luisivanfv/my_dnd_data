@@ -4,6 +4,8 @@ async function getLatestCommitHash() {
     try {
         const response = await fetch('https://api.github.com/repos/luisivanfv/my_dnd_data/commits/main');
         const data = await response.json();
+        if(!window.latestCommitHash)
+            window.latestCommitHash = data.sha.substring(0, 8);
         return data.sha.substring(0, 8); // Short hash
     } catch (error) {
         console.error('Failed to fetch commit hash:', error);
