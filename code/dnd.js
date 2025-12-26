@@ -18,7 +18,7 @@ testMarker.textContent = 'TEST SCRIPT WORKING - ' + new Date().toLocaleTimeStrin
 document.body.appendChild(testMarker);
 
 if (!window.githubRoot) 
-    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
+    window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@latest/';
 // Expose a simple function
 window.initializeExternalScript = async function() {
     document.body.classList.add('loading');
