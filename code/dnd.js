@@ -54,7 +54,6 @@ function addSpellComponentIcons(txt) {
         'S': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/pastel-glyph/64/${specialTextColor}/hand--v3.png" alt="hand--v3"/>`,
         'M': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/ios-filled/50/${specialTextColor}/diamond--v1.png" alt="diamond--v1"/>`
     };
-    console.log('addSpellComponentIcons...');
     return replaceIcons(txt, replacements);
 }
 function addRangeOrAreaIcons(txt) {
@@ -65,7 +64,6 @@ function addRangeOrAreaIcons(txt) {
         'sphere': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/external-outline-black-m-oki-orlando/32/${specialTextColor}/external-sphere-math-vol-2-outline-outline-black-m-oki-orlando.png" alt="external-sphere-math-vol-2-outline-outline-black-m-oki-orlando"/>`,
         'line': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/sf-black-filled/64/${specialTextColor}/line.png" alt="line"/>`
     };
-    console.log('addRangeOrAreaIcons...');
     return replaceIcons(txt, replacements);
 }
 function addCastingTimeIcons(txt) {
@@ -78,7 +76,6 @@ function addCastingTimeIcons(txt) {
         'Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
         '1 Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
     };
-    console.log('addCastingTimeIcons...');
     return replaceIcons(txt, replacements);
 }
 async function loadSpells() {
@@ -88,13 +85,7 @@ async function loadSpells() {
             spellSearched = getUrlParameter('name');
         else
             return;
-        //const spellInfo = await getJson(`spells/${spellSearched}`);
-        console.log('spellSearched');
-        console.log(spellSearched);
         const spellInfo = JSON.parse(localStorage.getItem(`spells_${spellSearched}.json`));
-        /*Object.keys(localStorage).forEach(key => {
-            console.log(`${key} - ${localStorage.getItem(key)}`);
-        });*/
         if (!spellInfo) return;
         element.outerHTML = `<div id="${element.id}" class="loaded_spell" style="color: white;">
             <strong>Level</strong> ${spellInfo.level}<br><br>
@@ -533,9 +524,7 @@ async function loadStatblocks() {
         else
             return;
         const creatureInfo = await getJson(`statblocks/${creatureSearched}.json`);
-        //const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
         const allReplacements = JSON.parse(localStorage.getItem('allReplacements'));
-        console.log(allReplacements);
         if (!creatureInfo) return;
         element.outerHTML = `
             <div id="global-image-preview" class="global-image-preview">
@@ -879,7 +868,6 @@ async function addDamageTypeIcons(txt) {
         let iconAlt = iconData.includes('||') ? iconData.split('||')[1] : '';
         replacements[damageType] = `<img width="${damageTypeIconSize}" height="${damageTypeIconSize}" src="${iconUrl}" alt="${iconAlt}" title="${damageType}"/>`;
     });
-    console.log('addDamageTypeIcons...');
     return replaceIcons(txt, replacements);
 }
 async function addSectionIfExists(txt, replacements, title, options) {
@@ -894,11 +882,6 @@ function playSoundIfPossible(soundUrl) {
     AudioManager.playSound(`${window.githubRoot}sound_effects/${soundUrl}.mp3`, {volume: 0.5});
 }
 function enrichText(txt, replacements, options = {}) {
-    console.log('>>>>');
-    console.log(txt);
-    console.log(replacements);
-    console.log(options);
-    console.log('<<<<');
     const {
         styleText = true,
         addDieRolls = true,
@@ -909,7 +892,6 @@ function enrichText(txt, replacements, options = {}) {
     if(styleText) txt = addTextStyling(txt);
     if(addDieRolls) txt = replaceFormulasWithLinks(txt, { fontColor, fontSize });
     if(addToHit) txt = addToHitFormulas(txt, { fontColor, fontSize });
-    console.log('enrichText...');
     return replaceIcons(txt, replacements);
 }
 async function toActionSection(actions, replacements, title, options) {

@@ -36,7 +36,6 @@ async function loadExternalScript(url) {
         // Set BOTH event handlers
         script.onload = () => {
             setTimeout(() => {
-                //console.log('- window.initializeEverything:', typeof window.initializeEverything);
             }, 0);
             
             resolve();
@@ -125,8 +124,6 @@ function toUpper(str) {
 		.join(' ');
 }
 async function getJson(url) {
-    console.log('url');
-    console.log(url);
     const response = await fetch(`${window.githubRoot}${url}`);
     return await response.json(`${window.githubRoot}${url}`);
 }
@@ -156,10 +153,7 @@ async function loadDirectoriesToStorage() {
     directories.forEach(async (directory) => {
         const filenames = await getFilenames(directory);
         localStorage.setItem(directory, JSON.stringify(filenames));
-        console.log('filenames:');
-        console.log(filenames);
         filenames.forEach(async (filename) => {
-            console.log(filename);
             localStorage.setItem(`${directory}_${filename}`, JSON.stringify(await getJson(`${directory}/${filename}`)))
         });
     });
@@ -230,7 +224,6 @@ async function initializeApp() {
     try {
         const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/dnd.js`;
         await loadExternalScript(scriptUrl);
-        console.log('WE ARE IN: ', document.URL);
         if(document.URL.endsWith('/advanced-settings'))
             await loadAllStorageData();
         //await new Promise(resolve => setTimeout(resolve, 1000));
