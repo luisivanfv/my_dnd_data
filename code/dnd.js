@@ -1292,11 +1292,10 @@ function convertToEncounterTable() {
     // Get data from storage
     let tableData = [];
     try {
-      const storedData = localStorage.getItem('encounterData');
       
-    const players = JSON.parse(localStorage.getItem('players'));
-    console.log('players');
-    console.log(players);
+    //const players = JSON.parse(localStorage.getItem('players'));
+    localStorage.setItem('encounterData', localStorage.getItem('players'));
+      const storedData = localStorage.getItem('encounterData');
       if (storedData) {
         tableData = JSON.parse(storedData);
         if (!Array.isArray(tableData)) {
