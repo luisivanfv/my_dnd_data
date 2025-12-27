@@ -1701,6 +1701,7 @@ function convertToEncounterTable() {
     
     // Function to reload from source data
     function reloadFromSourceData() {
+        console.log('>>> 1');
       tableData = initializeTableData();
       renderTable();
     }
@@ -1777,6 +1778,7 @@ function convertToEncounterTable() {
     controls.appendChild(clearButton);
     
     // Initialize and render table data
+        console.log('>>> 2');
     tableData = initializeTableData();
     renderTable();
     
