@@ -184,7 +184,7 @@ async function loadAllReplacementsToStorage() {
         result[key] = value;
     }
     
-    localStorage.setItem('allReplacements', result);
+    localStorage.setItem('allReplacements', JSON.stringify(result));
 }
 async function loadAllStorageData() {
     await loadAllReplacementsToStorage();
