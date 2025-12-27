@@ -318,10 +318,10 @@ function getUrlParameter(name) {
         return null;
     }
 }
-async function getJson(url) {
+/*async function getJson(url) {
     const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     return await response.json(`${window.githubRoot}${url}.json?t=${Date.now()}`);
-}
+}*/
 async function getJsonMap(url) {
     const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     const jsonObject = await response.json()
@@ -407,7 +407,7 @@ async function buildAllReplacements(addWikiUrls, addSpellUrls, addCreatureUrls, 
     
     return result;
 }
-function toUpper(str) {
+/*function toUpper(str) {
 	return str
 		.toLowerCase()
 		.split(' ')
@@ -415,7 +415,7 @@ function toUpper(str) {
 			return word[0].toUpperCase() + word.substr(1);
 		})
 		.join(' ');
-}
+}*/
 async function getKeywordsFromFolder(folderName) {
     return (await getFilenames(folderName)).map(file => file.replace(/\.json$/, '').replaceAll('-', ' '));
 }
@@ -528,10 +528,10 @@ function addTextStyling(str) {
     let keywords_to_bold = [];
     return styleFormat(styleFormat(str, keywords_to_italic, 'i'), keywords_to_bold, 'b');
 }
-function keywordToUrl(txt, color, url, fontSize) {
+/*function keywordToUrl(txt, color, url, fontSize) {
     if (!url) return color ? `<span style="color:${color}">${txt}</span>` : txt;
     return getImagePreview(url, txt, color, fontSize);
-}
+}*/
 async function loadStatblocks() {
     Array.from(document.getElementsByClassName('statblock')).forEach(async (element) => {
         let creatureSearched = element.id.toString().split('_statblock')[0].replaceAll('_', ' ');
@@ -540,7 +540,9 @@ async function loadStatblocks() {
         else
             return;
         const creatureInfo = await getJson(`statblocks/${creatureSearched}`);
-        const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
+        //const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
+        const allReplacements = localStorage.getItem('allReplacements');
+        console.log(`replacements fetched: ${allReplacements}`);
         if (!creatureInfo) return;
         element.outerHTML = `
             <div id="global-image-preview" class="global-image-preview">
@@ -843,67 +845,6 @@ function handleImagePreviewMouseEnter(event, previewId, url, txt) {
         window.imagePreviewState.isPreviewVisible = true;
     }, 0);
 }
-function getImagePreview(url, txt, color, fontSize) {
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    color = color ? color : 'darkred';
-    fontSize = fontSize || txtSize;
-    const isImage = imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
-    if (isImage) {
-        const previewId = 'img-preview-' + Date.now();
-        return `
-        <a href="${url}" 
-           target="_blank"
-           class="image-preview-link"
-           data-url="${url}"
-           data-text="${txt}"
-           data-preview-id="${previewId}"
-           oncontextmenu="handleImagePreviewMouseEnter(event, '${previewId}', '${url}', '${txt}')"
-           onmouseleave="handleImagePreviewMouseLeave(event, '${previewId}')"
-           style="color: ${color}; font-size: ${fontSize}; cursor: pointer; text-decoration: none;">
-            ${txt}
-        </a>
-        <div id="${previewId}" class="image-preview-container" style="
-            position: fixed;
-            display: none;
-            z-index: 9999;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            pointer-events: auto;
-            overflow: auto;
-            top: 0;
-            bottom: 0;
-        ">
-            <div style="position: relative; height: 100%;">
-                <button onclick="hideImagePreview('${previewId}')" style="
-                    position: absolute; top: 5px; right: 5px; background: #333; color: white; border: none; border-radius: 50%; width: 25px;
-                    height: 25px; cursor: pointer; z-index: 10000; font-size: 16px; line-height: 1;">x</button>
-                <div class="image-wrapper" style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100%;
-                    width: 100%;
-                ">
-                    <img src="${url}" alt="${txt}" class="preview-image" style="
-                        max-width: 100%;
-                        max-height: 100%;
-                        object-fit: contain;
-                        display: block;
-                    ">
-                </div>
-            </div>
-        </div>`;
-    }
-    return `<a class="lazy-preview-link"
-           href="${url}"
-           data-url="${url}"
-           data-text="${txt.replace(/"/g, '&quot;')}"
-           style="color: ${color}; font-size: ${fontSize}; cursor: pointer;">
-            ${txt}
-        </a>`;
-}
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
     let html = '';
@@ -1024,11 +965,11 @@ async function recolor() {
     changeElementPropertyIfExists('.wiki-page-name', 'color', window.colors.get('gambobe'));
     changeElementPropertyIfExists('.character-name', 'color', window.colors.get('gambobe'));
 }
-async function fetchIfNotSet(key) {
+/*async function fetchIfNotSet(key) {
     if(!window[key])
         window[key] = await getJson(key);
     return window[key];
-}
+}*/
 async function fetchMapIfNotSet(key) {
     if(!window[key])
         window[key] = await getJsonMap(key);
