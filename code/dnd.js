@@ -1359,14 +1359,8 @@ function convertToEncounterTable() {
         
         // Save this initialized data to localStorage (encounterData) for persistence
         console.log(tableData);
-        saveTableData();
         return tableData;
         }
-    
-    // Function to save data to localStorage for persistence
-    function saveTableData() {
-      localStorage.setItem('encounterData', JSON.stringify(tableData));
-    }
     
     // Function to create a modal prompt for numbers only
     function showNumberPrompt(currentValue, callback) {
@@ -1612,7 +1606,6 @@ function convertToEncounterTable() {
       deleteButton.addEventListener('click', () => {
         const rowIndex = row.rowIndex - 1; // Adjust for header row
         tableData.splice(rowIndex, 1);
-        saveTableData();
         renderTable();
       });
       deleteCell.appendChild(deleteButton);
@@ -1632,7 +1625,6 @@ function convertToEncounterTable() {
         } else {
           tableData.push(data);
         }
-        saveTableData();
       }
     }
     
@@ -1643,7 +1635,6 @@ function convertToEncounterTable() {
           tableData[rowIndex] = {};
         }
         tableData[rowIndex][key] = value;
-        saveTableData();
       }
     }
     
@@ -1702,7 +1693,6 @@ function convertToEncounterTable() {
       });
       
       if (hasChanges) {
-        saveTableData();
         renderTable();
         return true;
       }
@@ -1739,7 +1729,6 @@ function convertToEncounterTable() {
         notes: '',
         type: 'custom'
       });
-      saveTableData();
     });
     
     const clearButton = document.createElement('button');
@@ -1747,7 +1736,6 @@ function convertToEncounterTable() {
     clearButton.addEventListener('click', () => {
       if (confirm('Are you sure you want to clear all rows?')) {
         tableData = [];
-        saveTableData();
         renderTable();
       }
     });
@@ -1760,7 +1748,6 @@ function convertToEncounterTable() {
         const initB = parseInt(b.initiative) || 0;
         return initB - initA; // Higher initiative first
       });
-      saveTableData();
       renderTable();
     });
     
