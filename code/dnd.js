@@ -1121,7 +1121,7 @@ function convertToSearchBar() {
           console.warn('Data in localStorage is not an array');
           searchData = [];
         } else {
-            searchData = searchData.map(name => name.replace('.json', '').replaceAll('-', ' '));
+            searchData = searchData.map(name => name != '_example.json' && toUpper(name.replace('.json', '').replaceAll('-', ' ')));
         }
       }
     } catch (error) {
