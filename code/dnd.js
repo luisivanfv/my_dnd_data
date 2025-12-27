@@ -1113,11 +1113,12 @@ function convertToSearchBar() {
     // Get data from local storage
     let searchData = [];
     try {
-      const storedData = localStorage.getItem('searchData');
+      const storedData = localStorage.getItem('statblocks');
       if (storedData) {
         searchData = JSON.parse(storedData);
         if (!Array.isArray(searchData)) {
           console.warn('Data in localStorage is not an array');
+          console.log(searchData);
           searchData = [];
         }
       }
