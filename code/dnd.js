@@ -92,9 +92,9 @@ async function loadSpells() {
         console.log('spellSearched');
         console.log(spellSearched);
         const spellInfo = JSON.parse(localStorage.getItem(`spells_${spellSearched}`.json));
-        Object.keys(localStorage).forEach(key => {
+        /*Object.keys(localStorage).forEach(key => {
             console.log(`${key} - ${localStorage.getItem(key)}`);
-        });
+        });*/
         if (!spellInfo) return;
         element.outerHTML = `<div id="${element.id}" class="loaded_spell" style="color: white;">
             <strong>Level</strong> ${spellInfo.level}<br><br>
