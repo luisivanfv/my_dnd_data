@@ -1300,7 +1300,7 @@ function convertToEncounterTable() {
         console.log(playerData);
         if (playerData) {
             tableData = [];
-            playerData.forEach((player) => {
+            Object.entries(playerData).forEach((player) => {
                 tableData.push(player);
             });
             if (!Array.isArray(tableData)) {
