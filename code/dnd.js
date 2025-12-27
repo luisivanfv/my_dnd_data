@@ -91,7 +91,7 @@ async function loadSpells() {
         //const spellInfo = await getJson(`spells/${spellSearched}`);
         console.log('spellSearched');
         console.log(spellSearched);
-        const spellInfo = JSON.parse(localStorage.getItem(`spells_${spellSearched}`.json));
+        const spellInfo = JSON.parse(localStorage.getItem(`spells_${spellSearched}.json`));
         /*Object.keys(localStorage).forEach(key => {
             console.log(`${key} - ${localStorage.getItem(key)}`);
         });*/
