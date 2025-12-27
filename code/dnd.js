@@ -40,7 +40,6 @@ async function loadLocations() {
     Array.from(document.getElementsByClassName('location')).forEach(async (element) => {
         const locationSlug = getUrlParameter('name');
         if(!locationSlug) return;
-        //const locationData = await getJson(`locations/${locationSlug}`);
         const locationData = JSON.parse(localStorage.getItem(`locations_${locationSlug}.json`));
         console.log(locationData);
         html = `<div id="${locationSlug}" class="location">
@@ -68,7 +67,6 @@ async function loadCharacters() {
         const replacements = await buildAllReplacements(true, true, true, true, true, statblockReplacementColor, statblockFontSize);
         const characterSlug = getUrlParameter('name');
         if(!characterSlug) return;
-        //const characterData = await getJson(`characters/${characterSlug}`);
         const characterData = JSON.parse(localStorage.getItem(`characters_${characterSlug}.json`));
         html = `<div id="${characterSlug}" class="character">
             <span style="color: white">${enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
@@ -1083,3 +1081,185 @@ function initLazyPreviews() {
         }
     });
 }
+// SEARCH BAR
+function convertToSearchBar() {
+  // Get all elements with the class "to-search-bar"
+  const elements = document.querySelectorAll('.to-search-bar');
+  
+  elements.forEach(element => {
+    // Clear the element's content
+    element.innerHTML = '';
+    
+    // Create the search bar structure
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-bar-container';
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'search-input';
+    searchInput.placeholder = 'Search...';
+    
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'search-suggestions';
+    suggestionsContainer.style.display = 'none';
+    
+    // Add elements to container
+    searchContainer.appendChild(searchInput);
+    searchContainer.appendChild(suggestionsContainer);
+    element.appendChild(searchContainer);
+    
+    // Get data from local storage
+    let searchData = [];
+    try {
+      const storedData = localStorage.getItem('searchData');
+      if (storedData) {
+        searchData = JSON.parse(storedData);
+        if (!Array.isArray(searchData)) {
+          console.warn('Data in localStorage is not an array');
+          searchData = [];
+        }
+      }
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      searchData = [];
+    }
+    
+    // Event listener for input changes
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.trim().toLowerCase();
+      suggestionsContainer.innerHTML = '';
+      suggestionsContainer.style.display = 'none';
+      
+      if (searchTerm.length > 0) {
+        const filteredItems = searchData.filter(item => {
+          if (typeof item === 'string') {
+            return item.toLowerCase().includes(searchTerm);
+          }
+          return String(item).toLowerCase().includes(searchTerm);
+        });
+        
+        if (filteredItems.length > 0) {
+          filteredItems.forEach(item => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = item;
+            suggestionItem.addEventListener('click', function() {
+              selectedInSearchBar(item);
+              searchInput.value = item;
+              suggestionsContainer.style.display = 'none';
+            });
+            suggestionsContainer.appendChild(suggestionItem);
+          });
+          suggestionsContainer.style.display = 'block';
+        }
+      }
+    });
+    
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!searchContainer.contains(event.target)) {
+        suggestionsContainer.style.display = 'none';
+      }
+    });
+    
+    // Show suggestions when input is focused (if there's text)
+    searchInput.addEventListener('focus', function() {
+      if (this.value.trim().length > 0 && suggestionsContainer.children.length > 0) {
+        suggestionsContainer.style.display = 'block';
+      }
+    });
+    
+    // Keyboard navigation for suggestions
+    searchInput.addEventListener('keydown', function(event) {
+      const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
+      const activeSuggestion = suggestionsContainer.querySelector('.suggestion-item.active');
+      
+      if (suggestions.length === 0) return;
+      
+      let currentIndex = -1;
+      if (activeSuggestion) {
+        currentIndex = Array.from(suggestions).indexOf(activeSuggestion);
+      }
+      
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (currentIndex < suggestions.length - 1) {
+          if (activeSuggestion) activeSuggestion.classList.remove('active');
+          suggestions[currentIndex + 1].classList.add('active');
+        }
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (currentIndex > 0) {
+          if (activeSuggestion) activeSuggestion.classList.remove('active');
+          suggestions[currentIndex - 1].classList.add('active');
+        }
+      } else if (event.key === 'Enter' && activeSuggestion) {
+        event.preventDefault();
+        activeSuggestion.click();
+      }
+    });
+  });
+}
+
+// The onclick function you requested
+function selectedInSearchBar(selectedValue) {
+  console.log('selectedInSearchBar was triggered with value:', selectedValue);
+}
+
+// Optional: Basic CSS styles for the search bar
+function addSearchBarStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .search-bar-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .suggestion-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .suggestion-item:hover,
+    .suggestion-item.active {
+      background-color: #f0f0f0;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Initialize the search bars when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  addSearchBarStyles();
+  convertToSearchBar();
+});
+
+// Also export the function for manual use
+window.convertToSearchBar = convertToSearchBar;
+window.selectedInSearchBar = selectedInSearchBar;
