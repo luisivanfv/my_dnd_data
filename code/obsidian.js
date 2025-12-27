@@ -167,7 +167,7 @@ async function loadDirectoriesToStorage() {
 //await getJson(`spells/${spellSearched}`)
 async function loadAllReplacementsToStorage() {
     const allEntries = [];
-    const keywords = await fetchIfNotSet('keywords');
+    const keywords = await fetchIfNotSet('keywords.json');
     for (const [keyword, url] of Object.entries(keywords)) {
         allEntries.push(
             [keyword, keywordToUrl(keyword, statblockReplacementColor, url, fontSize)],
