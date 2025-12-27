@@ -1300,28 +1300,28 @@ function convertToEncounterTable() {
         try {
             const playerData = JSON.parse(localStorage.getItem('players'));
             if (playerData && typeof playerData === 'object') {
-            const playerKeys = Object.keys(playerData);
-            for (let i = 0; i < playerKeys.length; i++) {
-                const playerKey = playerKeys[i];
-                const playerInfo = playerData[playerKey];
-                console.log(playerKey);
-                console.log(playerInfo);
-                if (playerInfo && typeof playerInfo === 'object') {
-                    tableData.push({
-                        id: idCounter++,
-                        initiative: 0,
-                        name: toUpper(playerInfo.name),
-                        ac: playerInfo.ac || 10,
-                        hp: playerInfo.maxHp || '0/0',
-                        tempHp: '0',
-                        conditions: '',
-                        notes: '',
-                        type: 'player',
-                        sourceKey: playerKey
-                    });
+                const playerKeys = Object.keys(playerData);
+                for (let i = 0; i < playerKeys.length; i++) {
+                    const playerKey = playerKeys[i];
+                    const playerInfo = playerData[playerKey];
+                    console.log(playerKey);
+                    console.log(playerInfo);
+                    if (playerInfo && typeof playerInfo === 'object') {
+                        tableData.push({
+                            id: idCounter++,
+                            initiative: 0,
+                            name: toUpper(playerInfo.name),
+                            ac: playerInfo.ac || 10,
+                            hp: playerInfo.maxHp || '0/0',
+                            tempHp: '0',
+                            conditions: '',
+                            notes: '',
+                            type: 'player',
+                            sourceKey: playerKey
+                        });
+                    }
                 }
                 console.warn(tableData);
-            }
             }
         } catch (error) {
             console.error('Error loading player data:', error);
@@ -1331,27 +1331,27 @@ function convertToEncounterTable() {
         try {
             const monsterData = JSON.parse(localStorage.getItem('monsters'));
             if (monsterData && typeof monsterData === 'object') {
-            const monsterKeys = Object.keys(monsterData);
-            for (let i = 0; i < monsterKeys.length; i++) {
-                const monsterKey = monsterKeys[i];
-                const monsterInfo = monsterData[monsterKey];
-                
-                if (monsterInfo && typeof monsterInfo === 'object') {
-                    tableData.push({
-                        id: idCounter++,
-                        initiative: 0,
-                        name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
-                        ac: monsterInfo.ac || 10,
-                        hp: monsterInfo.hp || '0/0',
-                        tempHp: '0',
-                        conditions: '',
-                        notes: '',
-                        type: 'monster',
-                        sourceKey: monsterKey
-                    });
+                const monsterKeys = Object.keys(monsterData);
+                for (let i = 0; i < monsterKeys.length; i++) {
+                    const monsterKey = monsterKeys[i];
+                    const monsterInfo = monsterData[monsterKey];
+                    
+                    if (monsterInfo && typeof monsterInfo === 'object') {
+                        tableData.push({
+                            id: idCounter++,
+                            initiative: 0,
+                            name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
+                            ac: monsterInfo.ac || 10,
+                            hp: monsterInfo.hp || '0/0',
+                            tempHp: '0',
+                            conditions: '',
+                            notes: '',
+                            type: 'monster',
+                            sourceKey: monsterKey
+                        });
+                    }
                 }
                 console.warn(tableData);
-            }
             }
         } catch (error) {
             console.error('Error loading monster data:', error);
