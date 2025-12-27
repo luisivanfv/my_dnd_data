@@ -1,4 +1,3 @@
-//console.log('🎉 TEST SCRIPT LOADED AND EXECUTING!', new Date().toISOString());
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
@@ -42,7 +41,6 @@ async function loadCharacters() {
         const characterSlug = getUrlParameter('name');
         if(!characterSlug) return;
         const characterData = await getJson(`characters/${characterSlug}`);
-        console.log(characterData);
         html = `<div id="${characterSlug}" class="character">
             <span style="color: white">${await enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
         html += `</div>`;
@@ -322,8 +320,6 @@ function getUrlParameter(name) {
 }
 async function getJson(url) {
     const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
-    console.log('gettingJson:');
-    console.log(`${window.githubRoot}${url}.json?t=${Date.now()}`);
     return await response.json(`${window.githubRoot}${url}.json?t=${Date.now()}`);
 }
 async function getJsonMap(url) {
@@ -544,8 +540,6 @@ async function loadStatblocks() {
         else
             return;
         const creatureInfo = await getJson(`statblocks/${creatureSearched}`);
-        console.log('fafa:');
-        console.log(creatureInfo);
         const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
         if (!creatureInfo) return;
         element.outerHTML = `
@@ -913,15 +907,9 @@ function getImagePreview(url, txt, color, fontSize) {
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
     let html = '';
-    console.log(sounds);
     await fetchMapIfNotSet('icons');
     Array.from(sounds).forEach((sound) => {
-        console.log(sound);
         let iconData = window.icons.get(sound.icon);
-        console.log('ASDF:');
-        console.log(sound.icon);
-        console.log(iconData);
-        console.log(window.icons);
         let iconUrl = iconData.split('||')[0].replace('customColor', iconColor);
         let iconAlt = iconData.includes('||') ? iconData.split('||')[1] : '';
         if(sound.icon)
