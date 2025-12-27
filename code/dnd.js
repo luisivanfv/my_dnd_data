@@ -13,16 +13,8 @@ const actionTitleTxtSize = '14px';
 const soundIconSize = '30';
 const secondsPopupShown = 5;
 const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
-// Create visible element
-var testMarker = document.createElement('div');
-testMarker.id = 'test-script-marker';
-testMarker.style.cssText = 'position: fixed; top: 50px; left: 10px; background: purple; color: white; padding: 10px; z-index: 99998; font-weight: bold; border-radius: 5px;';
-testMarker.textContent = 'TEST SCRIPT WORKING - ' + new Date().toLocaleTimeString();
-document.body.appendChild(testMarker);
+window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window.latestCommitHash}/`;
 
-//if (!window.githubRoot) 
-    window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window.latestCommitHash}/`;
-// Expose a simple function
 window.initializeExternalScript = async function() {
     document.body.classList.add('loading');
         initLazyPreviews();
