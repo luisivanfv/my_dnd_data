@@ -38,7 +38,7 @@ window.initializeExternalScript = async function() {
         //await loadSearchBoxes();
         await loadWikiLists();
         await loadLookers();
-        //await renameWikisWithNames();
+        await renameWikisWithNames();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
@@ -429,6 +429,14 @@ function updateModalText(formula) {
 function hideLazyPreview() {
     const container = document.getElementById('global-preview-container');
     container.style.display = 'none';
+}
+async function renameWikisWithNames() {
+    if(getUrlParameter('name'))
+        Array.from(document.getElementsByClassName('wiki-page-name')).forEach((element) => {
+            const name = toUpper(getUrlParameter('name').replaceAll('-', ' '));
+            element.innerHTML = name;
+            document.title = name;
+        });
 }
 const toggleModal = (element) => {
     window.event.preventDefault();
