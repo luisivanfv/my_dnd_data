@@ -31,15 +31,9 @@ async function loadExternalScript(url) {
         
         // Set BOTH event handlers
         script.onload = () => {
-            console.log('✅ Script onload fired:', url);
-            console.log('Script element:', script);
-            console.log('Script readyState:', script.readyState);
             setTimeout(() => {
-                console.log('Checking for script execution...');
-                console.log('- window.initializeExternalScript:', typeof window.initializeExternalScript);
-                console.log('- window.initializeEverything:', typeof window.initializeEverything);
-                console.log('- window.DataManager:', typeof window.DataManager);
-            }, 100);
+                //console.log('- window.initializeEverything:', typeof window.initializeEverything);
+            }, 0);
             
             resolve();
         };
@@ -73,7 +67,6 @@ async function initializeApp() {
             await window.initializeEverything();
         } else {
             if (window.DataManager && typeof window.DataManager.waitForLoad === 'function') {
-                console.log('Trying DataManager.waitForLoad()...');
                 await window.DataManager.waitForLoad();
             }
         }
@@ -92,11 +85,8 @@ async function initializeApp() {
 }
 
 function startApp() {
-    console.log('Starting app initialization...');
-    //updateDebug('Starting app...', '#3498db');
     initializeApp().catch(err => {
         console.error('Unhandled error in app:', err);
-        //updateDebug('Error: ' + err.message, '#e74c3c');
     });
 }
 
