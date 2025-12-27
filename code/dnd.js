@@ -34,6 +34,8 @@ window.initializeExternalScript = async function() {
         await renameWikisWithNames();
         addSearchBarStyles();
         convertToSearchBar();
+        addEncounterTableStyles();
+        convertToEncounterTable();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
@@ -1121,7 +1123,7 @@ function convertToSearchBar() {
           console.warn('Data in localStorage is not an array');
           searchData = [];
         } else {
-            searchData = searchData.filter(name => name !== '_example.json');
+            searchData = searchData.filter(name => name !== '_example.json' && name !== 'repeated-statblock.json');
             searchData = searchData.map(name => toUpper(name.replace('.json', '').replaceAll('-', ' ')));
         }
       }
@@ -1265,3 +1267,526 @@ function addSearchBarStyles() {
 // Also export the function for manual use
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
+// ENCOUNTER TABLE
+function convertToEncounterTable() {
+  // Get all elements with the class "to-encounter-table"
+  const elements = document.querySelectorAll('.to-encounter-table');
+  
+  elements.forEach(element => {
+    // Clear the element's content
+    element.innerHTML = '';
+    
+    // Create table structure
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'encounter-table-container';
+    
+    const table = document.createElement('table');
+    table.className = 'encounter-table';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    const headers = ['ID', 'Initiative', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
+    headers.forEach(headerText => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    
+    // Get data from storage
+    let tableData = [];
+    try {
+      const storedData = localStorage.getItem('encounterData');
+      if (storedData) {
+        tableData = JSON.parse(storedData);
+        if (!Array.isArray(tableData)) {
+          console.warn('Data in localStorage is not an array');
+          tableData = [];
+        }
+      }
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      tableData = [];
+    }
+    
+    // Function to save data back to storage
+    function saveTableData() {
+      localStorage.setItem('encounterData', JSON.stringify(tableData));
+    }
+    
+    // Function to create a modal prompt
+    function showNumberPrompt(currentValue, callback) {
+      const modal = document.createElement('div');
+      modal.className = 'number-prompt-modal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `;
+      
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+      `;
+      
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.value = currentValue;
+      input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+      `;
+      
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+      `;
+      
+      const cancelButton = document.createElement('button');
+      cancelButton.textContent = 'Cancel';
+      cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      const confirmButton = document.createElement('button');
+      confirmButton.textContent = 'OK';
+      confirmButton.addEventListener('click', () => {
+        const value = parseInt(input.value);
+        if (!isNaN(value)) {
+          callback(value);
+        }
+        document.body.removeChild(modal);
+      });
+      
+      // Allow Enter key to confirm
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const value = parseInt(input.value);
+          if (!isNaN(value)) {
+            callback(value);
+          }
+          document.body.removeChild(modal);
+        }
+      });
+      
+      buttonContainer.appendChild(cancelButton);
+      buttonContainer.appendChild(confirmButton);
+      
+      modalContent.appendChild(document.createTextNode('Enter a number:'));
+      modalContent.appendChild(input);
+      modalContent.appendChild(buttonContainer);
+      modal.appendChild(modalContent);
+      
+      document.body.appendChild(modal);
+      input.focus();
+      input.select();
+    }
+    
+    // Function to create a text prompt
+    function showTextPrompt(currentValue, callback) {
+      const modal = document.createElement('div');
+      modal.className = 'text-prompt-modal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `;
+      
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+      `;
+      
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = currentValue;
+      input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+      `;
+      
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+      `;
+      
+      const cancelButton = document.createElement('button');
+      cancelButton.textContent = 'Cancel';
+      cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      const confirmButton = document.createElement('button');
+      confirmButton.textContent = 'OK';
+      confirmButton.addEventListener('click', () => {
+        callback(input.value);
+        document.body.removeChild(modal);
+      });
+      
+      // Allow Enter key to confirm
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          callback(input.value);
+          document.body.removeChild(modal);
+        }
+      });
+      
+      buttonContainer.appendChild(cancelButton);
+      buttonContainer.appendChild(confirmButton);
+      
+      modalContent.appendChild(document.createTextNode('Enter text:'));
+      modalContent.appendChild(input);
+      modalContent.appendChild(buttonContainer);
+      modal.appendChild(modalContent);
+      
+      document.body.appendChild(modal);
+      input.focus();
+      input.select();
+    }
+    
+    // Function to add a new row
+    function addRow(data = null, index = null) {
+      const row = document.createElement('tr');
+      
+      // Create cells
+      const cellConfigs = [
+        { type: 'number', key: 'id' },
+        { type: 'number', key: 'initiative' },
+        { type: 'text', key: 'name' },
+        { type: 'number', key: 'ac' },
+        { type: 'text', key: 'hp' },
+        { type: 'text', key: 'tempHp' },
+        { type: 'text', key: 'conditions' },
+        { type: 'text', key: 'notes' }
+      ];
+      
+      cellConfigs.forEach((config, cellIndex) => {
+        const cell = document.createElement('td');
+        cell.dataset.key = config.key;
+        
+        // Set cell content
+        let cellValue = '';
+        if (data && data[config.key] !== undefined) {
+          cellValue = data[config.key];
+        } else {
+          // Default values for new rows
+          switch(config.key) {
+            case 'id': cellValue = tbody.children.length + 1; break;
+            case 'initiative': cellValue = 0; break;
+            case 'name': cellValue = `Creature ${tbody.children.length + 1}`; break;
+            case 'ac': cellValue = 10; break;
+            default: cellValue = '';
+          }
+        }
+        
+        cell.textContent = cellValue;
+        
+        // Add click handler based on cell type
+        cell.addEventListener('click', () => {
+          const currentValue = cell.textContent;
+          
+          if (config.type === 'number') {
+            showNumberPrompt(currentValue, (newValue) => {
+              cell.textContent = newValue;
+              updateTableData(row.rowIndex - 1, config.key, newValue);
+            });
+          } else {
+            showTextPrompt(currentValue, (newValue) => {
+              cell.textContent = newValue;
+              updateTableData(row.rowIndex - 1, config.key, newValue);
+            });
+          }
+        });
+        
+        row.appendChild(cell);
+      });
+      
+      // Add delete button cell
+      const deleteCell = document.createElement('td');
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = '×';
+      deleteButton.style.cssText = `
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1;
+      `;
+      deleteButton.addEventListener('click', () => {
+        const rowIndex = row.rowIndex - 1; // Adjust for header row
+        tableData.splice(rowIndex, 1);
+        saveTableData();
+        renderTable();
+      });
+      deleteCell.appendChild(deleteButton);
+      row.appendChild(deleteCell);
+      
+      // Insert at specific position or append
+      if (index !== null && index >= 0 && index < tbody.children.length) {
+        tbody.insertBefore(row, tbody.children[index]);
+      } else {
+        tbody.appendChild(row);
+      }
+      
+      // Update table data if new data was provided
+      if (data) {
+        if (index !== null && index >= 0 && index < tableData.length) {
+          tableData.splice(index, 0, data);
+        } else {
+          tableData.push(data);
+        }
+        saveTableData();
+      }
+    }
+    
+    // Function to update table data
+    function updateTableData(rowIndex, key, value) {
+      if (rowIndex >= 0 && rowIndex < tableData.length) {
+        if (!tableData[rowIndex]) {
+          tableData[rowIndex] = {};
+        }
+        tableData[rowIndex][key] = value;
+        saveTableData();
+      }
+    }
+    
+    // Function to render the entire table
+    function renderTable() {
+      tbody.innerHTML = '';
+      tableData.forEach((rowData, index) => {
+        addRow(rowData, index);
+      });
+    }
+    
+    // Create control buttons
+    const controls = document.createElement('div');
+    controls.className = 'table-controls';
+    controls.style.cssText = `
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    `;
+    
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Row';
+    addButton.addEventListener('click', () => {
+      addRow();
+      saveTableData();
+    });
+    
+    const clearButton = document.createElement('button');
+    clearButton.textContent = 'Clear All';
+    clearButton.addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all rows?')) {
+        tableData = [];
+        saveTableData();
+        renderTable();
+      }
+    });
+    
+    const sortButton = document.createElement('button');
+    sortButton.textContent = 'Sort by Initiative';
+    sortButton.addEventListener('click', () => {
+      tableData.sort((a, b) => {
+        const initA = parseInt(a.initiative) || 0;
+        const initB = parseInt(b.initiative) || 0;
+        return initB - initA; // Higher initiative first
+      });
+      saveTableData();
+      renderTable();
+    });
+    
+    controls.appendChild(addButton);
+    controls.appendChild(sortButton);
+    controls.appendChild(clearButton);
+    
+    // Initial render
+    renderTable();
+    
+    // If no data exists, create a default row
+    if (tableData.length === 0) {
+      addRow({
+        id: 1,
+        initiative: 0,
+        name: 'Sample Creature',
+        ac: 10,
+        hp: '10/10',
+        tempHp: '0',
+        conditions: '',
+        notes: ''
+      });
+    }
+    
+    // Assemble everything
+    tableContainer.appendChild(controls);
+    tableContainer.appendChild(table);
+    element.appendChild(tableContainer);
+  });
+}
+
+// Optional: Add CSS styles for the table
+function addEncounterTableStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .encounter-table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    
+    .encounter-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    .encounter-table th {
+      background-color: #4a5568;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: bold;
+      border: 1px solid #ddd;
+    }
+    
+    .encounter-table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .encounter-table td:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .encounter-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .encounter-table tr:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .table-controls button {
+      padding: 8px 16px;
+      background-color: #4a5568;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    
+    .table-controls button:hover {
+      background-color: #2d3748;
+    }
+    
+    .number-prompt-modal button,
+    .text-prompt-modal button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .number-prompt-modal button:first-child,
+    .text-prompt-modal button:first-child {
+      background-color: #e2e8f0;
+    }
+    
+    .number-prompt-modal button:last-child,
+    .text-prompt-modal button:last-child {
+      background-color: #4a5568;
+      color: white;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Export the function for manual use
+window.convertToEncounterTable = convertToEncounterTable;
+
+// Function to save sample data to localStorage (for testing)
+window.saveSampleEncounterData = function() {
+  const sampleData = [
+    {
+      id: 1,
+      initiative: 15,
+      name: 'Goblin',
+      ac: 13,
+      hp: '7/7',
+      tempHp: '0',
+      conditions: '',
+      notes: 'Armed with a scimitar'
+    },
+    {
+      id: 2,
+      initiative: 12,
+      name: 'Orc',
+      ac: 13,
+      hp: '15/15',
+      tempHp: '5',
+      conditions: 'Raging',
+      notes: 'Wielding a greataxe'
+    },
+    {
+      id: 3,
+      initiative: 18,
+      name: 'Wizard',
+      ac: 12,
+      hp: '22/22',
+      tempHp: '0',
+      conditions: 'Mage Armor',
+      notes: 'Has 3rd level spell slots remaining'
+    }
+  ];
+  
+  localStorage.setItem('encounterData', JSON.stringify(sampleData));
+  convertToEncounterTable(); // Refresh the table
+};
