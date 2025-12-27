@@ -1262,9 +1262,8 @@ function addSearchBarStyles() {
   `;
   document.head.appendChild(style);
 }
-
-// Initialize the search bars when the DOM is loaded
-
+function getPlayersObjects() {
+}
 // Also export the function for manual use
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
@@ -1755,39 +1754,5 @@ window.convertToEncounterTable = convertToEncounterTable;
 
 // Function to save sample data to localStorage (for testing)
 window.saveSampleEncounterData = function() {
-  const sampleData = [
-    {
-      id: 1,
-      initiative: 15,
-      name: 'Goblin',
-      ac: 13,
-      hp: '7/7',
-      tempHp: '0',
-      conditions: '',
-      notes: 'Armed with a scimitar'
-    },
-    {
-      id: 2,
-      initiative: 12,
-      name: 'Orc',
-      ac: 13,
-      hp: '15/15',
-      tempHp: '5',
-      conditions: 'Raging',
-      notes: 'Wielding a greataxe'
-    },
-    {
-      id: 3,
-      initiative: 18,
-      name: 'Wizard',
-      ac: 12,
-      hp: '22/22',
-      tempHp: '0',
-      conditions: 'Mage Armor',
-      notes: 'Has 3rd level spell slots remaining'
-    }
-  ];
-  
-  localStorage.setItem('encounterData', JSON.stringify(sampleData));
   convertToEncounterTable(); // Refresh the table
 };
