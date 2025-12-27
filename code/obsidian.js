@@ -12,13 +12,6 @@ async function getLatestCommitHash() {
         return 'main'; // Fallback
     }
 }
-// Create visible indicator immediately
-/*var debugDiv = document.createElement('div');
-debugDiv.id = 'debug-indicator';
-debugDiv.style.cssText = 'position: fixed; top: 10px; left: 10px; background: #ff6b6b; color: white; padding: 10px; z-index: 99999; font-family: Arial; font-size: 12px; border-radius: 5px; max-width: 300px;';
-debugDiv.innerHTML = '<strong>Script Status</strong><br>Starting...';
-document.body.appendChild(debugDiv);*/
-//updateDebug('Initializing...', '#ff6b6b');
 
 // MAIN SCRIPT - Use this in your website
 async function loadExternalScript(url) {
@@ -111,9 +104,6 @@ async function initializeApp() {
         }
         
         console.log('✅ Application initialization complete!');
-        //updateDebug('Initialization complete!', '#2ecc71');
-        debugDiv.style.background = '#2ecc71';
-        
     } catch (error) {
         console.error('❌ Initialization failed:', error);
         //updateDebug('Failed: ' + error.message, '#e74c3c');
