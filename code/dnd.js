@@ -4,6 +4,7 @@ const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
 const iconColor = '8B0000';
 const iconSize = '26';
+const smallIconSize = '17';
 const damageTypeIconSize = "20";
 const txtSize = '16px';
 const lookerTxtSize = '16px';
