@@ -156,7 +156,7 @@ async function loadAllCreatures() {
     const playersInJson = await getKeywordsFromFolder('players');
     const players = {};
     for (const player of playersInJson) {
-        players[player] = await getJson(`players/${player}`);
+        players[player] = await getJson(`players/${player}.json`);
     }
     localStorage.setItem('players', JSON.stringify(players));
 }
