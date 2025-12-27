@@ -32,8 +32,8 @@ window.initializeExternalScript = async function() {
         await loadWikiLists();
         await loadLookers();
         await renameWikisWithNames();
-        //addSearchBarStyles();
-        //convertToSearchBar();
+        addSearchBarStyles();
+        convertToSearchBar();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
