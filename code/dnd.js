@@ -1358,9 +1358,9 @@ function convertToEncounterTable() {
         }
         
         // Save this initialized data to localStorage (encounterData) for persistence
-        console.log(tableData);
+        console.error(tableData);
         return tableData;
-        }
+    }
     
     // Function to create a modal prompt for numbers only
     function showNumberPrompt(currentValue, callback) {
