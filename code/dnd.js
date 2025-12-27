@@ -1301,6 +1301,8 @@ function convertToEncounterTable() {
             const playerData = JSON.parse(localStorage.getItem('players'));
             if (playerData && typeof playerData === 'object') {
             const playerKeys = Object.keys(playerData);
+            console.log('playerKeys');
+            console.log(playerKeys);
             for (let i = 0; i < playerKeys.length; i++) {
                 const playerKey = playerKeys[i];
                 const playerInfo = playerData[playerKey];
