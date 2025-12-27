@@ -439,18 +439,6 @@ async function buildAllReplacements(addWikiUrls, addSpellUrls, addCreatureUrls, 
     
     return result;
 }
-/*function toUpper(str) {
-	return str
-		.toLowerCase()
-		.split(' ')
-		.map(function(word) {
-			return word[0].toUpperCase() + word.substr(1);
-		})
-		.join(' ');
-}*/
-async function getKeywordsFromFolder(folderName) {
-    return (await getFilenames(folderName)).map(file => file.replace(/\.json$/, '').replaceAll('-', ' '));
-}
 function colorText(txt, color) {
     return `<span style="color: ${color}">${txt}</span>`;
 }
@@ -1305,6 +1293,9 @@ function convertToEncounterTable() {
     let tableData = [];
     try {
       const storedData = localStorage.getItem('encounterData');
+      
+    const players = localStorage.setItem('players', JSON.stringify(players));
+    console.log(players);
       if (storedData) {
         tableData = JSON.parse(storedData);
         if (!Array.isArray(tableData)) {

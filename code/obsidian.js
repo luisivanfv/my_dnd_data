@@ -148,6 +148,18 @@ async function getFilenames(path = '') {
         return [];
     }
 }
+async function getKeywordsFromFolder(folderName) {
+    return (await getFilenames(folderName)).map(file => file.replace(/\.json$/, '').replaceAll('-', ' '));
+}
+async function loadAllCreatures() {
+    //const allEntries = [];
+    const playersInJson = await getKeywordsFromFolder('players');
+    const players = {};
+    for (const player of playersInJson) {
+        players[player] = await getJson(`players/${player}`);
+    }
+    localStorage.setItem('players', JSON.stringify(players));
+}
 async function loadDirectoriesToStorage() {
     const directories = ['characters', 'locations', 'spells', 'statblocks'];
     directories.forEach(async (directory) => {
@@ -216,6 +228,7 @@ async function loadAllStorageData() {
     localStorage.clear();
     await loadAllReplacementsToStorage();
     await loadDirectoriesToStorage();
+    await loadAllCreatures();
     console.log('Local storage:');
     console.log(localStorage);
 }
