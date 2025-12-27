@@ -1321,6 +1321,7 @@ function convertToEncounterTable() {
                         });
                     }
                 }
+                console.log('Players loaded to table');
                 console.warn(tableData);
             }
         } catch (error) {
@@ -1351,6 +1352,7 @@ function convertToEncounterTable() {
                         });
                     }
                 }
+                console.log('Monsters loaded to table');
                 console.warn(tableData);
             }
         } catch (error) {
