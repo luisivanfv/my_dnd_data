@@ -1,5 +1,5 @@
 window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
-const fontColor = '#fefefe';
+const statblockReplacementColor = '#010101';
 const fontSize = '15px';
 
 async function getLatestCommitHash() {
@@ -133,21 +133,40 @@ async function fetchIfNotSet(key) {
         window[key] = await getJson(key);
     return window[key];
 }
+async function getFilenames(path = '') {
+    const apiUrl = `https://api.github.com/repos/luisivanfv/my_dnd_data/contents/${path}`;
+    try {
+        const response = await fetch(apiUrl, { headers: {} });
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data
+            .filter(item => item.type === 'file')  // Only files, not folders
+            .map(item => item.name);
+    } catch (error) {
+        console.error('Error fetching GitHub files:', error);
+        return [];
+    }
+}
+async function loadDirectoriesToStorage() {
+    localStorage.setItem('spells', JSON.stringify(await getFilenames('spells')));
+}
 async function loadAllReplacementsToStorage() {
     const allEntries = [];
     const keywords = await fetchIfNotSet('keywords');
     for (const [keyword, url] of Object.entries(keywords)) {
         allEntries.push(
-            [keyword, keywordToUrl(keyword, fontColor, url, fontSize)],
-            [toUpper(keyword), keywordToUrl(toUpper(keyword), fontColor, url, fontSize)]
+            [keyword, keywordToUrl(keyword, statblockReplacementColor, url, fontSize)],
+            [toUpper(keyword), keywordToUrl(toUpper(keyword), statblockReplacementColor, url, fontSize)]
         );
     }
     const spells = await getKeywordsFromFolder('spells');
     for (const spell of spells) {
         const slug = `spell?name=${spell.replaceAll(' ', '-')}`;
         allEntries.push(
-            [spell, keywordToUrl(spell, fontColor, slug, fontSize)],
-            [toUpper(spell), keywordToUrl(toUpper(spell), fontColor, slug, fontSize)]
+            [spell, keywordToUrl(spell, statblockReplacementColor, slug, fontSize)],
+            [toUpper(spell), keywordToUrl(toUpper(spell), statblockReplacementColor, slug, fontSize)]
         );
     }
     const creatures = await getKeywordsFromFolder('statblocks');
@@ -162,16 +181,16 @@ async function loadAllReplacementsToStorage() {
     for (const location of locations) {
         const slug = `location?name=${location.replaceAll(' ', '-')}`;
         allEntries.push(
-            [location, keywordToUrl(location, fontColor, slug, fontSize)],
-            [toUpper(location), keywordToUrl(toUpper(location), fontColor, slug, fontSize)]
+            [location, keywordToUrl(location, statblockReplacementColor, slug, fontSize)],
+            [toUpper(location), keywordToUrl(toUpper(location), statblockReplacementColor, slug, fontSize)]
         );
     }
     const characters = await getKeywordsFromFolder('characters');
     for (const character of characters) {
         const slug = `character?name=${character.replaceAll(' ', '-')}`;
         allEntries.push(
-            [character, keywordToUrl(character, fontColor, slug, fontSize)],
-            [toUpper(character), keywordToUrl(toUpper(character), fontColor, slug, fontSize)]
+            [character, keywordToUrl(character, statblockReplacementColor, slug, fontSize)],
+            [toUpper(character), keywordToUrl(toUpper(character), statblockReplacementColor, slug, fontSize)]
         );
     }
     
@@ -188,6 +207,7 @@ async function loadAllReplacementsToStorage() {
 }
 async function loadAllStorageData() {
     await loadAllReplacementsToStorage();
+    await loadDirectoriesToStorage();
     console.log('Local storage:');
     console.log(localStorage);
 }

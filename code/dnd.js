@@ -37,12 +37,12 @@ window.initializeExternalScript = async function() {
 };
 async function loadCharacters() {
     Array.from(document.getElementsByClassName('character')).forEach(async (element) => {
-        const replacements = await buildAllReplacements(true, true, true, true, true, fontColor, fontSize);
+        const replacements = await buildAllReplacements(true, true, true, true, true, statblockReplacementColor, fontSize);
         const characterSlug = getUrlParameter('name');
         if(!characterSlug) return;
         const characterData = await getJson(`characters/${characterSlug}`);
         html = `<div id="${characterSlug}" class="character">
-            <span style="color: white">${await enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
+            <span style="color: white">${enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
         html += `</div>`;
         element.outerHTML = html;
     });
@@ -97,7 +97,7 @@ async function loadSpells() {
             <strong>Attack/Save</strong> ${spellInfo.attackOrSave}<br><br>
             <strong>Damage/Effect</strong> ${spellInfo.damageOrEffect}<br><br>
             <hr>
-            ${await enrichText(spellInfo.description, { fontColor: iconColor, addSpellUrls: false })}
+            ${enrichText(spellInfo.description, { fontColor: iconColor, addSpellUrls: false })}
             <hr>
             <a href="/wikis/spells" class="wiki-page-link">< Spells</a>
         </div>`;
@@ -122,7 +122,7 @@ function toPrettyListName(str) {
 async function loadWikiLists() {
     Array.from(document.getElementsByClassName('wiki_list')).forEach(async (element) => {
         let html = `<ul>`;
-        let array = await getFilenames(`${element.id}`);
+        let array = JSON.parse(localStorage.getItem(element.id));
         let genericWikiName = element.innerHTML;
         await fetchMapIfNotSet('colors');
         array.forEach((item) => {
@@ -419,22 +419,6 @@ async function buildAllReplacements(addWikiUrls, addSpellUrls, addCreatureUrls, 
 async function getKeywordsFromFolder(folderName) {
     return (await getFilenames(folderName)).map(file => file.replace(/\.json$/, '').replaceAll('-', ' '));
 }
-async function getFilenames(path = '') {
-    const apiUrl = `https://api.github.com/repos/luisivanfv/my_dnd_data/contents/${path}`;
-    try {
-        const response = await fetch(apiUrl, { headers: {} });
-        if (!response.ok) {
-            throw new Error(`GitHub API error: ${response.status}`);
-        }
-        const data = await response.json();
-        return data
-            .filter(item => item.type === 'file')  // Only files, not folders
-            .map(item => item.name);
-    } catch (error) {
-        console.error('Error fetching GitHub files:', error);
-        return [];
-    }
-}
 function colorText(txt, color) {
     return `<span style="color: ${color}">${txt}</span>`;
 }
@@ -553,7 +537,7 @@ async function loadStatblocks() {
                 <div class="section-left">
                     <div class="creature-heading">
                         ${getImagePreview(window.githubRoot + 'images/monsters/' + creatureSearched + ".jpeg", toUpper(creatureSearched.replaceAll('-', ' ')), null, '26px')}
-                        <h2 style="font-size: 15px;">${await enrichText(creatureInfo.creatureType, allReplacements, { fontColor: 'black' })}</h2>
+                        <h2 style="font-size: 15px;">${enrichText(creatureInfo.creatureType, allReplacements, { fontColor: 'black' })}</h2>
                         <div class="soundboard">${await getSoundboardForCreature(creatureInfo.sounds)}</div>
                     </div>
                     <hr>
@@ -890,7 +874,7 @@ async function addDamageTypeIcons(txt) {
 }
 async function addSectionIfExists(txt, replacements, title, options) {
     if(!txt || txt.trim() == '') return '';
-    const enrichedText = await enrichText(txt, replacements, options);
+    const enrichedText = enrichText(txt, replacements, options);
     return `<div class="property-line">
         <h4>${title} </h4>${enrichedText}
     </div>`;
@@ -899,7 +883,7 @@ function playSoundIfPossible(soundUrl) {
     window.event.preventDefault();
     AudioManager.playSound(`${window.githubRoot}sound_effects/${soundUrl}.mp3`, {volume: 0.5});
 }
-async function enrichText(txt, replacements, options = {}) {
+function enrichText(txt, replacements, options = {}) {
     const {
         styleText = true,
         addDieRolls = true,
@@ -919,7 +903,7 @@ async function toActionSection(actions, replacements, title, options) {
         let action_name = action.name.trim();
         let action_description = action.description.trim();
         let action_sound = action.sound ? action.sound : action.name.toLowerCase().trim();
-        const richActionDescription = await enrichText(action_description, replacements, options);
+        const richActionDescription = enrichText(action_description, replacements, options);
         if(action_name != '')
             inner_html += `<div class="property-block">
                 <h4 oncontextmenu="playSoundIfPossible('${action_sound}');" onclick="playSoundIfPossible('${action_sound}');" style="font-size: ${actionTitleTxtSize}; font-weight: bold;">${action_name}. </h4>${richActionDescription}
