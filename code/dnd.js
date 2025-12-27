@@ -1289,36 +1289,77 @@ function convertToEncounterTable() {
     const tbody = document.createElement('tbody');
     table.appendChild(tbody);
     
-    // Get data from storage
+    // Initialize table data from playerData and monsterData
     let tableData = [];
-    try {
-      
-        //const players = JSON.parse(localStorage.getItem('players'));
-        localStorage.setItem('encounterData', localStorage.getItem('players'));
-        const playerData = JSON.parse(localStorage.getItem('encounterData'));
-        console.log('playerData');
-        console.log(playerData);
-        if (playerData) {
-            tableData = [];
-            Object.entries(playerData).forEach((player) => {
-                tableData.push(player);
-            });
-            if (!Array.isArray(tableData)) {
-                console.warn('Data in localStorage is not an array');
-                tableData = [];
-            }
-        }
-    } catch (error) {
-      console.error('Error reading from localStorage:', error);
+    
+    // Function to initialize data from localStorage players and monsters
+    function initializeTableData() {
       tableData = [];
+      let idCounter = 1;
+      
+      // Get player data from localStorage
+      try {
+        const playerData = JSON.parse(localStorage.getItem('players'));
+        if (playerData && typeof playerData === 'object') {
+          Object.entries(playerData).forEach(([playerKey, playerInfo]) => {
+            if (playerInfo && typeof playerInfo === 'object') {
+              tableData.push({
+                id: idCounter++,
+                initiative: 0,
+                name: playerKey.charAt(0).toUpperCase() + playerKey.slice(1), // Capitalize
+                ac: playerInfo.ac || 10,
+                hp: playerInfo.hp || '0/0',
+                tempHp: '0',
+                conditions: '',
+                notes: '',
+                type: 'player', // Mark as player
+                sourceKey: playerKey
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading player data:', error);
+      }
+      
+      // Get monster data from localStorage (when available)
+      try {
+        const monsterData = JSON.parse(localStorage.getItem('monsters'));
+        if (monsterData && typeof monsterData === 'object') {
+          Object.entries(monsterData).forEach(([monsterKey, monsterInfo]) => {
+            if (monsterInfo && typeof monsterInfo === 'object') {
+              tableData.push({
+                id: idCounter++,
+                initiative: 0,
+                name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1), // Capitalize
+                ac: monsterInfo.ac || 10,
+                hp: monsterInfo.hp || '0/0',
+                tempHp: '0',
+                conditions: '',
+                notes: '',
+                type: 'monster', // Mark as monster
+                sourceKey: monsterKey
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading monster data:', error);
+        // If there's no monster data, just continue
+      }
+      
+      // Save this initialized data to localStorage (encounterData) for persistence
+      saveTableData();
+      
+      return tableData;
     }
     
-    // Function to save data back to storage
+    // Function to save data to localStorage for persistence
     function saveTableData() {
       localStorage.setItem('encounterData', JSON.stringify(tableData));
     }
     
-    // Function to create a modal prompt
+    // Function to create a modal prompt for numbers only
     function showNumberPrompt(currentValue, callback) {
       const modal = document.createElement('div');
       modal.className = 'number-prompt-modal';
@@ -1484,29 +1525,29 @@ function convertToEncounterTable() {
     function addRow(data = null, index = null) {
       const row = document.createElement('tr');
       
-      // Create cells
-      const cellConfigs = [
-        { type: 'number', key: 'id' },
-        { type: 'number', key: 'initiative' },
-        { type: 'text', key: 'name' },
-        { type: 'number', key: 'ac' },
-        { type: 'text', key: 'hp' },
-        { type: 'text', key: 'tempHp' },
-        { type: 'text', key: 'conditions' },
-        { type: 'text', key: 'notes' }
+      // Define which columns are editable and their types
+      const columns = [
+        { key: 'id', editable: true, type: 'number' },
+        { key: 'initiative', editable: true, type: 'number' },
+        { key: 'name', editable: false, type: 'text' },
+        { key: 'ac', editable: true, type: 'number' },
+        { key: 'hp', editable: false, type: 'text' },
+        { key: 'tempHp', editable: false, type: 'text' },
+        { key: 'conditions', editable: false, type: 'text' },
+        { key: 'notes', editable: false, type: 'text' }
       ];
       
-      cellConfigs.forEach((config, cellIndex) => {
+      columns.forEach((column, cellIndex) => {
         const cell = document.createElement('td');
-        cell.dataset.key = config.key;
+        cell.dataset.key = column.key;
         
         // Set cell content
         let cellValue = '';
-        if (data && data[config.key] !== undefined) {
-          cellValue = data[config.key];
+        if (data && data[column.key] !== undefined) {
+          cellValue = data[column.key];
         } else {
           // Default values for new rows
-          switch(config.key) {
+          switch(column.key) {
             case 'id': cellValue = tbody.children.length + 1; break;
             case 'initiative': cellValue = 0; break;
             case 'name': cellValue = `Creature ${tbody.children.length + 1}`; break;
@@ -1517,22 +1558,29 @@ function convertToEncounterTable() {
         
         cell.textContent = cellValue;
         
-        // Add click handler based on cell type
-        cell.addEventListener('click', () => {
-          const currentValue = cell.textContent;
+        // Only make certain cells editable
+        if (column.editable) {
+          cell.style.cursor = 'pointer';
+          cell.classList.add('editable-cell');
           
-          if (config.type === 'number') {
-            showNumberPrompt(currentValue, (newValue) => {
-              cell.textContent = newValue;
-              updateTableData(row.rowIndex - 1, config.key, newValue);
-            });
-          } else {
-            showTextPrompt(currentValue, (newValue) => {
-              cell.textContent = newValue;
-              updateTableData(row.rowIndex - 1, config.key, newValue);
-            });
-          }
-        });
+          cell.addEventListener('click', () => {
+            const currentValue = cell.textContent;
+            
+            if (column.type === 'number') {
+              showNumberPrompt(currentValue, (newValue) => {
+                cell.textContent = newValue;
+                updateTableData(row.rowIndex - 1, column.key, newValue);
+              });
+            } else {
+              showTextPrompt(currentValue, (newValue) => {
+                cell.textContent = newValue;
+                updateTableData(row.rowIndex - 1, column.key, newValue);
+              });
+            }
+          });
+        } else {
+          cell.style.cursor = 'default';
+        }
         
         row.appendChild(cell);
       });
@@ -1598,6 +1646,66 @@ function convertToEncounterTable() {
       });
     }
     
+    // Function to sync with source data (players and monsters)
+    function syncWithSourceData() {
+      const playerData = JSON.parse(localStorage.getItem('players')) || {};
+      const monsterData = JSON.parse(localStorage.getItem('monsters')) || {};
+      let hasChanges = false;
+      
+      // Create maps for quick lookup
+      const playerMap = new Map();
+      const monsterMap = new Map();
+      
+      Object.entries(playerData).forEach(([key, info]) => {
+        playerMap.set(key.toLowerCase(), info);
+      });
+      
+      Object.entries(monsterData).forEach(([key, info]) => {
+        monsterMap.set(key.toLowerCase(), info);
+      });
+      
+      // Update existing table data with source data
+      tableData.forEach((row, index) => {
+        if (row.sourceKey) {
+          const sourceKey = row.sourceKey.toLowerCase();
+          let sourceInfo = null;
+          
+          if (row.type === 'player') {
+            sourceInfo = playerMap.get(sourceKey);
+          } else if (row.type === 'monster') {
+            sourceInfo = monsterMap.get(sourceKey);
+          }
+          
+          if (sourceInfo) {
+            // Update AC if different
+            if (sourceInfo.ac !== undefined && row.ac !== sourceInfo.ac) {
+              row.ac = sourceInfo.ac;
+              hasChanges = true;
+            }
+            
+            // Update HP if different
+            if (sourceInfo.hp !== undefined && row.hp !== sourceInfo.hp) {
+              row.hp = sourceInfo.hp;
+              hasChanges = true;
+            }
+          }
+        }
+      });
+      
+      if (hasChanges) {
+        saveTableData();
+        renderTable();
+        return true;
+      }
+      return false;
+    }
+    
+    // Function to reload from source data
+    function reloadFromSourceData() {
+      tableData = initializeTableData();
+      renderTable();
+    }
+    
     // Create control buttons
     const controls = document.createElement('div');
     controls.className = 'table-controls';
@@ -1605,12 +1713,23 @@ function convertToEncounterTable() {
       margin-bottom: 15px;
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     `;
     
     const addButton = document.createElement('button');
     addButton.textContent = 'Add Row';
     addButton.addEventListener('click', () => {
-      addRow();
+      addRow({
+        id: tableData.length + 1,
+        initiative: 0,
+        name: `Creature ${tableData.length + 1}`,
+        ac: 10,
+        hp: '0/0',
+        tempHp: '0',
+        conditions: '',
+        notes: '',
+        type: 'custom'
+      });
       saveTableData();
     });
     
@@ -1636,26 +1755,34 @@ function convertToEncounterTable() {
       renderTable();
     });
     
+    const syncButton = document.createElement('button');
+    syncButton.textContent = 'Sync Source Data';
+    syncButton.addEventListener('click', () => {
+      if (syncWithSourceData()) {
+        alert('Source data synced successfully!');
+      } else {
+        alert('No changes needed - data is already up to date.');
+      }
+    });
+    
+    const reloadButton = document.createElement('button');
+    reloadButton.textContent = 'Reload from Source';
+    reloadButton.addEventListener('click', () => {
+      if (confirm('This will replace current table with player and monster data. Continue?')) {
+        reloadFromSourceData();
+        alert('Table reloaded from source data!');
+      }
+    });
+    
     controls.appendChild(addButton);
     controls.appendChild(sortButton);
+    controls.appendChild(syncButton);
+    controls.appendChild(reloadButton);
     controls.appendChild(clearButton);
     
-    // Initial render
+    // Initialize and render table data
+    tableData = initializeTableData();
     renderTable();
-    
-    // If no data exists, create a default row
-    if (tableData.length === 0) {
-      addRow({
-        id: 1,
-        initiative: 0,
-        name: 'Sample Creature',
-        ac: 10,
-        hp: '10/10',
-        tempHp: '0',
-        conditions: '',
-        notes: ''
-      });
-    }
     
     // Assemble everything
     tableContainer.appendChild(controls);
@@ -1691,12 +1818,15 @@ function addEncounterTableStyles() {
     .encounter-table td {
       padding: 12px;
       border: 1px solid #ddd;
+    }
+    
+    .encounter-table td.editable-cell {
       cursor: pointer;
       transition: background-color 0.2s;
     }
     
-    .encounter-table td:hover {
-      background-color: #f0f0f0;
+    .encounter-table td.editable-cell:hover {
+      background-color: #e0f7fa;
     }
     
     .encounter-table tr:nth-child(even) {
@@ -1747,8 +1877,3 @@ function addEncounterTableStyles() {
 
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
-
-// Function to save sample data to localStorage (for testing)
-window.saveSampleEncounterData = function() {
-  convertToEncounterTable(); // Refresh the table
-};
