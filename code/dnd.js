@@ -542,7 +542,8 @@ async function loadStatblocks() {
         const creatureInfo = await getJson(`statblocks/${creatureSearched}`);
         //const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
         const allReplacements = localStorage.getItem('allReplacements');
-        console.log(`replacements fetched: ${allReplacements}`);
+        console.log(localStorage);
+        console.log(localStorage.getItem(allReplacements));
         if (!creatureInfo) return;
         element.outerHTML = `
             <div id="global-image-preview" class="global-image-preview">
