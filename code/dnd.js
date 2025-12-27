@@ -34,6 +34,7 @@ window.initializeExternalScript = async function() {
         await renameWikisWithNames();
         addSearchBarStyles();
         convertToSearchBar();
+        window.saveSampleEncounterData();
         addEncounterTableStyles();
         convertToEncounterTable();
         document.body.classList.remove('loading');
