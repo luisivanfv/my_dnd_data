@@ -125,8 +125,10 @@ function toUpper(str) {
 		.join(' ');
 }
 async function getJson(url) {
-    const response = await fetch(`${window.githubRoot}${url}.json?t=${Date.now()}`);
-    return await response.json(`${window.githubRoot}${url}.json?t=${Date.now()}`);
+    console.log('url');
+    console.log(url);
+    const response = await fetch(`${window.githubRoot}${url}`);
+    return await response.json(`${window.githubRoot}${url}`);
 }
 async function fetchIfNotSet(key) {
     if(!window[key])
@@ -154,8 +156,11 @@ async function loadDirectoriesToStorage() {
     directories.forEach(async (directory) => {
         const filenames = await getFilenames(directory);
         localStorage.setItem(directory, JSON.stringify(filenames));
+        console.log('filenames:');
+        console.log(filenames);
         filenames.forEach(async (filename) => {
-            localStorage.setItem(`${directory}_${filename}`, JSON.stringify(await getJson(`spells/${spellSearched}`)))
+            console.log(filename);
+            localStorage.setItem(`${directory}_${filename}`, JSON.stringify(await getJson(`${directory}/${filename}`)))
         });
     });
 }
@@ -214,6 +219,7 @@ async function loadAllReplacementsToStorage() {
     localStorage.setItem('allReplacements', JSON.stringify(result));
 }
 async function loadAllStorageData() {
+    localStorage.clear();
     await loadAllReplacementsToStorage();
     await loadDirectoriesToStorage();
     console.log('Local storage:');

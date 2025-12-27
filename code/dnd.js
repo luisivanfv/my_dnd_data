@@ -528,7 +528,7 @@ async function loadStatblocks() {
             creatureSearched = getUrlParameter('name');
         else
             return;
-        const creatureInfo = await getJson(`statblocks/${creatureSearched}`);
+        const creatureInfo = await getJson(`statblocks/${creatureSearched}.json`);
         //const allReplacements = await buildAllReplacements(true, true, true, true, true, 'black', keywordSizeInStatblock);
         const allReplacements = JSON.parse(localStorage.getItem('allReplacements'));
         console.log(allReplacements);
