@@ -893,6 +893,11 @@ function playSoundIfPossible(soundUrl) {
     AudioManager.playSound(`${window.githubRoot}sound_effects/${soundUrl}.mp3`, {volume: 0.5});
 }
 function enrichText(txt, replacements, options = {}) {
+    console.log('>>>>');
+    console.log(txt);
+    console.log(replacements);
+    console.log(options);
+    console.log('<<<<');
     const {
         styleText = true,
         addDieRolls = true,
