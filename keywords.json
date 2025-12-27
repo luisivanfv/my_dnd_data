@@ -1,4 +1,5 @@
 {
+    "auran": "auran",
     "charmed": "charmed",
     "charm": "charmed",
     "darkvision": "darkvision",
@@ -8,7 +9,12 @@
     "grappled": "grappled",
     "grapple": "grappled",
     "grappling": "grappled",
+    "paralyzed": "paralyzed",
+    "paralyze": "paralyzed",
+    "petrified": "petrified",
+    "petrify": "petrified",
     "poisoned": "poisoned",
+    "prone": "prone",
     "poison": "poisoned",
     "sylvan": "sylvan"
 }
