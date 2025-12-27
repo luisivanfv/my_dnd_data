@@ -150,7 +150,10 @@ async function getFilenames(path = '') {
     }
 }
 async function loadDirectoriesToStorage() {
-    localStorage.setItem('spells', JSON.stringify(await getFilenames('spells')));
+    const directories = ['characters', 'locations', 'spells', 'statblocks'];
+    directories.forEach(async (directory) => {
+        localStorage.setItem(directory, JSON.stringify(await getFilenames(directory)));
+    });
 }
 async function loadAllReplacementsToStorage() {
     const allEntries = [];
