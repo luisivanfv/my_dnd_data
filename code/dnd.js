@@ -54,6 +54,7 @@ function addSpellComponentIcons(txt) {
         'S': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/pastel-glyph/64/${specialTextColor}/hand--v3.png" alt="hand--v3"/>`,
         'M': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/ios-filled/50/${specialTextColor}/diamond--v1.png" alt="diamond--v1"/>`
     };
+    console.log('addSpellComponentIcons...');
     return replaceIcons(txt, replacements);
 }
 function addRangeOrAreaIcons(txt) {
@@ -64,6 +65,7 @@ function addRangeOrAreaIcons(txt) {
         'sphere': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/external-outline-black-m-oki-orlando/32/${specialTextColor}/external-sphere-math-vol-2-outline-outline-black-m-oki-orlando.png" alt="external-sphere-math-vol-2-outline-outline-black-m-oki-orlando"/>`,
         'line': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/sf-black-filled/64/${specialTextColor}/line.png" alt="line"/>`
     };
+    console.log('addRangeOrAreaIcons...');
     return replaceIcons(txt, replacements);
 }
 function addCastingTimeIcons(txt) {
@@ -76,6 +78,7 @@ function addCastingTimeIcons(txt) {
         'Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
         '1 Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
     };
+    console.log('addCastingTimeIcons...');
     return replaceIcons(txt, replacements);
 }
 async function loadSpells() {
@@ -900,6 +903,7 @@ function enrichText(txt, replacements, options = {}) {
     if(styleText) txt = addTextStyling(txt);
     if(addDieRolls) txt = replaceFormulasWithLinks(txt, { fontColor, fontSize });
     if(addToHit) txt = addToHitFormulas(txt, { fontColor, fontSize });
+    console.log('enrichText...');
     return replaceIcons(txt, replacements);
 }
 async function toActionSection(actions, replacements, title, options) {
