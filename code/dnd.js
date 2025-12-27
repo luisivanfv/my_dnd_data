@@ -1293,7 +1293,7 @@ function convertToEncounterTable() {
     
     // Function to initialize data from localStorage players and monsters
     function initializeTableData() {
-        tableData = [];
+        const tableData = [];
         let idCounter = 1;
         
         // Get player data from localStorage
