@@ -1294,7 +1294,8 @@ function convertToEncounterTable() {
     try {
       const storedData = localStorage.getItem('encounterData');
       
-    const players = localStorage.getItem('players');
+    const players = JSON.parse(localStorage.getItem('players'));
+    console.log('players');
     console.log(players);
       if (storedData) {
         tableData = JSON.parse(storedData);
