@@ -1295,14 +1295,17 @@ function convertToEncounterTable() {
       
         //const players = JSON.parse(localStorage.getItem('players'));
         localStorage.setItem('encounterData', localStorage.getItem('players'));
-        const storedData = JSON.parse(localStorage.getItem('encounterData'));
-        console.log('storedData');
-        console.log(storedData);
-        if (storedData) {
-            tableData = storedData;
-            if (!Array.isArray(tableData)) {
-            console.warn('Data in localStorage is not an array');
+        const playerData = JSON.parse(localStorage.getItem('encounterData'));
+        console.log('playerData');
+        console.log(playerData);
+        if (playerData) {
             tableData = [];
+            playerData.forEach((player) => {
+                tableData.push(player);
+            });
+            if (!Array.isArray(tableData)) {
+                console.warn('Data in localStorage is not an array');
+                tableData = [];
             }
         }
     } catch (error) {
