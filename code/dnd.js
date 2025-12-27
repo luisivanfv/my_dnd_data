@@ -86,6 +86,7 @@ async function loadSpells() {
         else
             return;
         //const spellInfo = await getJson(`spells/${spellSearched}`);
+        console.log(localStorage);
         const spellInfo = JSON.parse(localStorage.getItem(`spell_${spellSearched}`));
         if (!spellInfo) return;
         element.outerHTML = `<div id="${element.id}" class="loaded_spell" style="color: white;">
