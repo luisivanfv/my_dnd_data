@@ -1297,7 +1297,7 @@ function convertToEncounterTable() {
     localStorage.setItem('encounterData', localStorage.getItem('players'));
       const storedData = JSON.parse(localStorage.getItem('encounterData'));
       if (storedData) {
-        tableData = JSON.parse(storedData);
+        tableData = storedData;
         if (!Array.isArray(tableData)) {
           console.warn('Data in localStorage is not an array');
           tableData = [];
