@@ -31,8 +31,8 @@ window.initializeExternalScript = async function() {
         await recolor();
         //await fetchFolderDataSequentially();
         await loadStatblocks();
-        //await loadSpells();
-        //await loadCharacters();
+        await loadSpells();
+        await loadCharacters();
         //await loadEncounters();
         //await loadLocations();
         //await loadSearchBoxes();
@@ -42,6 +42,75 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+async function loadCharacters() {
+    Array.from(document.getElementsByClassName('character')).forEach(async (element) => {
+        const replacements = await buildAllReplacements(true, true, true, true, true, fontColor, fontSize);
+        const characterSlug = getUrlParameter('name');
+        if(!characterSlug) return;
+        const characterData = await getJson(`characters/${characterSlug}`);
+        console.log(characterData);
+        html = `<div id="${characterSlug}" class="character">
+            <span style="color: white">${await enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
+        html += `</div>`;
+        element.outerHTML = html;
+    });
+}
+function addSpellComponentIcons(txt) {
+    txt = txt.replaceAll(', ', '   ');
+    const replacements = {
+        'V': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/sf-black-filled/64/${specialTextColor}/medium-volume.png" alt="medium-volume"/>`,
+        'S': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/pastel-glyph/64/${specialTextColor}/hand--v3.png" alt="hand--v3"/>`,
+        'M': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/ios-filled/50/${specialTextColor}/diamond--v1.png" alt="diamond--v1"/>`
+    };
+    return replaceIcons(txt, replacements);
+}
+function addRangeOrAreaIcons(txt) {
+    const replacements = {
+        'Touch': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/pastel-glyph/64/${specialTextColor}/hand--v3.png" alt="hand--v3"/>`,
+        'distance': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/deco-glyph/48/${specialTextColor}/goal.png" alt="goal"/>`,
+        'cone': `<img style="transform: rotate(270deg);" width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/24/${specialTextColor}/external-line-shapes-tanah-basah-basic-outline-tanah-basah-4.png" alt="external-line-shapes-tanah-basah-basic-outline-tanah-basah-4"/>`,
+        'sphere': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/external-outline-black-m-oki-orlando/32/${specialTextColor}/external-sphere-math-vol-2-outline-outline-black-m-oki-orlando.png" alt="external-sphere-math-vol-2-outline-outline-black-m-oki-orlando"/>`,
+        'line': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/sf-black-filled/64/${specialTextColor}/line.png" alt="line"/>`
+    };
+    return replaceIcons(txt, replacements);
+}
+function addCastingTimeIcons(txt) {
+    const replacements = {
+        '(Ritual)': `<img width="${iconSize}" height="${iconSize}" src="https://img.icons8.com/pulsar-line/48/${specialTextColor}/pentagram-devil.png" alt="pentagram-devil"/>`,
+        '1 Action': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/40C057/filled-circle.png" alt="filled-circle"/>`,
+        'Action': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/40C057/filled-circle.png" alt="filled-circle"/>`,
+        'Bonus Action': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/48/FD7E14/external-glyph-shapes-tanah-basah-glyph-tanah-basah-69.png" alt="external-glyph-shapes-tanah-basah-glyph-tanah-basah-69"/>`,
+        '1 Bonus Action': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/48/FD7E14/external-glyph-shapes-tanah-basah-glyph-tanah-basah-69.png" alt="external-glyph-shapes-tanah-basah-glyph-tanah-basah-69"/>`,
+        'Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
+        '1 Reaction': `<img width="${smallIconSize}" height="${smallIconSize}" src="https://img.icons8.com/ios-filled/50/C850F2/star.png" alt="star"/>`,
+    };
+    return replaceIcons(txt, replacements);
+}
+async function loadSpells() {
+    Array.from(document.getElementsByClassName('spell')).forEach(async (element) => {
+        let spellSearched = element.id.toString().split('_spell')[0].replace('_', ' ');
+        if(spellSearched == 'spell')
+            spellSearched = getUrlParameter('name');
+        else
+            return;
+        const spellInfo = await getJson(`spells/${spellSearched}`);
+        if (!spellInfo) return;
+        element.outerHTML = `<div id="${element.id}" class="loaded_spell" style="color: white;">
+            <strong>Level</strong> ${spellInfo.level}<br><br>
+            <strong>Casting time</strong> ${addCastingTimeIcons(spellInfo.castingTime)}<br><br>
+            <strong>Range/Area</strong> ${addRangeOrAreaIcons(spellInfo.rangeOrArea)}<br><br>
+            <strong>Components</strong> ${addSpellComponentIcons(spellInfo.components)}<br><br>
+            <strong>Duration</strong> ${spellInfo.duration}<br><br>
+            <strong>School</strong> ${spellInfo.school}<br><br>
+            <strong>Attack/Save</strong> ${spellInfo.attackOrSave}<br><br>
+            <strong>Damage/Effect</strong> ${spellInfo.damageOrEffect}<br><br>
+            <hr>
+            ${await enrichText(spellInfo.description, { fontColor: iconColor, addSpellUrls: false })}
+            <hr>
+            <a href="/wikis/spells" class="wiki-page-link">< Spells</a>
+        </div>`;
+    });
+}
 function toPrettyListName(str) {
     let result = '';
     let capitalizeNext = true;
