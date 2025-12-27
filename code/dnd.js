@@ -27,7 +27,7 @@ window.initializeExternalScript = async function() {
         await loadSpells();
         await loadCharacters();
         //await loadEncounters();
-        //await loadLocations();
+        await loadLocations();
         //await loadSearchBoxes();
         await loadWikiLists();
         await loadLookers();
@@ -35,12 +35,41 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+
+async function loadLocations() {
+    Array.from(document.getElementsByClassName('location')).forEach(async (element) => {
+        const locationSlug = getUrlParameter('name');
+        if(!locationSlug) return;
+        //const locationData = await getJson(`locations/${locationSlug}`);
+        const locationData = JSON.parse(localStorage.getItem(`locations_${locationSlug}.json`));
+        console.log(locationData);
+        html = `<div id="${locationSlug}" class="location">
+            <span style="color: white">${enrichText(locationData.description, { fontColor: specialTextColor })}</span>
+            `;
+        if(locationData.inhabitants.length > 0) {
+            html += `<div class="op_accordion ui-accordion ui-widget ui-helper-reset" role="tablist">
+                <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all" role="tab" id="ui-accordion-1-header-0" aria-controls="ui-accordion-1-panel-0" aria-selected="false" tabindex="0" data-accordion-key="habitantes" style="background: rgb(28, 28, 28); color: rgb(242, 242, 242);"><span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e"></span> Habitantes </h3>
+            <div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" id="ui-accordion-1-panel-0" aria-labelledby="ui-accordion-1-header-0" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none; background: rgb(28, 28, 28); overflow: hidden;">
+            <ul>`;
+            locationData.inhabitants.forEach((inhabitant) => {
+                html += `<li style="color: rgb(242, 242, 242);"><a href="/character?t=${inhabitant.toLowerCase().replaceAll(' ', '-')}" class="wiki-content-link">${inhabitant}</a></li>`;
+            });
+            html += `</ul>
+            </div>
+            </div>`;
+        }
+        html += `
+        </div>`;
+        element.outerHTML = html;
+    });
+}
 async function loadCharacters() {
     Array.from(document.getElementsByClassName('character')).forEach(async (element) => {
-        const replacements = await buildAllReplacements(true, true, true, true, true, statblockReplacementColor, fontSize);
+        const replacements = await buildAllReplacements(true, true, true, true, true, statblockReplacementColor, statblockFontSize);
         const characterSlug = getUrlParameter('name');
         if(!characterSlug) return;
-        const characterData = await getJson(`characters/${characterSlug}`);
+        //const characterData = await getJson(`characters/${characterSlug}`);
+        const characterData = JSON.parse(localStorage.getItem(`characters_${characterSlug}.json`));
         html = `<div id="${characterSlug}" class="character">
             <span style="color: white">${enrichText(characterData.description, replacements, { fontColor: specialTextColor })}</span>`;
         html += `</div>`;

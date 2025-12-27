@@ -1,6 +1,6 @@
 window.githubRoot = 'https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@main/';
 const statblockReplacementColor = '#010101';
-const fontSize = '15px';
+const statblockFontSize = '14px';
 
 async function getLatestCommitHash() {
     try {
@@ -164,40 +164,40 @@ async function loadAllReplacementsToStorage() {
     const keywords = await fetchIfNotSet('keywords.json');
     for (const [keyword, url] of Object.entries(keywords)) {
         allEntries.push(
-            [keyword, keywordToUrl(keyword, statblockReplacementColor, url, fontSize)],
-            [toUpper(keyword), keywordToUrl(toUpper(keyword), statblockReplacementColor, url, fontSize)]
+            [keyword, keywordToUrl(keyword, statblockReplacementColor, url, statblockFontSize)],
+            [toUpper(keyword), keywordToUrl(toUpper(keyword), statblockReplacementColor, url, statblockFontSize)]
         );
     }
     const spells = await getKeywordsFromFolder('spells');
     for (const spell of spells) {
         const slug = `spell?name=${spell.replaceAll(' ', '-')}`;
         allEntries.push(
-            [spell, keywordToUrl(spell, statblockReplacementColor, slug, fontSize)],
-            [toUpper(spell), keywordToUrl(toUpper(spell), statblockReplacementColor, slug, fontSize)]
+            [spell, keywordToUrl(spell, statblockReplacementColor, slug, statblockFontSize)],
+            [toUpper(spell), keywordToUrl(toUpper(spell), statblockReplacementColor, slug, statblockFontSize)]
         );
     }
     const creatures = await getKeywordsFromFolder('statblocks');
     for (const creature of creatures) {
         const slug = `creature?name=${creature.replaceAll(' ', '-')}`;
         allEntries.push(
-            [creature, keywordToUrl(creature, 'black', slug, fontSize)],
-            [toUpper(creature), keywordToUrl(toUpper(creature), 'black', slug, fontSize)]
+            [creature, keywordToUrl(creature, 'black', slug, statblockFontSize)],
+            [toUpper(creature), keywordToUrl(toUpper(creature), 'black', slug, statblockFontSize)]
         );
     }
     const locations = await getKeywordsFromFolder('locations');
     for (const location of locations) {
         const slug = `location?name=${location.replaceAll(' ', '-')}`;
         allEntries.push(
-            [location, keywordToUrl(location, statblockReplacementColor, slug, fontSize)],
-            [toUpper(location), keywordToUrl(toUpper(location), statblockReplacementColor, slug, fontSize)]
+            [location, keywordToUrl(location, statblockReplacementColor, slug, statblockFontSize)],
+            [toUpper(location), keywordToUrl(toUpper(location), statblockReplacementColor, slug, statblockFontSize)]
         );
     }
     const characters = await getKeywordsFromFolder('characters');
     for (const character of characters) {
         const slug = `character?name=${character.replaceAll(' ', '-')}`;
         allEntries.push(
-            [character, keywordToUrl(character, statblockReplacementColor, slug, fontSize)],
-            [toUpper(character), keywordToUrl(toUpper(character), statblockReplacementColor, slug, fontSize)]
+            [character, keywordToUrl(character, statblockReplacementColor, slug, statblockFontSize)],
+            [toUpper(character), keywordToUrl(toUpper(character), statblockReplacementColor, slug, statblockFontSize)]
         );
     }
     
