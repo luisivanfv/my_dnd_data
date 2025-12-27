@@ -152,9 +152,14 @@ async function getFilenames(path = '') {
 async function loadDirectoriesToStorage() {
     const directories = ['characters', 'locations', 'spells', 'statblocks'];
     directories.forEach(async (directory) => {
-        localStorage.setItem(directory, JSON.stringify(await getFilenames(directory)));
+        const filenames = await getFilenames(directory);
+        localStorage.setItem(directory, JSON.stringify(filenames));
+        filenames.forEach(async (filename) => {
+            localStorage.setItem(`${directory}_${filename}`, JSON.stringify(await getJson(`spells/${spellSearched}`)))
+        });
     });
 }
+//await getJson(`spells/${spellSearched}`)
 async function loadAllReplacementsToStorage() {
     const allEntries = [];
     const keywords = await fetchIfNotSet('keywords');
@@ -222,7 +227,7 @@ async function initializeApp() {
         console.log('WE ARE IN: ', document.URL);
         if(document.URL.endsWith('/advanced-settings'))
             await loadAllStorageData();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        //await new Promise(resolve => setTimeout(resolve, 1000));
         
         var initFunctions = [];
         for (var key in window) {

@@ -85,7 +85,8 @@ async function loadSpells() {
             spellSearched = getUrlParameter('name');
         else
             return;
-        const spellInfo = await getJson(`spells/${spellSearched}`);
+        //const spellInfo = await getJson(`spells/${spellSearched}`);
+        const spellInfo = JSON.parse(localStorage.getItem(`spell_${spellSearched}`));
         if (!spellInfo) return;
         element.outerHTML = `<div id="${element.id}" class="loaded_spell" style="color: white;">
             <strong>Level</strong> ${spellInfo.level}<br><br>
