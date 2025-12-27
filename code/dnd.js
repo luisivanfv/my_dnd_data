@@ -32,6 +32,8 @@ window.initializeExternalScript = async function() {
         await loadWikiLists();
         await loadLookers();
         await renameWikisWithNames();
+        addSearchBarStyles();
+        convertToSearchBar();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
@@ -1255,10 +1257,6 @@ function addSearchBarStyles() {
 }
 
 // Initialize the search bars when the DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  addSearchBarStyles();
-  convertToSearchBar();
-});
 
 // Also export the function for manual use
 window.convertToSearchBar = convertToSearchBar;
