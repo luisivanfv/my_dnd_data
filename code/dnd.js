@@ -1646,59 +1646,6 @@ function convertToEncounterTable() {
       });
     }
     
-    // Function to sync with source data (players and monsters)
-    function syncWithSourceData() {
-      const playerData = JSON.parse(localStorage.getItem('players')) || {};
-      const monsterData = JSON.parse(localStorage.getItem('monsters')) || {};
-      let hasChanges = false;
-      
-      // Create maps for quick lookup
-      const playerMap = new Map();
-      const monsterMap = new Map();
-      
-      Object.entries(playerData).forEach(([key, info]) => {
-        playerMap.set(key.toLowerCase(), info);
-      });
-      
-      Object.entries(monsterData).forEach(([key, info]) => {
-        monsterMap.set(key.toLowerCase(), info);
-      });
-      
-      // Update existing table data with source data
-      tableData.forEach((row, index) => {
-        if (row.sourceKey) {
-          const sourceKey = row.sourceKey.toLowerCase();
-          let sourceInfo = null;
-          
-          if (row.type === 'player') {
-            sourceInfo = playerMap.get(sourceKey);
-          } else if (row.type === 'monster') {
-            sourceInfo = monsterMap.get(sourceKey);
-          }
-          
-          if (sourceInfo) {
-            // Update AC if different
-            if (sourceInfo.ac !== undefined && row.ac !== sourceInfo.ac) {
-              row.ac = sourceInfo.ac;
-              hasChanges = true;
-            }
-            
-            // Update HP if different
-            if (sourceInfo.hp !== undefined && row.hp !== sourceInfo.hp) {
-              row.hp = sourceInfo.hp;
-              hasChanges = true;
-            }
-          }
-        }
-      });
-      
-      if (hasChanges) {
-        renderTable();
-        return true;
-      }
-      return false;
-    }
-    
     // Function to reload from source data
     function reloadFromSourceData() {
         console.log('>>> 1');
@@ -1752,16 +1699,6 @@ function convertToEncounterTable() {
       renderTable();
     });
     
-    const syncButton = document.createElement('button');
-    syncButton.textContent = 'Sync Source Data';
-    syncButton.addEventListener('click', () => {
-      if (syncWithSourceData()) {
-        alert('Source data synced successfully!');
-      } else {
-        alert('No changes needed - data is already up to date.');
-      }
-    });
-    
     const reloadButton = document.createElement('button');
     reloadButton.textContent = 'Reload from Source';
     reloadButton.addEventListener('click', () => {
@@ -1773,7 +1710,6 @@ function convertToEncounterTable() {
     
     controls.appendChild(addButton);
     controls.appendChild(sortButton);
-    controls.appendChild(syncButton);
     controls.appendChild(reloadButton);
     controls.appendChild(clearButton);
     
