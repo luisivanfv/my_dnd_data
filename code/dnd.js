@@ -875,6 +875,7 @@ async function addDamageTypeIcons(txt) {
         let iconAlt = iconData.includes('||') ? iconData.split('||')[1] : '';
         replacements[damageType] = `<img width="${damageTypeIconSize}" height="${damageTypeIconSize}" src="${iconUrl}" alt="${iconAlt}" title="${damageType}"/>`;
     });
+    console.log('addDamageTypeIcons...');
     return replaceIcons(txt, replacements);
 }
 async function addSectionIfExists(txt, replacements, title, options) {
