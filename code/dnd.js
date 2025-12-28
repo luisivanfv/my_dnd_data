@@ -1711,7 +1711,7 @@ addButton.addEventListener('click', () => {
     const sortButton = document.createElement('button');
     sortButton.textContent = 'Sort by Initiative';
     sortButton.addEventListener('click', () => {
-        sortTable();
+        sortTable(tableData);
     });
     
     const reloadButton = document.createElement('button');
@@ -1743,7 +1743,7 @@ addButton.addEventListener('click', () => {
     element.appendChild(tableContainer);
   });
 }
-function sortTable() {
+function sortTable(tableData) {
     // Make a copy of tableData to sort
     const sortedData = [...tableData];
     
