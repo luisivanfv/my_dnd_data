@@ -1200,8 +1200,23 @@ function convertToSearchBar() {
 // The onclick function you requested
 function selectedInSearchBar(selectedValue) {
     console.log('selectedInSearchBar was triggered with value:', selectedValue);
-    const data = JSON.parse(localStorage.getItem(`statblocks_${selectedValue.replaceAll(' ', '-').toLowerCase()}.json`));
-    console.log(data);
+    const slugName = selectedValue.replaceAll(' ', '-').toLowerCase();
+    const data = JSON.parse(localStorage.getItem(`statblocks_${slugName}.json`));
+    const dataToAdd = {
+        id: 0,
+        initiative: 0,
+        name: selectedValue,
+        ac: data.armorClass || 10,
+        hp: data.hitPoints ? data.hitPoints.split('(')[1].split(')')[0].trim() : '0',
+        maxHp: data.hitPoints ? data.hitPoints.split('(')[1].split(')')[0].trim() : '0',
+        tempHp: '0',
+        conditions: '',
+        notes: '',
+        type: 'creature',
+        sourceKey: selectedValue
+    };
+    console.log(dataToAdd);
+    addRowToDOM(dataToAdd);
 }
 
 // Optional: Basic CSS styles for the search bar
