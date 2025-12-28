@@ -1566,19 +1566,26 @@ function addRowToDOM(data = null, index = null) {
       cell.style.cursor = 'pointer';
       cell.classList.add('editable-cell');
       
-      cell.addEventListener('click', () => {
-        const currentValue = cell.textContent;
+      // In addRowToDOM function:
+    row.dataset.rowId = data.id; // Store the ID on the row
+
+    // In the click handler:
+    cell.addEventListener('click', () => {
+    const currentValue = cell.textContent;
+    
+    if (column.type === 'number') {
+        showNumberPrompt(currentValue, (newValue) => {
+        cell.textContent = newValue;
+        // Find the row in tableData by ID
+        const rowId = parseInt(row.dataset.rowId);
+        const rowIndex = tableData.findIndex(item => item.id === rowId);
         
-        if (column.type === 'number') {
-          showNumberPrompt(currentValue, (newValue) => {
-            cell.textContent = newValue;
-            // Update the actual tableData, not just the DOM
-            if (index !== null && index >= 0 && index < tableData.length) {
-              tableData[index][column.key] = newValue;
-            }
-          });
+        if (rowIndex !== -1) {
+            tableData[rowIndex][column.key] = newValue;
         }
-      });
+        });
+    }
+    });
     } else {
       cell.style.cursor = 'default';
     }
@@ -1702,23 +1709,30 @@ addButton.addEventListener('click', () => {
     });
     
     const sortButton = document.createElement('button');
-sortButton.textContent = 'Sort by Initiative';
-sortButton.addEventListener('click', () => {
-  // Sort the tableData array
-  tableData.sort((a, b) => {
-    const initA = parseInt(a.initiative) || 0;
-    const initB = parseInt(b.initiative) || 0;
-    return initB - initA; // Higher initiative first
-  });
-  
-  // Update IDs after sorting
-  tableData.forEach((row, index) => {
-    row.id = index + 1;
-  });
-  
-  // Re-render with sorted data
-  renderTable();
-});
+    sortButton.textContent = 'Sort by Initiative';
+    sortButton.addEventListener('click', () => {
+        // Make a copy of tableData to sort
+        const sortedData = [...tableData];
+        
+        // Sort by initiative (highest first)
+        sortedData.sort((a, b) => {
+            const initA = parseInt(a.initiative) || 0;
+            const initB = parseInt(b.initiative) || 0;
+            return initB - initA; // Higher initiative first
+        });
+        
+        // Update IDs based on new order
+        sortedData.forEach((row, index) => {
+            row.id = index + 1;
+        });
+        
+        // Replace tableData with sorted version
+        tableData.length = 0; // Clear the array
+        tableData.push(...sortedData); // Add sorted data back
+        
+        // Re-render with sorted data
+        renderTable();
+    });
     
     const reloadButton = document.createElement('button');
     reloadButton.textContent = 'Reload from Source';
