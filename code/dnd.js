@@ -1328,6 +1328,9 @@ function initializeTableData() {
     
     // Save this initialized data to localStorage (encounterData) for persistence
     console.error(tableForData);
+    tableForData.forEach((item) => {
+        console.log(item);
+    });
     return tableForData;
 }
 function convertToEncounterTable() {
