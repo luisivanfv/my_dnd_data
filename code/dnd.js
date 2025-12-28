@@ -1310,7 +1310,8 @@ function initializeTableData() {
                         initiative: 0,
                         name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
                         ac: monsterInfo.ac || 10,
-                        hp: monsterInfo.hp || '0/0',
+                        hp: monsterInfo.hp || '0',
+                        maxHp: monsterInfo.hp || '0',
                         tempHp: '0',
                         conditions: '',
                         notes: '',
@@ -1352,7 +1353,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', 'Initiative', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['ID', 'I', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
       const th = document.createElement('th');
       th.textContent = headerText;
@@ -1564,6 +1565,7 @@ function addRowToDOM(data = null, index = null) {
     { key: 'name', editable: false, type: 'text' },
     { key: 'ac', editable: true, type: 'number' },
     { key: 'hp', editable: false, type: 'text' },
+    { key: 'maxHp', editable: false, type: 'text' },
     { key: 'tempHp', editable: false, type: 'text' },
     { key: 'conditions', editable: false, type: 'text' },
     { key: 'notes', editable: false, type: 'text' }
@@ -1707,7 +1709,8 @@ addButton.addEventListener('click', () => {
     initiative: 0,
     name: `Creature ${tableData.length + 1}`,
     ac: 10,
-    hp: '0/0',
+    hp: '0',
+    maxHp: '0',
     tempHp: '0',
     conditions: '',
     notes: '',
@@ -1769,12 +1772,7 @@ addButton.addEventListener('click', () => {
     controls.appendChild(clearButton);
     
     // Initialize and render table data
-    console.log('>>> 2');
-    console.log(tableData);
-    console.log('<');
     tableData = initializeTableData();
-    console.log('<<< 2');
-    console.log('<E>');
     renderTable();
     
     // Assemble everything
