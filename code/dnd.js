@@ -1651,6 +1651,10 @@ function convertToEncounterTable() {
     // Function to render the entire table
     function renderTable() {
         console.log('renderTable');
+        tableData.forEach((item) => {
+            console.log(item);
+        });
+        console.log('------');
         tbody.innerHTML = '';
         let index = 0;
         tableData.forEach((item) => {
