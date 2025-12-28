@@ -1438,6 +1438,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             
             cell.addEventListener('click', () => {
                 const currentValue = cell.textContent;
+                console.log('Cell clicked:', column.key, currentValue);
                 if (column.type === 'number') {
                     showNumberPromptFunc(currentValue, (newValue) => {
                         cell.textContent = newValue;
