@@ -1200,7 +1200,7 @@ function convertToSearchBar() {
 // The onclick function you requested
 function selectedInSearchBar(selectedValue) {
     console.log('selectedInSearchBar was triggered with value:', selectedValue);
-    const data = JSON.parse(localStorage.getItem(`statblocks_${toLowerCase(selectedValue.replaceAll(' ', '-'))}.json`));
+    const data = JSON.parse(localStorage.getItem(`statblocks_${selectedValue.replaceAll(' ', '-').toLowerCase()}.json`));
     console.log(data);
 }
 
