@@ -1720,6 +1720,7 @@ function convertToEncounterTable() {
         const row = document.createElement('tr');
         // === ADD THESE LINES ===
         // Add color classes based on type
+        console.log('Adding row for data:', data);
         if (data.type === 'player') {
             row.classList.add('player-row', 'color-row');
             if (data.color) {
