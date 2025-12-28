@@ -1231,7 +1231,8 @@ function selectedInSearchBar(selectedValue) {
         notes: '',
         type: 'creature',
         sourceKey: selectedValue,
-        color: '#dc2626'
+        color: '#dc2626',
+        textColor: 'white'
     };
     
     console.log('Data to add:', dataToAdd);
@@ -1331,7 +1332,8 @@ function initializeTableData() {
                         notes: '',
                         type: 'player',
                         sourceKey: playerKey,
-                        color: playerInfo.color || '#4a5568'
+                        color: playerInfo.color || '#4a5568',
+                        textColor: playerInfo.textColor || 'white'
                     });
                 }
             }
@@ -1838,25 +1840,6 @@ function convertToEncounterTable() {
         gap: 10px;
         flex-wrap: wrap;
     `;
-    
-    const addButton = document.createElement('button');
-    addButton.textContent = 'Add Row';
-    addButton.addEventListener('click', () => {
-        window.encounterTableData.push({
-            id: window.encounterTableData.length + 1,
-            initiative: 0,
-            name: `Creature ${window.encounterTableData.length + 1}`,
-            ac: 10,
-            hp: '0',
-            maxHp: '0',
-            tempHp: '0',
-            conditions: '',
-            notes: '',
-            type: 'custom',
-            color: '#dc2626',
-        });
-        renderTable();
-    });
     
     const clearButton = document.createElement('button');
     clearButton.textContent = 'Clear All';
