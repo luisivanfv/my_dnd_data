@@ -1649,7 +1649,7 @@ function renderTable() {
         });
         console.log('------');
         dataToRender.forEach((item) => {
-            addRow(item);
+            addRowToDOM(item);
         });
     }
     
