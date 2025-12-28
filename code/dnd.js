@@ -1391,7 +1391,7 @@ function sortTableData(tableData) {
         row.id = index + 1;
     });
 }
-function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
+/*function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
     
     // Add appropriate class based on type
@@ -1494,7 +1494,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
     row.appendChild(deleteCell);
     
     tbody.appendChild(row);
-}
+}*/
 // Create a showNumberPrompt function that can be used outside
 function createNumberPrompt(currentValue, callback) {
   const modal = document.createElement('div');
