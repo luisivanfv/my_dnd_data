@@ -1280,6 +1280,7 @@ function initializeTableData() {
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
                         hp: playerInfo.maxHp || '0/0',
+                        maxHp: playerInfo.maxHp || '0/0',
                         tempHp: '0',
                         conditions: '',
                         notes: '',
@@ -1353,7 +1354,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', 'I', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
       const th = document.createElement('th');
       th.textContent = headerText;
