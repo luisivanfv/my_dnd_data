@@ -1784,6 +1784,14 @@ function convertToEncounterTable() {
                 cell.style.cursor = 'default';
             }
             console.log('cellValue:', cellValue, 'for column:', column.key);
+            if(column.key === 'name' && data.type === 'creature') {
+                console.log('Adding lazy preview link for creature:', cellValue);
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = 'lazy-preview-link';
+                link.textContent = cellValue;
+                link.style.color = textColor;
+            }
             row.appendChild(cell);
         });
         
