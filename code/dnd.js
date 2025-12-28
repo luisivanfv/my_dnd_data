@@ -1532,111 +1532,102 @@ function convertToEncounterTable() {
     }
     
     // Function to add a new row
-    function addRow(data = null, index = null) {
-      const row = document.createElement('tr');
-      console.log('addRow');
-      console.log(data);
-      console.log(index);
-      // Define which columns are editable and their types
-      const columns = [
-        { key: 'id', editable: true, type: 'number' },
-        { key: 'initiative', editable: true, type: 'number' },
-        { key: 'name', editable: false, type: 'text' },
-        { key: 'ac', editable: true, type: 'number' },
-        { key: 'hp', editable: false, type: 'text' },
-        { key: 'tempHp', editable: false, type: 'text' },
-        { key: 'conditions', editable: false, type: 'text' },
-        { key: 'notes', editable: false, type: 'text' }
-      ];
+    // Function to add a new row to the DOM (does NOT add to tableData)
+function addRowToDOM(data = null, index = null) {
+  const row = document.createElement('tr');
+  
+  // Define which columns are editable and their types
+  const columns = [
+    { key: 'id', editable: true, type: 'number' },
+    { key: 'initiative', editable: true, type: 'number' },
+    { key: 'name', editable: false, type: 'text' },
+    { key: 'ac', editable: true, type: 'number' },
+    { key: 'hp', editable: false, type: 'text' },
+    { key: 'tempHp', editable: false, type: 'text' },
+    { key: 'conditions', editable: false, type: 'text' },
+    { key: 'notes', editable: false, type: 'text' }
+  ];
+  
+  columns.forEach((column, cellIndex) => {
+    const cell = document.createElement('td');
+    cell.dataset.key = column.key;
+    cell.dataset.rowIndex = index; // Store the original index
+    
+    // Set cell content
+    let cellValue = '';
+    if (data && data[column.key] !== undefined) {
+      cellValue = data[column.key];
+    }
+    
+    cell.textContent = cellValue;
+    
+    // Only make certain cells editable
+    if (column.editable) {
+      cell.style.cursor = 'pointer';
+      cell.classList.add('editable-cell');
       
-      columns.forEach((column, cellIndex) => {
-        const cell = document.createElement('td');
-        cell.dataset.key = column.key;
+      cell.addEventListener('click', () => {
+        const currentValue = cell.textContent;
         
-        // Set cell content
-        let cellValue = '';
-        if (data && data[column.key] !== undefined) {
-          cellValue = data[column.key];
-        } else {
-          // Default values for new rows
-          switch(column.key) {
-            case 'id': cellValue = tbody.children.length + 1; break;
-            case 'initiative': cellValue = 0; break;
-            case 'name': cellValue = `Creature ${tbody.children.length + 1}`; break;
-            case 'ac': cellValue = 10; break;
-            default: cellValue = '';
-          }
-        }
-        
-        cell.textContent = cellValue;
-        
-        // Only make certain cells editable
-        if (column.editable) {
-          cell.style.cursor = 'pointer';
-          cell.classList.add('editable-cell');
-          
-          cell.addEventListener('click', () => {
-            const currentValue = cell.textContent;
-            
-            if (column.type === 'number') {
-              showNumberPrompt(currentValue, (newValue) => {
-                cell.textContent = newValue;
-                updateTableData(row.rowIndex - 1, column.key, newValue);
-              });
-            } else {
-              showTextPrompt(currentValue, (newValue) => {
-                cell.textContent = newValue;
-                updateTableData(row.rowIndex - 1, column.key, newValue);
-              });
+        if (column.type === 'number') {
+          showNumberPrompt(currentValue, (newValue) => {
+            cell.textContent = newValue;
+            // Update the actual tableData, not just the DOM
+            if (index !== null && index >= 0 && index < tableData.length) {
+              tableData[index][column.key] = newValue;
             }
           });
-        } else {
-          cell.style.cursor = 'default';
         }
-        
-        row.appendChild(cell);
       });
-      
-      // Add delete button cell
-      const deleteCell = document.createElement('td');
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = '×';
-      deleteButton.style.cssText = `
-        background: #ff4444;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        font-size: 16px;
-        line-height: 1;
-      `;
-      deleteButton.addEventListener('click', () => {
-        const rowIndex = row.rowIndex - 1; // Adjust for header row
-        tableData.splice(rowIndex, 1);
-        console.log('<A>');
-        renderTable();
-      });
-      deleteCell.appendChild(deleteButton);
-      row.appendChild(deleteCell);
-      
-      // Insert at specific position or append
-      if (index !== null && index >= 0 && index < tbody.children.length) {
-        tbody.insertBefore(row, tbody.children[index]);
-      } else {
-        tbody.appendChild(row);
-      }
-      
-      // Update table data if new data was provided
-      if (data) {
-        if (index !== null && index >= 0 && index < tableData.length) {
-          tableData.splice(index, 0, data);
-        } else {
-          tableData.push(data);
-        }
-      }
+    } else {
+      cell.style.cursor = 'default';
     }
+    
+    row.appendChild(cell);
+  });
+  
+  // Add delete button cell
+  const deleteCell = document.createElement('td');
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = '×';
+  deleteButton.style.cssText = `
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+  `;
+  deleteButton.addEventListener('click', () => {
+    const rowIndex = parseInt(row.querySelector('td').dataset.rowIndex);
+    if (!isNaN(rowIndex) && rowIndex >= 0) {
+      tableData.splice(rowIndex, 1);
+      renderTable(); // Re-render after deletion
+    }
+  });
+  deleteCell.appendChild(deleteButton);
+  row.appendChild(deleteCell);
+  
+  // Insert at specific position or append
+  if (index !== null && index >= 0 && index < tbody.children.length) {
+    tbody.insertBefore(row, tbody.children[index]);
+  } else {
+    tbody.appendChild(row);
+  }
+}
+
+// Function to render the entire table
+function renderTable() {
+  tbody.innerHTML = '';
+  
+  // Render each row from tableData
+  tableData.forEach((rowData, index) => {
+    addRowToDOM(rowData, index);
+  });
+}
     
     // Function to update table data
     function updateTableData(rowIndex, key, value) {
@@ -1681,20 +1672,24 @@ function convertToEncounterTable() {
     `;
     
     const addButton = document.createElement('button');
-    addButton.textContent = 'Add Row';
-    addButton.addEventListener('click', () => {
-      addRow({
-        id: tableData.length + 1,
-        initiative: 0,
-        name: `Creature ${tableData.length + 1}`,
-        ac: 10,
-        hp: '0/0',
-        tempHp: '0',
-        conditions: '',
-        notes: '',
-        type: 'custom'
-      });
-    });
+addButton.textContent = 'Add Row';
+addButton.addEventListener('click', () => {
+  // Add to tableData array
+  tableData.push({
+    id: tableData.length + 1,
+    initiative: 0,
+    name: `Creature ${tableData.length + 1}`,
+    ac: 10,
+    hp: '0/0',
+    tempHp: '0',
+    conditions: '',
+    notes: '',
+    type: 'custom'
+  });
+  
+  // Re-render
+  renderTable();
+});
     
     const clearButton = document.createElement('button');
     clearButton.textContent = 'Clear All';
@@ -1707,16 +1702,23 @@ function convertToEncounterTable() {
     });
     
     const sortButton = document.createElement('button');
-    sortButton.textContent = 'Sort by Initiative';
-    sortButton.addEventListener('click', () => {
-        tableData.sort((a, b) => {
-            const initA = parseInt(a.initiative) || 0;
-            const initB = parseInt(b.initiative) || 0;
-            return initB - initA; // Higher initiative first
-        });
-        console.log('<D>');
-        renderTable();
-    });
+sortButton.textContent = 'Sort by Initiative';
+sortButton.addEventListener('click', () => {
+  // Sort the tableData array
+  tableData.sort((a, b) => {
+    const initA = parseInt(a.initiative) || 0;
+    const initB = parseInt(b.initiative) || 0;
+    return initB - initA; // Higher initiative first
+  });
+  
+  // Update IDs after sorting
+  tableData.forEach((row, index) => {
+    row.id = index + 1;
+  });
+  
+  // Re-render with sorted data
+  renderTable();
+});
     
     const reloadButton = document.createElement('button');
     reloadButton.textContent = 'Reload from Source';
