@@ -1422,6 +1422,28 @@ function convertToEncounterTable() {
       const confirmButton = document.createElement('button');
       confirmButton.textContent = 'OK';
       confirmButton.addEventListener('click', () => {
+        // Make a copy of tableData to sort
+        const sortedData = [...tableData];
+        
+        // Sort by initiative (highest first)
+        sortedData.sort((a, b) => {
+            const initA = parseInt(a.initiative) || 0;
+            const initB = parseInt(b.initiative) || 0;
+            return initB - initA; // Higher initiative first
+        });
+        
+        // Update IDs based on new order
+        sortedData.forEach((row, index) => {
+            row.id = index + 1;
+        });
+        
+        // Replace tableData with sorted version
+        tableData.length = 0; // Clear the array
+        tableData.push(...sortedData); // Add sorted data back
+        
+        // Re-render with sorted data
+        renderTable();
+        //asdf
         const value = parseInt(input.value);
         if (!isNaN(value)) {
           callback(value);
