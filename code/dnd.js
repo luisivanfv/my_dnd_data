@@ -1724,11 +1724,12 @@ function convertToEncounterTable() {
         if (data.type === 'player') {
             console.log('player');
             console.log(data);
-            row.style.backgroundColor = 'yellow';
+            row.style.backgroundColor = data.color || 'darkblue';
         } else if (data.type === 'monster' || data.type === 'creature') {
             console.log('monster/creature');
             console.log(data);
             row.style.backgroundColor = 'darkred';
+            row.style.color = 'white';
         }
         row.style.position = 'relative';
         // Define which columns are editable and their types
