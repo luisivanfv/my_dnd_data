@@ -1725,6 +1725,7 @@ function convertToEncounterTable() {
             console.log('player');
             console.log(data);
             row.style.backgroundColor = data.color || 'darkblue';
+            row.style.color = data.textColor || 'white';
         } else if (data.type === 'monster' || data.type === 'creature') {
             console.log('monster/creature');
             console.log(data);
