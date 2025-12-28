@@ -1230,7 +1230,8 @@ function selectedInSearchBar(selectedValue) {
         conditions: '',
         notes: '',
         type: 'creature',
-        sourceKey: selectedValue
+        sourceKey: selectedValue,
+        color: '#dc2626'
     };
     
     console.log('Data to add:', dataToAdd);
@@ -1329,7 +1330,8 @@ function initializeTableData() {
                         conditions: '',
                         notes: '',
                         type: 'player',
-                        sourceKey: playerKey
+                        sourceKey: playerKey,
+                        color: playerInfo.color || '#4a5568'
                     });
                 }
             }
@@ -1359,7 +1361,8 @@ function initializeTableData() {
                         conditions: '',
                         notes: '',
                         type: 'monster',
-                        sourceKey: monsterKey
+                        sourceKey: monsterKey,
+                        color: '#dc2626' // Red for monsters
                     });
                 }
             }
@@ -1392,6 +1395,37 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
     const row = document.createElement('tr');
     
     // Define which columns are editable and their types
+    if (data.color) {
+        row.style.backgroundColor = data.color;
+    } else if (data.type === 'monster') {
+        row.style.backgroundColor = '#dc2626'; // Red for monsters by default
+    } else if (data.type === 'player') {
+        row.style.backgroundColor = '#4a5568'; // Default for players
+    }
+    const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+    if (rowIndex !== -1) {
+        // Create a semi-transparent overlay for alternating pattern
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.pointerEvents = 'none';
+        
+        // Apply alternating transparency
+        if (rowIndex % 2 === 0) {
+            // Even rows (0, 2, 4...) - lighter
+            overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        } else {
+            // Odd rows (1, 3, 5...) - darker  
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+        }
+        
+        // Position the row relative so overlay can be positioned absolutely
+        row.style.position = 'relative';
+        row.appendChild(overlay);
+    }
     const columns = [
         { key: 'id', editable: true, type: 'number' },
         { key: 'initiative', editable: true, type: 'number' },
@@ -1905,7 +1939,8 @@ function convertToEncounterTable() {
             tempHp: '0',
             conditions: '',
             notes: '',
-            type: 'custom'
+            type: 'custom',
+            color: '#dc2626',
         });
         renderTable();
     });
