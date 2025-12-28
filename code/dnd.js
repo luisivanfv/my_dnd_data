@@ -1216,7 +1216,26 @@ function selectedInSearchBar(selectedValue) {
         sourceKey: selectedValue
     };
     console.log(dataToAdd);
-    addRowToDOM(dataToAdd);
+    
+    // Find the first encounter table on the page and add the row
+    const firstEncounterTable = document.querySelector('.to-encounter-table');
+    if (firstEncounterTable) {
+        // Get the tableData from the existing table (you'll need to expose this)
+        const tableContainer = firstEncounterTable.querySelector('.encounter-table-container');
+        if (tableContainer) {
+            // This is tricky because tableData is scoped inside convertToEncounterTable
+            // We need a different approach - either:
+            // 1. Store tableData globally
+            // 2. Trigger a custom event
+            // 3. Use a shared data structure
+            
+            // For now, let's trigger a custom event that the table can listen to
+            const addRowEvent = new CustomEvent('addCreatureToEncounter', {
+                detail: dataToAdd
+            });
+            document.dispatchEvent(addRowEvent);
+        }
+    }
 }
 
 // Optional: Basic CSS styles for the search bar
@@ -1269,6 +1288,7 @@ function addSearchBarStyles() {
 // Also export the function for manual use
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
+window.encounterTables = new Map(); // Store table data by element ID
 // ENCOUNTER TABLE
 
 // Function to initialize data from localStorage players and monsters
@@ -1328,38 +1348,117 @@ function initializeTableData() {
                     });
                 }
             }
-            console.log('Monsters loaded to table');
-            console.warn(tableForData.length);
         }
     } catch (error) {
         console.error('Error loading monster data:', error);
     }
     
-    // Save this initialized data to localStorage (encounterData) for persistence
-    console.error(tableForData);
-    tableForData.forEach((item) => {
-        console.log(item);
-    });
     return tableForData;
 }
 // Helper function for sorting
 function sortTableData(tableData) {
-  tableData.sort((a, b) => {
-    const initA = parseInt(a.initiative) || 0;
-    const initB = parseInt(b.initiative) || 0;
+    tableData.sort((a, b) => {
+        const initA = parseInt(a.initiative) || 0;
+        const initB = parseInt(b.initiative) || 0;
+        
+        if (initA === initB) {
+            return a.name.localeCompare(b.name);
+        }
+        
+        return initB - initA;
+    });
     
-    if (initA === initB) {
-      return a.name.localeCompare(b.name);
-    }
-    
-    return initB - initA;
-  });
-  
-  tableData.forEach((row, index) => {
-    row.id = index + 1;
-  });
+    tableData.forEach((row, index) => {
+        row.id = index + 1;
+    });
 }
-
+function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
+    const row = document.createElement('tr');
+    
+    // Define which columns are editable and their types
+    const columns = [
+        { key: 'id', editable: true, type: 'number' },
+        { key: 'initiative', editable: true, type: 'number' },
+        { key: 'name', editable: false, type: 'text' },
+        { key: 'ac', editable: true, type: 'number' },
+        { key: 'hp', editable: false, type: 'text' },
+        { key: 'maxHp', editable: false, type: 'text' },
+        { key: 'tempHp', editable: false, type: 'text' },
+        { key: 'conditions', editable: false, type: 'text' },
+        { key: 'notes', editable: false, type: 'text' }
+    ];
+    
+    columns.forEach((column) => {
+        const cell = document.createElement('td');
+        cell.dataset.key = column.key;
+        
+        // Set cell content
+        const cellValue = data[column.key] !== undefined ? data[column.key] : '';
+        cell.textContent = cellValue;
+        
+        // Only make certain cells editable
+        if (column.editable) {
+            cell.style.cursor = 'pointer';
+            cell.classList.add('editable-cell');
+            
+            cell.addEventListener('click', () => {
+                const currentValue = cell.textContent;
+                if (column.type === 'number') {
+                    showNumberPromptFunc(currentValue, (newValue) => {
+                        cell.textContent = newValue;
+                        // Find the row in tableData by ID
+                        const rowIndex = tableData.findIndex(item => item.id === data.id);
+                        
+                        if (rowIndex !== -1) {
+                            tableData[rowIndex][column.key] = newValue;
+                            
+                            // Auto-sort if initiative changed
+                            if (column.key === 'initiative') {
+                                sortTableData(tableData);
+                                renderTableFunc();
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            cell.style.cursor = 'default';
+        }
+        
+        row.appendChild(cell);
+    });
+    
+    // Add delete button cell
+    const deleteCell = document.createElement('td');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '×';
+    deleteButton.style.cssText = `
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1;
+    `;
+    deleteButton.addEventListener('click', () => {
+        const rowIndex = tableData.findIndex(item => item.id === data.id);
+        if (rowIndex !== -1) {
+            tableData.splice(rowIndex, 1);
+            // Update IDs after deletion
+            tableData.forEach((row, idx) => {
+                row.id = idx + 1;
+            });
+            renderTableFunc();
+        }
+    });
+    deleteCell.appendChild(deleteButton);
+    row.appendChild(deleteCell);
+    
+    tbody.appendChild(row);
+}
 // Create a showNumberPrompt function that can be used outside
 function createNumberPrompt(currentValue, callback) {
   const modal = document.createElement('div');
@@ -1532,144 +1631,328 @@ function addRowToDOM(data, tableData, tbody, showNumberPrompt, renderTable) {
   tbody.appendChild(row);
 }
 function convertToEncounterTable() {
-  const elements = document.querySelectorAll('.to-encounter-table');
-  
-  elements.forEach(element => {
-    element.innerHTML = '';
+    // Get all elements with the class "to-encounter-table"
+    const elements = document.querySelectorAll('.to-encounter-table');
     
-    const tableContainer = document.createElement('div');
-    tableContainer.className = 'encounter-table-container';
-    
-    const table = document.createElement('table');
-    table.className = 'encounter-table';
-    
-    // Create table header
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    
-    const headers = ['ID', 'Initiative', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
-    headers.forEach(headerText => {
-      const th = document.createElement('th');
-      th.textContent = headerText;
-      headerRow.appendChild(th);
+    elements.forEach((element, tableIndex) => {
+        // Clear the element's content
+        element.innerHTML = '';
+        
+        // Create table structure
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'encounter-table-container';
+        
+        const table = document.createElement('table');
+        table.className = 'encounter-table';
+        
+        // Create table header
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        
+        const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+        
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        
+        // Create table body
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        
+        // Initialize table data from playerData and monsterData
+        let tableData = initializeTableData();
+        
+        // Store this table's data globally so it can be accessed from outside
+        const tableId = `encounter-table-${tableIndex}`;
+        element.dataset.tableId = tableId;
+        window.encounterTables.set(tableId, {
+            tableData,
+            tbody,
+            renderTable: null // Will be set below
+        });
+        
+        // Function to create a modal prompt for numbers only
+        function showNumberPrompt(currentValue, callback) {
+            const modal = document.createElement('div');
+            modal.className = 'number-prompt-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                min-width: 300px;
+            `;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = currentValue;
+            input.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                font-size: 16px;
+                box-sizing: border-box;
+            `;
+            
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 15px;
+            `;
+            
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Cancel';
+            cancelButton.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'OK';
+            confirmButton.addEventListener('click', () => {
+                const value = parseInt(input.value);
+                if (!isNaN(value)) {
+                    callback(value);
+                }
+                document.body.removeChild(modal);
+            });
+            
+            // Allow Enter key to confirm
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const value = parseInt(input.value);
+                    if (!isNaN(value)) {
+                        callback(value);
+                    }
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            buttonContainer.appendChild(cancelButton);
+            buttonContainer.appendChild(confirmButton);
+            
+            modalContent.appendChild(document.createTextNode('Enter a number:'));
+            modalContent.appendChild(input);
+            modalContent.appendChild(buttonContainer);
+            modal.appendChild(modalContent);
+            
+            document.body.appendChild(modal);
+            input.focus();
+            input.select();
+        }
+        
+        // Function to render the entire table
+        function renderTable() {
+            tbody.innerHTML = '';
+            tableData.forEach((rowData) => {
+                addRowToDOM(rowData, tableData, tbody, showNumberPrompt, renderTable);
+            });
+            
+            // Update the stored render function
+            const tableInfo = window.encounterTables.get(tableId);
+            if (tableInfo) {
+                tableInfo.renderTable = renderTable;
+                tableInfo.tableData = tableData;
+                tableInfo.tbody = tbody;
+            }
+        }
+        
+        // Function to add a creature from outside
+        function addCreatureToTable(creatureData) {
+            // Set a proper ID
+            creatureData.id = tableData.length + 1;
+            
+            // Add to table data
+            tableData.push(creatureData);
+            
+            // Auto-sort by initiative
+            sortTableData(tableData);
+            
+            // Re-render
+            renderTable();
+        }
+        
+        // Listen for addCreature events
+        element.addEventListener('addCreatureToEncounter', (event) => {
+            addCreatureToTable(event.detail);
+        });
+        
+        // Also expose a global function to add creatures
+        window[`addCreatureToTable${tableIndex}`] = (creatureData) => {
+            addCreatureToTable(creatureData);
+        };
+        
+        // Create control buttons
+        const controls = document.createElement('div');
+        controls.className = 'table-controls';
+        controls.style.cssText = `
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        `;
+        
+        const addButton = document.createElement('button');
+        addButton.textContent = 'Add Row';
+        addButton.addEventListener('click', () => {
+            tableData.push({
+                id: tableData.length + 1,
+                initiative: 0,
+                name: `Creature ${tableData.length + 1}`,
+                ac: 10,
+                hp: '0',
+                maxHp: '0',
+                tempHp: '0',
+                conditions: '',
+                notes: '',
+                type: 'custom'
+            });
+            renderTable();
+        });
+        
+        const clearButton = document.createElement('button');
+        clearButton.textContent = 'Clear All';
+        clearButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all rows?')) {
+                tableData = [];
+                renderTable();
+            }
+        });
+        
+        const sortButton = document.createElement('button');
+        sortButton.textContent = 'Sort by Initiative';
+        sortButton.addEventListener('click', () => {
+            sortTableData(tableData);
+            renderTable();
+        });
+        
+        const reloadButton = document.createElement('button');
+        reloadButton.textContent = 'Reload from Source';
+        reloadButton.addEventListener('click', () => {
+            if (confirm('This will replace current table with player and monster data. Continue?')) {
+                tableData = initializeTableData();
+                renderTable();
+                alert('Table reloaded from source data!');
+            }
+        });
+        
+        controls.appendChild(addButton);
+        controls.appendChild(sortButton);
+        controls.appendChild(reloadButton);
+        controls.appendChild(clearButton);
+        
+        // Initial render
+        renderTable();
+        
+        // Assemble everything
+        tableContainer.appendChild(controls);
+        tableContainer.appendChild(table);
+        element.appendChild(tableContainer);
     });
-    
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-    
-    // Create table body
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    
-    // Initialize table data
-    let tableData = initializeTableData();
-    
-    // Create render function that uses the external addRowToDOM
-    function renderTable() {
-      tbody.innerHTML = '';
-      tableData.forEach((rowData) => {
-        // Use the external function, passing all dependencies
-        addRowToDOM(
-          rowData, 
-          tableData, 
-          tbody, 
-          createNumberPrompt, 
-          renderTable
-        );
-      });
-    }
-    
-    // ... rest of your convertToEncounterTable code ...
-    // (controls, event handlers, etc.)
-    
-    // Initial render
-    renderTable();
-  });
 }
 
 // Optional: Add CSS styles for the table
 function addEncounterTableStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .encounter-table-container {
-      width: 100%;
-      overflow-x: auto;
-    }
-    
-    .encounter-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    
-    .encounter-table th {
-      background-color: #4a5568;
-      color: white;
-      padding: 12px;
-      text-align: left;
-      font-weight: bold;
-      border: 1px solid #ddd;
-    }
-    
-    .encounter-table td {
-      padding: 12px;
-      border: 1px solid #ddd;
-    }
-    
-    .encounter-table td.editable-cell {
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    
-    .encounter-table td.editable-cell:hover {
-      background-color: #e0f7fa;
-    }
-    
-    .encounter-table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-    
-    .encounter-table tr:hover {
-      background-color: #f5f5f5;
-    }
-    
-    .table-controls button {
-      padding: 8px 16px;
-      background-color: #4a5568;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.2s;
-    }
-    
-    .table-controls button:hover {
-      background-color: #2d3748;
-    }
-    
-    .number-prompt-modal button,
-    .text-prompt-modal button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    
-    .number-prompt-modal button:first-child,
-    .text-prompt-modal button:first-child {
-      background-color: #e2e8f0;
-    }
-    
-    .number-prompt-modal button:last-child,
-    .text-prompt-modal button:last-child {
-      background-color: #4a5568;
-      color: white;
-    }
-  `;
-  document.head.appendChild(style);
+    const style = document.createElement('style');
+    style.textContent = `
+        .encounter-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .encounter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .encounter-table th {
+            background-color: #4a5568;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        
+        .encounter-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        .encounter-table td.editable-cell {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .encounter-table td.editable-cell:hover {
+            background-color: #e0f7fa;
+        }
+        
+        .encounter-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .encounter-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .table-controls button {
+            padding: 8px 16px;
+            background-color: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .table-controls button:hover {
+            background-color: #2d3748;
+        }
+        
+        .number-prompt-modal button,
+        .text-prompt-modal button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .number-prompt-modal button:first-child,
+        .text-prompt-modal button:first-child {
+            background-color: #e2e8f0;
+        }
+        
+        .number-prompt-modal button:last-child,
+        .text-prompt-modal button:last-child {
+            background-color: #4a5568;
+            color: white;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
+window.addRowToDOM = addRowToDOM; // Make it available globally
