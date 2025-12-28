@@ -1748,7 +1748,7 @@ function convertToEncounterTable() {
         columns.forEach((column) => {
             const cell = document.createElement('td');
             cell.dataset.key = column.key;
-            cell.color = textColor;
+            cell.style.color = textColor;
             
             // Set cell content
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
