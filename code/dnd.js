@@ -1342,280 +1342,156 @@ function initializeTableData() {
     });
     return tableForData;
 }
-function convertToEncounterTable() {
-  // Get all elements with the class "to-encounter-table"
-  const elements = document.querySelectorAll('.to-encounter-table');
+// Helper function for sorting
+function sortTableData(tableData) {
+  tableData.sort((a, b) => {
+    const initA = parseInt(a.initiative) || 0;
+    const initB = parseInt(b.initiative) || 0;
+    
+    if (initA === initB) {
+      return a.name.localeCompare(b.name);
+    }
+    
+    return initB - initA;
+  });
   
-  elements.forEach(element => {
-    // Clear the element's content
-    element.innerHTML = '';
-    
-    // Create table structure
-    const tableContainer = document.createElement('div');
-    tableContainer.className = 'encounter-table-container';
-    
-    const table = document.createElement('table');
-    table.className = 'encounter-table';
-    
-    // Create table header
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    
-    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
-    headers.forEach(headerText => {
-      const th = document.createElement('th');
-      th.textContent = headerText;
-      headerRow.appendChild(th);
-    });
-    
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-    
-    // Create table body
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    
-    // Initialize table data from playerData and monsterData
-    let tableData = [];
-    
-    // Function to create a modal prompt for numbers only
-    function showNumberPrompt(currentValue, callback) {
-      const modal = document.createElement('div');
-      modal.className = 'number-prompt-modal';
-      modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      `;
-      
-      const modalContent = document.createElement('div');
-      modalContent.style.cssText = `
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        min-width: 300px;
-      `;
-      
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.value = currentValue;
-      input.style.cssText = `
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        font-size: 16px;
-        box-sizing: border-box;
-      `;
-      
-      const buttonContainer = document.createElement('div');
-      buttonContainer.style.cssText = `
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 15px;
-      `;
-      
-      const cancelButton = document.createElement('button');
-      cancelButton.textContent = 'Cancel';
-      cancelButton.addEventListener('click', () => {
-        document.body.removeChild(modal);
-      });
-      
-      const confirmButton = document.createElement('button');
-      confirmButton.textContent = 'OK';
-      confirmButton.addEventListener('click', () => {
-        const value = parseInt(input.value);
-        if (!isNaN(value)) {
-          callback(value);
-        }
-        document.body.removeChild(modal);
-        // Make a copy of tableData to sort
-        const sortedData = [...tableData];
-        
-        // Sort by initiative (highest first)
-        sortedData.sort((a, b) => {
-            const initA = parseInt(a.initiative) || 0;
-            const initB = parseInt(b.initiative) || 0;
-            return initB - initA; // Higher initiative first
-        });
-        
-        // Update IDs based on new order
-        sortedData.forEach((row, index) => {
-            row.id = index + 1;
-        });
-        
-        // Replace tableData with sorted version
-        tableData.length = 0; // Clear the array
-        tableData.push(...sortedData); // Add sorted data back
-        
-        // Re-render with sorted data
-        renderTable();
-      });
-      
-      // Allow Enter key to confirm
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          const value = parseInt(input.value);
-          if (!isNaN(value)) {
-            callback(value);
-          }
-          document.body.removeChild(modal);
-        }
-      });
-      
-      buttonContainer.appendChild(cancelButton);
-      buttonContainer.appendChild(confirmButton);
-      
-      modalContent.appendChild(document.createTextNode('Enter a number:'));
-      modalContent.appendChild(input);
-      modalContent.appendChild(buttonContainer);
-      modal.appendChild(modalContent);
-      
-      document.body.appendChild(modal);
-      input.focus();
-      input.select();
+  tableData.forEach((row, index) => {
+    row.id = index + 1;
+  });
+}
+
+// Create a showNumberPrompt function that can be used outside
+function createNumberPrompt(currentValue, callback) {
+  const modal = document.createElement('div');
+  modal.className = 'number-prompt-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+  
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+  `;
+  
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.value = currentValue;
+  input.style.cssText = `
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    box-sizing: border-box;
+  `;
+  
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.cssText = `
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  `;
+  
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancel';
+  cancelButton.addEventListener('click', () => {
+    document.body.removeChild(modal);
+  });
+  
+  const confirmButton = document.createElement('button');
+  confirmButton.textContent = 'OK';
+  confirmButton.addEventListener('click', () => {
+    const value = parseInt(input.value);
+    if (!isNaN(value)) {
+      callback(value);
     }
-    
-    // Function to create a text prompt
-    function showTextPrompt(currentValue, callback) {
-      const modal = document.createElement('div');
-      modal.className = 'text-prompt-modal';
-      modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      `;
-      
-      const modalContent = document.createElement('div');
-      modalContent.style.cssText = `
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        min-width: 300px;
-      `;
-      
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = currentValue;
-      input.style.cssText = `
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        font-size: 16px;
-        box-sizing: border-box;
-      `;
-      
-      const buttonContainer = document.createElement('div');
-      buttonContainer.style.cssText = `
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 15px;
-      `;
-      
-      const cancelButton = document.createElement('button');
-      cancelButton.textContent = 'Cancel';
-      cancelButton.addEventListener('click', () => {
-        document.body.removeChild(modal);
-      });
-      
-      const confirmButton = document.createElement('button');
-      confirmButton.textContent = 'OK';
-      confirmButton.addEventListener('click', () => {
-        callback(input.value);
-        document.body.removeChild(modal);
-      });
-      
-      // Allow Enter key to confirm
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          callback(input.value);
-          document.body.removeChild(modal);
-        }
-      });
-      
-      buttonContainer.appendChild(cancelButton);
-      buttonContainer.appendChild(confirmButton);
-      
-      modalContent.appendChild(document.createTextNode('Enter text:'));
-      modalContent.appendChild(input);
-      modalContent.appendChild(buttonContainer);
-      modal.appendChild(modalContent);
-      
-      document.body.appendChild(modal);
-      input.focus();
-      input.select();
+    document.body.removeChild(modal);
+  });
+  
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const value = parseInt(input.value);
+      if (!isNaN(value)) {
+        callback(value);
+      }
+      document.body.removeChild(modal);
     }
-    
-    // Function to add a new row
-    // Function to add a new row to the DOM (does NOT add to tableData)
-function addRowToDOM(data = null, index = null) {
+  });
+  
+  buttonContainer.appendChild(cancelButton);
+  buttonContainer.appendChild(confirmButton);
+  
+  modalContent.appendChild(document.createTextNode('Enter a number:'));
+  modalContent.appendChild(input);
+  modalContent.appendChild(buttonContainer);
+  modal.appendChild(modalContent);
+  
+  document.body.appendChild(modal);
+  input.focus();
+  input.select();
+  
+  return modal;
+}
+// Move this OUTSIDE convertToEncounterTable
+function addRowToDOM(data, tableData, tbody, showNumberPrompt, renderTable) {
   const row = document.createElement('tr');
+  row.dataset.rowId = data.id;
   
-  // Define which columns are editable and their types
   const columns = [
     { key: 'id', editable: true, type: 'number' },
     { key: 'initiative', editable: true, type: 'number' },
     { key: 'name', editable: false, type: 'text' },
     { key: 'ac', editable: true, type: 'number' },
     { key: 'hp', editable: false, type: 'text' },
-    { key: 'maxHp', editable: false, type: 'text' },
     { key: 'tempHp', editable: false, type: 'text' },
     { key: 'conditions', editable: false, type: 'text' },
     { key: 'notes', editable: false, type: 'text' }
   ];
   
-  columns.forEach((column, cellIndex) => {
+  columns.forEach((column) => {
     const cell = document.createElement('td');
     cell.dataset.key = column.key;
-    cell.dataset.rowIndex = index; // Store the original index
     
-    // Set cell content
-    let cellValue = '';
-    if (data && data[column.key] !== undefined) {
-      cellValue = data[column.key];
-    }
-    
+    const cellValue = data[column.key] !== undefined ? data[column.key] : '';
     cell.textContent = cellValue;
     
-    // Only make certain cells editable
     if (column.editable) {
       cell.style.cursor = 'pointer';
       cell.classList.add('editable-cell');
       
-      // In addRowToDOM function:
-    row.dataset.rowId = data.id; // Store the ID on the row
-
-    // In the click handler:
-    cell.addEventListener('click', () => {
+      cell.addEventListener('click', () => {
         const currentValue = cell.textContent;
+        
         if (column.type === 'number') {
-            showNumberPrompt(currentValue, (newValue) => {
+          showNumberPrompt(currentValue, (newValue) => {
             cell.textContent = newValue;
-            // Find the row in tableData by ID
             const rowId = parseInt(row.dataset.rowId);
             const rowIndex = tableData.findIndex(item => item.id === rowId);
             
             if (rowIndex !== -1) {
-                tableData[rowIndex][column.key] = newValue;
+              tableData[rowIndex][column.key] = newValue;
+              
+              // Auto-sort if initiative changed
+              if (column.key === 'initiative') {
+                sortTableData(tableData);
+                renderTable();
+              }
             }
-            });
+          });
         }
-    });
+      });
     } else {
       cell.style.cursor = 'default';
     }
@@ -1623,7 +1499,7 @@ function addRowToDOM(data = null, index = null) {
     row.appendChild(cell);
   });
   
-  // Add delete button cell
+  // Add delete button
   const deleteCell = document.createElement('td');
   const deleteButton = document.createElement('button');
   deleteButton.textContent = '×';
@@ -1639,154 +1515,75 @@ function addRowToDOM(data = null, index = null) {
     line-height: 1;
   `;
   deleteButton.addEventListener('click', () => {
-    const rowIndex = parseInt(row.querySelector('td').dataset.rowIndex);
-    if (!isNaN(rowIndex) && rowIndex >= 0) {
+    const rowId = parseInt(row.dataset.rowId);
+    const rowIndex = tableData.findIndex(item => item.id === rowId);
+    
+    if (rowIndex !== -1) {
       tableData.splice(rowIndex, 1);
-      renderTable(); // Re-render after deletion
+      tableData.forEach((row, idx) => {
+        row.id = idx + 1;
+      });
+      renderTable();
     }
   });
   deleteCell.appendChild(deleteButton);
   row.appendChild(deleteCell);
   
-  // Insert at specific position or append
-  if (index !== null && index >= 0 && index < tbody.children.length) {
-    tbody.insertBefore(row, tbody.children[index]);
-  } else {
-    tbody.appendChild(row);
-  }
+  tbody.appendChild(row);
 }
-
-// Function to render the entire table
-function renderTable() {
-  tbody.innerHTML = '';
+function convertToEncounterTable() {
+  const elements = document.querySelectorAll('.to-encounter-table');
   
-  // Render each row from tableData
-  tableData.forEach((rowData, index) => {
-    addRowToDOM(rowData, index);
-  });
-}
+  elements.forEach(element => {
+    element.innerHTML = '';
     
-    // Function to update table data
-    function updateTableData(rowIndex, key, value) {
-        if (rowIndex >= 0 && rowIndex < tableData.length) {
-            if (!tableData[rowIndex]) {
-            tableData[rowIndex] = {};
-            }
-            tableData[rowIndex][key] = value;
-        }
-    }
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'encounter-table-container';
     
-    // Function to render the entire table
+    const table = document.createElement('table');
+    table.className = 'encounter-table';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    const headers = ['ID', 'Initiative', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
+    headers.forEach(headerText => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    
+    // Initialize table data
+    let tableData = initializeTableData();
+    
+    // Create render function that uses the external addRowToDOM
     function renderTable() {
-        tbody.innerHTML = '';
-        const dataToRender = [...tableData];
-        console.log('renderTable');
-        tableData.forEach((item) => {
-            console.log(item);
-        });
-        console.log('------');
-        dataToRender.forEach((item) => {
-            addRowToDOM(item);
-        });
+      tbody.innerHTML = '';
+      tableData.forEach((rowData) => {
+        // Use the external function, passing all dependencies
+        addRowToDOM(
+          rowData, 
+          tableData, 
+          tbody, 
+          createNumberPrompt, 
+          renderTable
+        );
+      });
     }
     
-    // Function to reload from source data
-    function reloadFromSourceData() {
-        console.log('>>> 1');
-        tableData = initializeTableData();
-        console.log('<B>');
-        renderTable();
-    }
+    // ... rest of your convertToEncounterTable code ...
+    // (controls, event handlers, etc.)
     
-    // Create control buttons
-    const controls = document.createElement('div');
-    controls.className = 'table-controls';
-    controls.style.cssText = `
-      margin-bottom: 15px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    `;
-    
-    const addButton = document.createElement('button');
-addButton.textContent = 'Add Row';
-addButton.addEventListener('click', () => {
-  // Add to tableData array
-  tableData.push({
-    id: tableData.length + 1,
-    initiative: 0,
-    name: `Creature ${tableData.length + 1}`,
-    ac: 10,
-    hp: '0',
-    maxHp: '0',
-    tempHp: '0',
-    conditions: '',
-    notes: '',
-    type: 'custom'
-  });
-  
-  // Re-render
-  renderTable();
-});
-    
-    const clearButton = document.createElement('button');
-    clearButton.textContent = 'Clear All';
-    clearButton.addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear all rows?')) {
-            tableData = [];
-            console.log('<C>');
-            renderTable();
-        }
-    });
-    
-    const sortButton = document.createElement('button');
-    sortButton.textContent = 'Sort by Initiative';
-    sortButton.addEventListener('click', () => {
-        // Make a copy of tableData to sort
-        const sortedData = [...tableData];
-        
-        // Sort by initiative (highest first)
-        sortedData.sort((a, b) => {
-            const initA = parseInt(a.initiative) || 0;
-            const initB = parseInt(b.initiative) || 0;
-            return initB - initA; // Higher initiative first
-        });
-        
-        // Update IDs based on new order
-        sortedData.forEach((row, index) => {
-            row.id = index + 1;
-        });
-        
-        // Replace tableData with sorted version
-        tableData.length = 0; // Clear the array
-        tableData.push(...sortedData); // Add sorted data back
-        
-        // Re-render with sorted data
-        renderTable();
-    });
-    
-    const reloadButton = document.createElement('button');
-    reloadButton.textContent = 'Reload from Source';
-    reloadButton.addEventListener('click', () => {
-      if (confirm('This will replace current table with player and monster data. Continue?')) {
-        reloadFromSourceData();
-        alert('Table reloaded from source data!');
-      }
-    });
-    
-    controls.appendChild(addButton);
-    controls.appendChild(sortButton);
-    controls.appendChild(reloadButton);
-    controls.appendChild(clearButton);
-    
-    // Initialize and render table data
-    tableData = initializeTableData();
+    // Initial render
     renderTable();
-    
-    // Assemble everything
-    tableContainer.appendChild(controls);
-    tableContainer.appendChild(table);
-    element.appendChild(tableContainer);
   });
 }
 
