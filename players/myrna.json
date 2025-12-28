@@ -1,6 +1,7 @@
 {
     "name": "Myrna",
-    "color": "brown",
+    "color": "darkorange",
+    "textColor": "white",
     "class": "Rogue",
     "ac": "15",
     "maxHp": "11"

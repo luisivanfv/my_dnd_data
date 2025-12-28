@@ -1,6 +1,7 @@
 {
     "name": "Karina",
     "color": "yellow",
+    "textColor": "black",
     "class": "Sorcerer",
     "ac": "15",
     "maxHp": "11"

@@ -1,6 +1,7 @@
 {
     "name": "Juanjo",
     "color": "darkgreen",
+    "textColor": "white",
     "class": "Cleric",
     "ac": "15",
     "maxHp": "11"
