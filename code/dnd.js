@@ -1761,7 +1761,7 @@ function convertToEncounterTable() {
             if (column.editable) {
                 cell.style.cursor = 'pointer';
                 cell.classList.add('editable-cell');
-                console.log('Cell clicked:', column.key, currentValue);
+                console.log('Cell clicked:', column.key, cellValue);
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
                     if (column.type === 'number') {
