@@ -1206,13 +1206,26 @@ function selectedInSearchBar(selectedValue) {
     console.log('selectedInSearchBar was triggered with value:', selectedValue);
     const slugName = selectedValue.replaceAll(' ', '-').toLowerCase();
     const data = JSON.parse(localStorage.getItem(`statblocks_${slugName}.json`));
+    
+    // Extract HP from format like "45 (5d10 + 20)" -> "45"
+    let hp = '0';
+    if (data.hitPoints) {
+        const hpMatch = data.hitPoints.match(/^(\d+)/);
+        if (hpMatch) {
+            hp = hpMatch[1];
+        }
+    }
+    
+    // Use window.encounterTableData for the ID calculation
+    const nextId = window.encounterTableData ? window.encounterTableData.length + 1 : 1;
+    
     const dataToAdd = {
-        id: window.encounterTableData ? window.encounterTableData.length + 1 : 1,
+        id: nextId,
         initiative: 0,
         name: selectedValue,
-        ac: data.armorClass ? data.armorClass.split('(')[0].trim() : 10,
-        hp: data.hitPoints.split('(')[1].split(')')[0].trim(),
-        maxHp: data.hitPoints.split('(')[1].split(')')[0].trim(),
+        ac: data.armorClass || 10,
+        hp: hp,
+        maxHp: hp,
         tempHp: '0',
         conditions: '',
         notes: '',
@@ -1222,7 +1235,7 @@ function selectedInSearchBar(selectedValue) {
     
     console.log('Data to add:', dataToAdd);
     
-    // Directly add to the table if we have the references
+    // Directly add to the table using global references
     if (window.encounterTableData && window.encounterTableRender) {
         // Add to table data
         window.encounterTableData.push(dataToAdd);
@@ -1235,6 +1248,8 @@ function selectedInSearchBar(selectedValue) {
         console.log('Added creature to table via global reference');
     } else {
         console.error('Table references not found. Table might not be initialized yet.');
+        console.log('encounterTableData:', window.encounterTableData);
+        console.log('encounterTableRender:', window.encounterTableRender);
     }
 }
 
