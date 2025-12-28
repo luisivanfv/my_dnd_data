@@ -1584,10 +1584,8 @@ function convertToEncounterTable() {
     const element = document.getElementById('encounter_table') || 
                     document.querySelector('.to-encounter-table');
     
-    if (!element) {
-        console.error('Encounter table element not found');
+    if (!element)
         return;
-    }
     
     // Clear the element's content
     element.innerHTML = '';
@@ -1785,7 +1783,7 @@ function convertToEncounterTable() {
             } else {
                 cell.style.cursor = 'default';
             }
-            
+            console.log('cellValue:', cellValue, 'for column:', column.key);
             row.appendChild(cell);
         });
         
