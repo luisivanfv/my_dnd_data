@@ -1649,6 +1649,10 @@ function convertToEncounterTable() {
     function renderTable() {
       tbody.innerHTML = '';
       tableData.forEach((rowData, index) => {
+        console.log('rowData');
+        console.log(rowData);
+        console.log('index');
+        console.log(index);
         addRow(rowData, index);
       });
     }
