@@ -1650,22 +1650,16 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
+        tbody.innerHTML = '';
+        const dataToRender = [...tableData];
         console.log('renderTable');
         tableData.forEach((item) => {
             console.log(item);
         });
         console.log('------');
-        tbody.innerHTML = '';
-        tableData.forEach((item) => {
+        dataToRender.forEach((item) => {
             addRow(item);
         });
-        /*tableData.forEach((rowDataaa, index) => {
-            console.log('rowDataaa');
-            console.log(rowDataaa);
-            console.log('index');
-            console.log(index);
-            addRow(rowDataaa, index);
-        });*/
     }
     
     // Function to reload from source data
