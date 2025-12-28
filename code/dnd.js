@@ -1534,7 +1534,9 @@ function convertToEncounterTable() {
     // Function to add a new row
     function addRow(data = null, index = null) {
       const row = document.createElement('tr');
-      
+      console.log('addRow');
+      console.log(data);
+      console.log(index);
       // Define which columns are editable and their types
       const columns = [
         { key: 'id', editable: true, type: 'number' },
@@ -1729,10 +1731,6 @@ function convertToEncounterTable() {
     console.log(tableData);
     console.log('<');
     tableData = initializeTableData();
-    console.log('<');
-    tableData.forEach((item) => {
-        console.log(item);
-    });
     console.log('<<< 2');
     renderTable();
     
