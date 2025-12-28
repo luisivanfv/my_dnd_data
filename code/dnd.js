@@ -1415,12 +1415,12 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         { key: 'id', editable: true, type: 'number' },
         { key: 'initiative', editable: true, type: 'number' },
         { key: 'name', editable: false, type: 'text' },
-        { key: 'ac', editable: true, type: 'number' },
-        { key: 'hp', editable: false, type: 'text' },
+        { key: 'ac', editable: false, type: 'number' },
+        { key: 'hp', editable: true, type: 'text' },
         { key: 'maxHp', editable: false, type: 'text' },
-        { key: 'tempHp', editable: false, type: 'text' },
-        { key: 'conditions', editable: false, type: 'text' },
-        { key: 'notes', editable: false, type: 'text' }
+        { key: 'tempHp', editable: true, type: 'text' },
+        { key: 'conditions', editable: true, type: 'text' },
+        { key: 'notes', editable: true, type: 'text' }
     ];
     
     columns.forEach((column) => {
