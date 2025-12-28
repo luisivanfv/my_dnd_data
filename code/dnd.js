@@ -1262,7 +1262,7 @@ function initializeTableData() {
     let idCounter = 1;
     
     console.log('Beginning');
-    console.warn(tableForData);
+    console.warn(tableForData.length);
     // Get player data from localStorage
     try {
         const playerData = JSON.parse(localStorage.getItem('players'));
@@ -1289,7 +1289,7 @@ function initializeTableData() {
                 }
             }
             console.log('Players loaded to table');
-            console.warn(tableForData);
+            console.warn(tableForData.length);
         }
     } catch (error) {
         console.error('Error loading player data:', error);
@@ -1320,7 +1320,7 @@ function initializeTableData() {
                 }
             }
             console.log('Monsters loaded to table');
-            console.warn(tableForData);
+            console.warn(tableForData.length);
         }
     } catch (error) {
         console.error('Error loading monster data:', error);
