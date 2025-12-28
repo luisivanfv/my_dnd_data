@@ -1650,12 +1650,12 @@ function convertToEncounterTable() {
     // Function to render the entire table
     function renderTable() {
       tbody.innerHTML = '';
-      tableData.forEach((rowData, index) => {
+      tableData.forEach((rowDataaa, index) => {
         console.log('rowData');
-        console.log(rowData);
+        console.log(rowDataaa);
         console.log('index');
         console.log(index);
-        addRow(rowData, index);
+        addRow(rowDataaa, index);
       });
     }
     
