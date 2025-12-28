@@ -1615,6 +1615,7 @@ function convertToEncounterTable() {
       deleteButton.addEventListener('click', () => {
         const rowIndex = row.rowIndex - 1; // Adjust for header row
         tableData.splice(rowIndex, 1);
+        console.log('<A>');
         renderTable();
       });
       deleteCell.appendChild(deleteButton);
@@ -1649,27 +1650,29 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
-      tbody.innerHTML = '';
-      let index = 0;
-      tableData.forEach((item) => {
-        console.log(item);
-        addRow(item, index);
-        index+=1;
-      });
-      /*tableData.forEach((rowDataaa, index) => {
-        console.log('rowDataaa');
-        console.log(rowDataaa);
-        console.log('index');
-        console.log(index);
-        addRow(rowDataaa, index);
-      });*/
+        console.log('renderTable');
+        tbody.innerHTML = '';
+        let index = 0;
+        tableData.forEach((item) => {
+            console.log(item);
+            addRow(item, index);
+            index+=1;
+        });
+        /*tableData.forEach((rowDataaa, index) => {
+            console.log('rowDataaa');
+            console.log(rowDataaa);
+            console.log('index');
+            console.log(index);
+            addRow(rowDataaa, index);
+        });*/
     }
     
     // Function to reload from source data
     function reloadFromSourceData() {
         console.log('>>> 1');
-      tableData = initializeTableData();
-      renderTable();
+        tableData = initializeTableData();
+        console.log('<B>');
+        renderTable();
     }
     
     // Create control buttons
@@ -1701,21 +1704,23 @@ function convertToEncounterTable() {
     const clearButton = document.createElement('button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
-      if (confirm('Are you sure you want to clear all rows?')) {
-        tableData = [];
-        renderTable();
-      }
+        if (confirm('Are you sure you want to clear all rows?')) {
+            tableData = [];
+            console.log('<C>');
+            renderTable();
+        }
     });
     
     const sortButton = document.createElement('button');
     sortButton.textContent = 'Sort by Initiative';
     sortButton.addEventListener('click', () => {
-      tableData.sort((a, b) => {
-        const initA = parseInt(a.initiative) || 0;
-        const initB = parseInt(b.initiative) || 0;
-        return initB - initA; // Higher initiative first
-      });
-      renderTable();
+        tableData.sort((a, b) => {
+            const initA = parseInt(a.initiative) || 0;
+            const initB = parseInt(b.initiative) || 0;
+            return initB - initA; // Higher initiative first
+        });
+        console.log('<D>');
+        renderTable();
     });
     
     const reloadButton = document.createElement('button');
@@ -1738,6 +1743,7 @@ function convertToEncounterTable() {
     console.log('<');
     tableData = initializeTableData();
     console.log('<<< 2');
+    console.log('<E>');
     renderTable();
     
     // Assemble everything
