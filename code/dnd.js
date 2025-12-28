@@ -1422,6 +1422,11 @@ function convertToEncounterTable() {
       const confirmButton = document.createElement('button');
       confirmButton.textContent = 'OK';
       confirmButton.addEventListener('click', () => {
+        const value = parseInt(input.value);
+        if (!isNaN(value)) {
+          callback(value);
+        }
+        document.body.removeChild(modal);
         // Make a copy of tableData to sort
         const sortedData = [...tableData];
         
@@ -1443,12 +1448,6 @@ function convertToEncounterTable() {
         
         // Re-render with sorted data
         renderTable();
-        //asdf
-        const value = parseInt(input.value);
-        if (!isNaN(value)) {
-          callback(value);
-        }
-        document.body.removeChild(modal);
       });
       
       // Allow Enter key to confirm
