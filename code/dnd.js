@@ -1640,12 +1640,12 @@ function convertToEncounterTable() {
     
     // Function to update table data
     function updateTableData(rowIndex, key, value) {
-      if (rowIndex >= 0 && rowIndex < tableData.length) {
-        if (!tableData[rowIndex]) {
-          tableData[rowIndex] = {};
+        if (rowIndex >= 0 && rowIndex < tableData.length) {
+            if (!tableData[rowIndex]) {
+            tableData[rowIndex] = {};
+            }
+            tableData[rowIndex][key] = value;
         }
-        tableData[rowIndex][key] = value;
-      }
     }
     
     // Function to render the entire table
@@ -1656,11 +1656,8 @@ function convertToEncounterTable() {
         });
         console.log('------');
         tbody.innerHTML = '';
-        let index = 0;
         tableData.forEach((item) => {
-            console.log(item);
-            addRow(item, index);
-            index+=1;
+            addRow(item);
         });
         /*tableData.forEach((rowDataaa, index) => {
             console.log('rowDataaa');
