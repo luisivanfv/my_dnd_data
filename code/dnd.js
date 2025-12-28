@@ -1391,23 +1391,20 @@ function sortTableData(tableData) {
         row.id = index + 1;
     });
 }
-/*function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
+function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
-    
+    console.log('1st');
     // Add appropriate class based on type
     if (data.type === 'player') {
-        row.classList.add('player-row');
-        row.classList.add('color-row'); // Add this for alternating pattern
-        // Set custom color if provided
-        if (data.color) {
-            row.style.setProperty('--player-color', data.color);
-        }
+        console.log('player');
+        console.log(data);
+        row.style.backgroundColor = data.color || 'darkblue';
+        row.style.color = data.textColor 
     } else if (data.type === 'monster' || data.type === 'creature') {
-        row.classList.add('monster-row');
-        row.classList.add('color-row'); // Add this for alternating pattern
-    } else if (data.type === 'custom') {
-        row.classList.add('custom-row');
-        row.classList.add('color-row'); // Add this for alternating pattern
+        console.log('monster/creature');
+        console.log(data);
+        row.style.backgroundColor = 'darkred';
+        row.style.color = 'white';
     }
     row.style.position = 'relative';
 
@@ -1494,7 +1491,7 @@ function sortTableData(tableData) {
     row.appendChild(deleteCell);
     
     tbody.appendChild(row);
-}*/
+}
 // Create a showNumberPrompt function that can be used outside
 function createNumberPrompt(currentValue, callback) {
   const modal = document.createElement('div');
@@ -1718,6 +1715,7 @@ function convertToEncounterTable() {
     // Function to add a new row to the DOM
     function addRowToDOM(data) {
         const row = document.createElement('tr');
+        console.log('2nd');
         // === ADD THESE LINES ===
         // Add color classes based on type
         console.log('Adding row for data:', data);
@@ -1725,7 +1723,7 @@ function convertToEncounterTable() {
             console.log('player');
             console.log(data);
             row.style.backgroundColor = data.color || 'darkblue';
-            row.style.color = data.textColor || 'white';
+            row.style.color = data.textColor 
         } else if (data.type === 'monster' || data.type === 'creature') {
             console.log('monster/creature');
             console.log(data);
