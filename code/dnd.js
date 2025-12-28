@@ -1653,7 +1653,8 @@ function convertToEncounterTable() {
       let index = 0;
       tableData.forEach((item) => {
         console.log(item);
-        //addRow(item, index++);
+        addRow(item, index)
+        index+=1
       });
       /*tableData.forEach((rowDataaa, index) => {
         console.log('rowDataaa');
