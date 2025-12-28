@@ -1730,7 +1730,9 @@ function convertToEncounterTable() {
     console.log('<');
     tableData = initializeTableData();
     console.log('<');
-    console.log(tableData);
+    tableData.forEach((item) => {
+        console.log(item);
+    });
     console.log('<<< 2');
     renderTable();
     
