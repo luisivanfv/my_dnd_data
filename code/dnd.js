@@ -1325,8 +1325,8 @@ function initializeTableData() {
                         initiative: 0,
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
-                        hp: playerInfo.maxHp || '0/0',
-                        maxHp: playerInfo.maxHp || '0/0',
+                        hp: playerInfo.maxHp || '0',
+                        maxHp: playerInfo.maxHp || '0',
                         tempHp: '0',
                         conditions: '',
                         notes: '',
@@ -1356,7 +1356,7 @@ function initializeTableData() {
                         id: idCounter++,
                         initiative: 0,
                         name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
-                        ac: monsterInfo.ac || 10,
+                        ac: monsterInfo.ac.split('(')[0].trim() || 10,
                         hp: monsterInfo.hp || '0',
                         maxHp: monsterInfo.hp || '0',
                         tempHp: '0',
@@ -1438,7 +1438,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             
             cell.addEventListener('click', () => {
                 const currentValue = cell.textContent;
-                console.log('Cell clicked:', column.key, currentValue);
+                console.log('Cell clicked 1:', column.key, currentValue);
                 if (column.type === 'number') {
                     showNumberPromptFunc(currentValue, (newValue) => {
                         cell.textContent = newValue;
@@ -1727,7 +1727,7 @@ function convertToEncounterTable() {
             backgroundColor = data.color || 'darkblue';
             textColor = data.textColor || 'white';
         } else if (data.type === 'monster' || data.type === 'creature') {
-            backgroundColor = 'darkred';
+            backgroundColor = 'grey';
             textColor = 'white';
         }
         row.style.backgroundColor = backgroundColor;
@@ -1763,7 +1763,7 @@ function convertToEncounterTable() {
                 cell.classList.add('editable-cell');
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
-                    console.log('Cell clicked:', column.key, currentValue);
+                    console.log('Cell clicked 2:', column.key, currentValue);
                     if (column.type === 'number') {
                         showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
