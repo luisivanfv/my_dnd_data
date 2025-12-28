@@ -1394,38 +1394,20 @@ function sortTableData(tableData) {
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
     
-    // Define which columns are editable and their types
-    if (data.color) {
-        row.style.backgroundColor = data.color;
-    } else if (data.type === 'monster') {
-        row.style.backgroundColor = '#dc2626'; // Red for monsters by default
-    } else if (data.type === 'player') {
-        row.style.backgroundColor = '#4a5568'; // Default for players
-    }
-    const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
-    if (rowIndex !== -1) {
-        // Create a semi-transparent overlay for alternating pattern
-        const overlay = document.createElement('div');
-        overlay.style.position = 'absolute';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.width = '100%';
-        overlay.style.height = '100%';
-        overlay.style.pointerEvents = 'none';
-        
-        // Apply alternating transparency
-        if (rowIndex % 2 === 0) {
-            // Even rows (0, 2, 4...) - lighter
-            overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        } else {
-            // Odd rows (1, 3, 5...) - darker  
-            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+    // Add appropriate class based on type
+    if (data.type === 'player') {
+        row.classList.add('player-row');
+        // Set custom color if provided
+        if (data.color) {
+            row.style.setProperty('--player-color', data.color);
         }
-        
-        // Position the row relative so overlay can be positioned absolutely
-        row.style.position = 'relative';
-        row.appendChild(overlay);
+    } else if (data.type === 'monster' || data.type === 'creature') {
+        row.classList.add('monster-row');
+    } else if (data.type === 'custom') {
+        row.classList.add('custom-row');
     }
+
+    // No need for the alternating row logic since CSS handles it
     const columns = [
         { key: 'id', editable: true, type: 'number' },
         { key: 'initiative', editable: true, type: 'number' },
@@ -2067,6 +2049,48 @@ function addEncounterTableStyles() {
         .text-prompt-modal button:last-child {
             background-color: #4a5568;
             color: white;
+        }
+    `;
+    style.textContent += `
+        /* Row coloring */
+        .encounter-table tr.player-row {
+            background-color: var(--player-color, #4a5568) !important;
+        }
+        
+        .encounter-table tr.monster-row {
+            background-color: #dc2626 !important;
+        }
+        
+        .encounter-table tr.creature-row {
+            background-color: #dc2626 !important;
+        }
+        
+        .encounter-table tr.custom-row {
+            background-color: #6b7280 !important;
+        }
+        
+        /* Alternating pattern overlay */
+        .encounter-table tr::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .encounter-table tr:nth-child(even)::before {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .encounter-table tr:nth-child(odd)::before {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Make rows positioned for the pseudo-element */
+        .encounter-table tr {
+            position: relative;
         }
     `;
     document.head.appendChild(style);
