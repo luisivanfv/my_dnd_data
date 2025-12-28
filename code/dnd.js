@@ -1866,8 +1866,7 @@ function convertToEncounterTable() {
             alert('Table reloaded from source data!');
         }
     });
-    
-    controls.appendChild(addButton);
+
     controls.appendChild(sortButton);
     controls.appendChild(reloadButton);
     controls.appendChild(clearButton);
