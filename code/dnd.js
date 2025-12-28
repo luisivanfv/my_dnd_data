@@ -1197,46 +1197,45 @@ function convertToSearchBar() {
   });
 }
 
+window.encounterTableData = null;
+window.encounterTableRender = null;
+window.encounterTableShowNumberPrompt = null;
+
 // The onclick function you requested
 function selectedInSearchBar(selectedValue) {
     console.log('selectedInSearchBar was triggered with value:', selectedValue);
     const slugName = selectedValue.replaceAll(' ', '-').toLowerCase();
     const data = JSON.parse(localStorage.getItem(`statblocks_${slugName}.json`));
     const dataToAdd = {
-        id: 0,
+        id: window.encounterTableData ? window.encounterTableData.length + 1 : 1,
         initiative: 0,
         name: selectedValue,
-        ac: data.armorClass || 10,
-        hp: data.hitPoints ? data.hitPoints.split('(')[1].split(')')[0].trim() : '0',
-        maxHp: data.hitPoints ? data.hitPoints.split('(')[1].split(')')[0].trim() : '0',
+        ac: data.armorClass ? data.armorClass.split('(')[0].trim() : 10,
+        hp: data.hitPoints.split('(')[1].split(')')[0].trim(),
+        maxHp: data.hitPoints.split('(')[1].split(')')[0].trim(),
         tempHp: '0',
         conditions: '',
         notes: '',
         type: 'creature',
         sourceKey: selectedValue
     };
-    console.log(dataToAdd);
     
-    // Find the first encounter table on the page and add the row
-    const firstEncounterTable = document.querySelector('.to-encounter-table');
-    if (firstEncounterTable) {
-        // Get the tableData from the existing table (you'll need to expose this)
-        const tableContainer = firstEncounterTable.querySelector('.encounter-table-container');
-        if (tableContainer) {
-            // This is tricky because tableData is scoped inside convertToEncounterTable
-            // We need a different approach - either:
-            // 1. Store tableData globally
-            // 2. Trigger a custom event
-            // 3. Use a shared data structure
-            
-            // For now, let's trigger a custom event that the table can listen to
-            const addRowEvent = new CustomEvent('addCreatureToEncounter', {
-                detail: dataToAdd
-            });
-            document.dispatchEvent(addRowEvent);
-        }
+    console.log('Data to add:', dataToAdd);
+    
+    // Directly add to the table if we have the references
+    if (window.encounterTableData && window.encounterTableRender) {
+        // Add to table data
+        window.encounterTableData.push(dataToAdd);
+        
+        // Auto-sort by initiative
+        sortTableData(window.encounterTableData);
+        
+        // Re-render the table
+        window.encounterTableRender();
+        console.log('Added creature to table via global reference');
+    } else {
+        console.error('Table references not found. Table might not be initialized yet.');
     }
-}
 
 // Optional: Basic CSS styles for the search bar
 function addSearchBarStyles() {
@@ -1295,6 +1294,7 @@ window.encounterTables = new Map(); // Store table data by element ID
 function initializeTableData() {
     const tableForData = [];
     let idCounter = 1;
+    
     try {
         const playerData = JSON.parse(localStorage.getItem('players'));
         if (playerData && typeof playerData === 'object') {
@@ -1365,9 +1365,10 @@ function sortTableData(tableData) {
             return a.name.localeCompare(b.name);
         }
         
-        return initB - initA;
+        return initB - initA; // Higher initiative first
     });
     
+    // Update IDs
     tableData.forEach((row, index) => {
         row.id = index + 1;
     });
@@ -1631,242 +1632,309 @@ function addRowToDOM(data, tableData, tbody, showNumberPrompt, renderTable) {
   tbody.appendChild(row);
 }
 function convertToEncounterTable() {
-    // Get all elements with the class "to-encounter-table"
-    const elements = document.querySelectorAll('.to-encounter-table');
+    // Get the element with ID "encounter_table" or class "to-encounter-table"
+    const element = document.getElementById('encounter_table') || 
+                    document.querySelector('.to-encounter-table');
     
-    elements.forEach((element, tableIndex) => {
-        // Clear the element's content
-        element.innerHTML = '';
+    if (!element) {
+        console.error('Encounter table element not found');
+        return;
+    }
+    
+    // Clear the element's content
+    element.innerHTML = '';
+    
+    // Create table structure
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'encounter-table-container';
+    
+    const table = document.createElement('table');
+    table.className = 'encounter-table';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // Create table body
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    
+    // Initialize table data
+    let tableData = initializeTableData();
+    
+    // Store references globally
+    window.encounterTableData = tableData;
+    
+    // Function to create a modal prompt for numbers only
+    function showNumberPrompt(currentValue, callback) {
+        const modal = document.createElement('div');
+        modal.className = 'number-prompt-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
         
-        // Create table structure
-        const tableContainer = document.createElement('div');
-        tableContainer.className = 'encounter-table-container';
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 300px;
+        `;
         
-        const table = document.createElement('table');
-        table.className = 'encounter-table';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.value = currentValue;
+        input.style.cssText = `
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            box-sizing: border-box;
+        `;
         
-        // Create table header
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.cssText = `
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        `;
         
-        const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
-        headers.forEach(headerText => {
-            const th = document.createElement('th');
-            th.textContent = headerText;
-            headerRow.appendChild(th);
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.addEventListener('click', () => {
+            document.body.removeChild(modal);
         });
         
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-        
-        // Create table body
-        const tbody = document.createElement('tbody');
-        table.appendChild(tbody);
-        
-        // Initialize table data from playerData and monsterData
-        let tableData = initializeTableData();
-        
-        // Store this table's data globally so it can be accessed from outside
-        const tableId = `encounter-table-${tableIndex}`;
-        element.dataset.tableId = tableId;
-        window.encounterTables.set(tableId, {
-            tableData,
-            tbody,
-            renderTable: null // Will be set below
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'OK';
+        confirmButton.addEventListener('click', () => {
+            const value = parseInt(input.value);
+            if (!isNaN(value)) {
+                callback(value);
+            }
+            document.body.removeChild(modal);
         });
         
-        // Function to create a modal prompt for numbers only
-        function showNumberPrompt(currentValue, callback) {
-            const modal = document.createElement('div');
-            modal.className = 'number-prompt-modal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            `;
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: white;
-                padding: 20px;
-                border-radius: 8px;
-                min-width: 300px;
-            `;
-            
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = currentValue;
-            input.style.cssText = `
-                width: 100%;
-                padding: 10px;
-                margin: 10px 0;
-                font-size: 16px;
-                box-sizing: border-box;
-            `;
-            
-            const buttonContainer = document.createElement('div');
-            buttonContainer.style.cssText = `
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-                margin-top: 15px;
-            `;
-            
-            const cancelButton = document.createElement('button');
-            cancelButton.textContent = 'Cancel';
-            cancelButton.addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-            
-            const confirmButton = document.createElement('button');
-            confirmButton.textContent = 'OK';
-            confirmButton.addEventListener('click', () => {
+        // Allow Enter key to confirm
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
                 const value = parseInt(input.value);
                 if (!isNaN(value)) {
                     callback(value);
                 }
                 document.body.removeChild(modal);
-            });
+            }
+        });
+        
+        buttonContainer.appendChild(cancelButton);
+        buttonContainer.appendChild(confirmButton);
+        
+        modalContent.appendChild(document.createTextNode('Enter a number:'));
+        modalContent.appendChild(input);
+        modalContent.appendChild(buttonContainer);
+        modal.appendChild(modalContent);
+        
+        document.body.appendChild(modal);
+        input.focus();
+        input.select();
+        
+        return modal;
+    }
+    
+    // Store showNumberPrompt globally
+    window.encounterTableShowNumberPrompt = showNumberPrompt;
+    
+    // Function to add a new row to the DOM
+    function addRowToDOM(data) {
+        const row = document.createElement('tr');
+        
+        // Define which columns are editable and their types
+        const columns = [
+            { key: 'id', editable: true, type: 'number' },
+            { key: 'initiative', editable: true, type: 'number' },
+            { key: 'name', editable: false, type: 'text' },
+            { key: 'ac', editable: true, type: 'number' },
+            { key: 'hp', editable: false, type: 'text' },
+            { key: 'maxHp', editable: false, type: 'text' },
+            { key: 'tempHp', editable: false, type: 'text' },
+            { key: 'conditions', editable: false, type: 'text' },
+            { key: 'notes', editable: false, type: 'text' }
+        ];
+        
+        columns.forEach((column) => {
+            const cell = document.createElement('td');
+            cell.dataset.key = column.key;
             
-            // Allow Enter key to confirm
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const value = parseInt(input.value);
-                    if (!isNaN(value)) {
-                        callback(value);
+            // Set cell content
+            const cellValue = data[column.key] !== undefined ? data[column.key] : '';
+            cell.textContent = cellValue;
+            
+            // Only make certain cells editable
+            if (column.editable) {
+                cell.style.cursor = 'pointer';
+                cell.classList.add('editable-cell');
+                
+                cell.addEventListener('click', () => {
+                    const currentValue = cell.textContent;
+                    if (column.type === 'number') {
+                        showNumberPrompt(currentValue, (newValue) => {
+                            cell.textContent = newValue;
+                            // Find the row in tableData by ID
+                            const rowIndex = tableData.findIndex(item => item.id === data.id);
+                            
+                            if (rowIndex !== -1) {
+                                tableData[rowIndex][column.key] = newValue;
+                                
+                                // Auto-sort if initiative changed
+                                if (column.key === 'initiative') {
+                                    sortTableData(tableData);
+                                    renderTable();
+                                }
+                            }
+                        });
                     }
-                    document.body.removeChild(modal);
-                }
-            });
-            
-            buttonContainer.appendChild(cancelButton);
-            buttonContainer.appendChild(confirmButton);
-            
-            modalContent.appendChild(document.createTextNode('Enter a number:'));
-            modalContent.appendChild(input);
-            modalContent.appendChild(buttonContainer);
-            modal.appendChild(modalContent);
-            
-            document.body.appendChild(modal);
-            input.focus();
-            input.select();
-        }
-        
-        // Function to render the entire table
-        function renderTable() {
-            tbody.innerHTML = '';
-            tableData.forEach((rowData) => {
-                addRowToDOM(rowData, tableData, tbody, showNumberPrompt, renderTable);
-            });
-            
-            // Update the stored render function
-            const tableInfo = window.encounterTables.get(tableId);
-            if (tableInfo) {
-                tableInfo.renderTable = renderTable;
-                tableInfo.tableData = tableData;
-                tableInfo.tbody = tbody;
+                });
+            } else {
+                cell.style.cursor = 'default';
             }
-        }
-        
-        // Function to add a creature from outside
-        function addCreatureToTable(creatureData) {
-            // Set a proper ID
-            creatureData.id = tableData.length + 1;
             
-            // Add to table data
-            tableData.push(creatureData);
-            
-            // Auto-sort by initiative
-            sortTableData(tableData);
-            
-            // Re-render
-            renderTable();
-        }
-        
-        // Listen for addCreature events
-        element.addEventListener('addCreatureToEncounter', (event) => {
-            addCreatureToTable(event.detail);
+            row.appendChild(cell);
         });
         
-        // Also expose a global function to add creatures
-        window[`addCreatureToTable${tableIndex}`] = (creatureData) => {
-            addCreatureToTable(creatureData);
-        };
-        
-        // Create control buttons
-        const controls = document.createElement('div');
-        controls.className = 'table-controls';
-        controls.style.cssText = `
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        // Add delete button cell
+        const deleteCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '×';
+        deleteButton.style.cssText = `
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
         `;
-        
-        const addButton = document.createElement('button');
-        addButton.textContent = 'Add Row';
-        addButton.addEventListener('click', () => {
-            tableData.push({
-                id: tableData.length + 1,
-                initiative: 0,
-                name: `Creature ${tableData.length + 1}`,
-                ac: 10,
-                hp: '0',
-                maxHp: '0',
-                tempHp: '0',
-                conditions: '',
-                notes: '',
-                type: 'custom'
-            });
-            renderTable();
-        });
-        
-        const clearButton = document.createElement('button');
-        clearButton.textContent = 'Clear All';
-        clearButton.addEventListener('click', () => {
-            if (confirm('Are you sure you want to clear all rows?')) {
-                tableData = [];
+        deleteButton.addEventListener('click', () => {
+            const rowIndex = tableData.findIndex(item => item.id === data.id);
+            if (rowIndex !== -1) {
+                tableData.splice(rowIndex, 1);
+                // Update IDs after deletion
+                tableData.forEach((row, idx) => {
+                    row.id = idx + 1;
+                });
                 renderTable();
             }
         });
+        deleteCell.appendChild(deleteButton);
+        row.appendChild(deleteCell);
         
-        const sortButton = document.createElement('button');
-        sortButton.textContent = 'Sort by Initiative';
-        sortButton.addEventListener('click', () => {
-            sortTableData(tableData);
-            renderTable();
+        tbody.appendChild(row);
+    }
+    
+    // Function to render the entire table
+    function renderTable() {
+        tbody.innerHTML = '';
+        tableData.forEach((rowData) => {
+            addRowToDOM(rowData);
         });
         
-        const reloadButton = document.createElement('button');
-        reloadButton.textContent = 'Reload from Source';
-        reloadButton.addEventListener('click', () => {
-            if (confirm('This will replace current table with player and monster data. Continue?')) {
-                tableData = initializeTableData();
-                renderTable();
-                alert('Table reloaded from source data!');
-            }
+        // Update global reference
+        window.encounterTableData = tableData;
+    }
+    
+    // Store renderTable globally
+    window.encounterTableRender = renderTable;
+    
+    // Create control buttons
+    const controls = document.createElement('div');
+    controls.className = 'table-controls';
+    controls.style.cssText = `
+        margin-bottom: 15px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    `;
+    
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Row';
+    addButton.addEventListener('click', () => {
+        tableData.push({
+            id: tableData.length + 1,
+            initiative: 0,
+            name: `Creature ${tableData.length + 1}`,
+            ac: 10,
+            hp: '0',
+            maxHp: '0',
+            tempHp: '0',
+            conditions: '',
+            notes: '',
+            type: 'custom'
         });
-        
-        controls.appendChild(addButton);
-        controls.appendChild(sortButton);
-        controls.appendChild(reloadButton);
-        controls.appendChild(clearButton);
-        
-        // Initial render
         renderTable();
-        
-        // Assemble everything
-        tableContainer.appendChild(controls);
-        tableContainer.appendChild(table);
-        element.appendChild(tableContainer);
     });
+    
+    const clearButton = document.createElement('button');
+    clearButton.textContent = 'Clear All';
+    clearButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all rows?')) {
+            tableData = [];
+            renderTable();
+        }
+    });
+    
+    const sortButton = document.createElement('button');
+    sortButton.textContent = 'Sort by Initiative';
+    sortButton.addEventListener('click', () => {
+        sortTableData(tableData);
+        renderTable();
+    });
+    
+    const reloadButton = document.createElement('button');
+    reloadButton.textContent = 'Reload from Source';
+    reloadButton.addEventListener('click', () => {
+        if (confirm('This will replace current table with player and monster data. Continue?')) {
+            tableData = initializeTableData();
+            renderTable();
+            alert('Table reloaded from source data!');
+        }
+    });
+    
+    controls.appendChild(addButton);
+    controls.appendChild(sortButton);
+    controls.appendChild(reloadButton);
+    controls.appendChild(clearButton);
+    
+    // Initial render
+    renderTable();
+    
+    // Assemble everything
+    tableContainer.appendChild(controls);
+    tableContainer.appendChild(table);
+    element.appendChild(tableContainer);
+    
+    console.log('Encounter table initialized. Global references set.');
 }
 
 // Optional: Add CSS styles for the table
