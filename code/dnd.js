@@ -1720,7 +1720,9 @@ function convertToEncounterTable() {
     // Initialize and render table data
     console.log('>>> 2');
     console.log(tableData);
+    console.log('<');
     tableData = initializeTableData();
+    console.log('<');
     console.log(tableData);
     console.log('<<< 2');
     renderTable();
