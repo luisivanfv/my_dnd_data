@@ -1718,7 +1718,19 @@ function convertToEncounterTable() {
     // Function to add a new row to the DOM
     function addRowToDOM(data) {
         const row = document.createElement('tr');
-        
+        // === ADD THESE LINES ===
+        // Add color classes based on type
+        if (data.type === 'player') {
+            row.classList.add('player-row', 'color-row');
+            if (data.color) {
+                row.style.setProperty('--player-color', data.color);
+            }
+        } else if (data.type === 'monster' || data.type === 'creature') {
+            row.classList.add('monster-row', 'color-row');
+        } else if (data.type === 'custom') {
+            row.classList.add('custom-row', 'color-row');
+        }
+        row.style.position = 'relative';
         // Define which columns are editable and their types
         const columns = [
             { key: 'id', editable: true, type: 'number' },
