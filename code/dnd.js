@@ -1199,7 +1199,9 @@ function convertToSearchBar() {
 
 // The onclick function you requested
 function selectedInSearchBar(selectedValue) {
-  console.log('selectedInSearchBar was triggered with value:', selectedValue);
+    console.log('selectedInSearchBar was triggered with value:', selectedValue);
+    const data = JSON.parse(localStorage.getItem(`statblocks_${toLowerCase(selectedValue.replaceAll(' ', '-'))}.json`));
+    console.log(data);
 }
 
 // Optional: Basic CSS styles for the search bar
@@ -1249,8 +1251,6 @@ function addSearchBarStyles() {
   `;
   document.head.appendChild(style);
 }
-function getPlayersObjects() {
-}
 // Also export the function for manual use
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
@@ -1260,10 +1260,6 @@ window.selectedInSearchBar = selectedInSearchBar;
 function initializeTableData() {
     const tableForData = [];
     let idCounter = 1;
-    
-    console.log('Beginning');
-    console.warn(tableForData.length);
-    // Get player data from localStorage
     try {
         const playerData = JSON.parse(localStorage.getItem('players'));
         if (playerData && typeof playerData === 'object') {
@@ -1271,8 +1267,6 @@ function initializeTableData() {
             for (let i = 0; i < playerKeys.length; i++) {
                 const playerKey = playerKeys[i];
                 const playerInfo = playerData[playerKey];
-                console.log(playerKey);
-                console.log(playerInfo);
                 if (playerInfo && typeof playerInfo === 'object') {
                     tableForData.push({
                         id: idCounter++,
@@ -1289,8 +1283,6 @@ function initializeTableData() {
                     });
                 }
             }
-            console.log('Players loaded to table');
-            console.warn(tableForData.length);
         }
     } catch (error) {
         console.error('Error loading player data:', error);
