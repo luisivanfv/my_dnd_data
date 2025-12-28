@@ -1255,6 +1255,81 @@ function getPlayersObjects() {
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
 // ENCOUNTER TABLE
+
+// Function to initialize data from localStorage players and monsters
+function initializeTableData() {
+    const tableForData = [];
+    let idCounter = 1;
+    
+    console.log('Beginning');
+    console.warn(tableForData);
+    // Get player data from localStorage
+    try {
+        const playerData = JSON.parse(localStorage.getItem('players'));
+        if (playerData && typeof playerData === 'object') {
+            const playerKeys = Object.keys(playerData);
+            for (let i = 0; i < playerKeys.length; i++) {
+                const playerKey = playerKeys[i];
+                const playerInfo = playerData[playerKey];
+                console.log(playerKey);
+                console.log(playerInfo);
+                if (playerInfo && typeof playerInfo === 'object') {
+                    tableForData.push({
+                        id: idCounter++,
+                        initiative: 0,
+                        name: toUpper(playerInfo.name),
+                        ac: playerInfo.ac || 10,
+                        hp: playerInfo.maxHp || '0/0',
+                        tempHp: '0',
+                        conditions: '',
+                        notes: '',
+                        type: 'player',
+                        sourceKey: playerKey
+                    });
+                }
+            }
+            console.log('Players loaded to table');
+            console.warn(tableForData);
+        }
+    } catch (error) {
+        console.error('Error loading player data:', error);
+    }
+    
+    // Get monster data from localStorage (when available)
+    try {
+        const monsterData = JSON.parse(localStorage.getItem('monsters'));
+        if (monsterData && typeof monsterData === 'object') {
+            const monsterKeys = Object.keys(monsterData);
+            for (let i = 0; i < monsterKeys.length; i++) {
+                const monsterKey = monsterKeys[i];
+                const monsterInfo = monsterData[monsterKey];
+                
+                if (monsterInfo && typeof monsterInfo === 'object') {
+                    tableForData.push({
+                        id: idCounter++,
+                        initiative: 0,
+                        name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
+                        ac: monsterInfo.ac || 10,
+                        hp: monsterInfo.hp || '0/0',
+                        tempHp: '0',
+                        conditions: '',
+                        notes: '',
+                        type: 'monster',
+                        sourceKey: monsterKey
+                    });
+                }
+            }
+            console.log('Monsters loaded to table');
+            console.warn(tableForData);
+        }
+    } catch (error) {
+        console.error('Error loading monster data:', error);
+    }
+    
+    // Save this initialized data to localStorage (encounterData) for persistence
+    console.error(tableForData);
+    return tableForData;
+}
 function convertToEncounterTable() {
   // Get all elements with the class "to-encounter-table"
   const elements = document.querySelectorAll('.to-encounter-table');
@@ -1290,81 +1365,6 @@ function convertToEncounterTable() {
     
     // Initialize table data from playerData and monsterData
     let tableData = [];
-    
-    // Function to initialize data from localStorage players and monsters
-    function initializeTableData() {
-        const tableForData = [];
-        let idCounter = 1;
-        
-        console.log('Beginning');
-        console.warn(tableForData);
-        // Get player data from localStorage
-        try {
-            const playerData = JSON.parse(localStorage.getItem('players'));
-            if (playerData && typeof playerData === 'object') {
-                const playerKeys = Object.keys(playerData);
-                for (let i = 0; i < playerKeys.length; i++) {
-                    const playerKey = playerKeys[i];
-                    const playerInfo = playerData[playerKey];
-                    console.log(playerKey);
-                    console.log(playerInfo);
-                    if (playerInfo && typeof playerInfo === 'object') {
-                        tableForData.push({
-                            id: idCounter++,
-                            initiative: 0,
-                            name: toUpper(playerInfo.name),
-                            ac: playerInfo.ac || 10,
-                            hp: playerInfo.maxHp || '0/0',
-                            tempHp: '0',
-                            conditions: '',
-                            notes: '',
-                            type: 'player',
-                            sourceKey: playerKey
-                        });
-                    }
-                }
-                console.log('Players loaded to table');
-                console.warn(tableForData);
-            }
-        } catch (error) {
-            console.error('Error loading player data:', error);
-        }
-        
-        // Get monster data from localStorage (when available)
-        try {
-            const monsterData = JSON.parse(localStorage.getItem('monsters'));
-            if (monsterData && typeof monsterData === 'object') {
-                const monsterKeys = Object.keys(monsterData);
-                for (let i = 0; i < monsterKeys.length; i++) {
-                    const monsterKey = monsterKeys[i];
-                    const monsterInfo = monsterData[monsterKey];
-                    
-                    if (monsterInfo && typeof monsterInfo === 'object') {
-                        tableForData.push({
-                            id: idCounter++,
-                            initiative: 0,
-                            name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
-                            ac: monsterInfo.ac || 10,
-                            hp: monsterInfo.hp || '0/0',
-                            tempHp: '0',
-                            conditions: '',
-                            notes: '',
-                            type: 'monster',
-                            sourceKey: monsterKey
-                        });
-                    }
-                }
-                console.log('Monsters loaded to table');
-                console.warn(tableForData);
-            }
-        } catch (error) {
-            console.error('Error loading monster data:', error);
-        }
-        
-        // Save this initialized data to localStorage (encounterData) for persistence
-        console.error(tableForData);
-        return tableForData;
-    }
     
     // Function to create a modal prompt for numbers only
     function showNumberPrompt(currentValue, callback) {
