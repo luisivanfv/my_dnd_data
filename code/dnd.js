@@ -1571,20 +1571,19 @@ function addRowToDOM(data = null, index = null) {
 
     // In the click handler:
     cell.addEventListener('click', () => {
-    const currentValue = cell.textContent;
-    
-    if (column.type === 'number') {
-        showNumberPrompt(currentValue, (newValue) => {
-        cell.textContent = newValue;
-        // Find the row in tableData by ID
-        const rowId = parseInt(row.dataset.rowId);
-        const rowIndex = tableData.findIndex(item => item.id === rowId);
-        
-        if (rowIndex !== -1) {
-            tableData[rowIndex][column.key] = newValue;
+        const currentValue = cell.textContent;
+        if (column.type === 'number') {
+            showNumberPrompt(currentValue, (newValue) => {
+            cell.textContent = newValue;
+            // Find the row in tableData by ID
+            const rowId = parseInt(row.dataset.rowId);
+            const rowIndex = tableData.findIndex(item => item.id === rowId);
+            
+            if (rowIndex !== -1) {
+                tableData[rowIndex][column.key] = newValue;
+            }
+            });
         }
-        });
-    }
     });
     } else {
       cell.style.cursor = 'default';
@@ -1711,7 +1710,27 @@ addButton.addEventListener('click', () => {
     const sortButton = document.createElement('button');
     sortButton.textContent = 'Sort by Initiative';
     sortButton.addEventListener('click', () => {
-        sortTable(tableData);
+        // Make a copy of tableData to sort
+        const sortedData = [...tableData];
+        
+        // Sort by initiative (highest first)
+        sortedData.sort((a, b) => {
+            const initA = parseInt(a.initiative) || 0;
+            const initB = parseInt(b.initiative) || 0;
+            return initB - initA; // Higher initiative first
+        });
+        
+        // Update IDs based on new order
+        sortedData.forEach((row, index) => {
+            row.id = index + 1;
+        });
+        
+        // Replace tableData with sorted version
+        tableData.length = 0; // Clear the array
+        tableData.push(...sortedData); // Add sorted data back
+        
+        // Re-render with sorted data
+        renderTable();
     });
     
     const reloadButton = document.createElement('button');
@@ -1742,29 +1761,6 @@ addButton.addEventListener('click', () => {
     tableContainer.appendChild(table);
     element.appendChild(tableContainer);
   });
-}
-function sortTable(tableData) {
-    // Make a copy of tableData to sort
-    const sortedData = [...tableData];
-    
-    // Sort by initiative (highest first)
-    sortedData.sort((a, b) => {
-        const initA = parseInt(a.initiative) || 0;
-        const initB = parseInt(b.initiative) || 0;
-        return initB - initA; // Higher initiative first
-    });
-    
-    // Update IDs based on new order
-    sortedData.forEach((row, index) => {
-        row.id = index + 1;
-    });
-    
-    // Replace tableData with sorted version
-    tableData.length = 0; // Clear the array
-    tableData.push(...sortedData); // Add sorted data back
-    
-    // Re-render with sorted data
-    renderTable();
 }
 
 // Optional: Add CSS styles for the table
