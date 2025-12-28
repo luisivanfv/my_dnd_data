@@ -1718,18 +1718,19 @@ function convertToEncounterTable() {
         console.log('2nd');
         // === ADD THESE LINES ===
         // Add color classes based on type
-        console.log('Adding row for data:', data);
+        let backgroundColor = 'darkblue';
+        let textColor = 'white';
         if (data.type === 'player') {
-            console.log('player');
-            console.log(data);
-            row.style.backgroundColor = data.color || 'darkblue';
-            row.style.color = data.textColor 
+            backgroundColor = data.color || 'darkblue';
+            textColor = data.textColor || 'white';
         } else if (data.type === 'monster' || data.type === 'creature') {
-            console.log('monster/creature');
-            console.log(data);
-            row.style.backgroundColor = 'darkred';
-            row.style.color = 'white';
+            backgroundColor = 'darkred';
+            textColor = 'white';
         }
+        row.style.backgroundColor = backgroundColor;
+        row.style.color = textColor;
+        // =======================
+        console.log('Adding row for data:', data);
         row.style.position = 'relative';
         // Define which columns are editable and their types
         const columns = [
@@ -1747,6 +1748,7 @@ function convertToEncounterTable() {
         columns.forEach((column) => {
             const cell = document.createElement('td');
             cell.dataset.key = column.key;
+            cell.color = textColor;
             
             // Set cell content
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
