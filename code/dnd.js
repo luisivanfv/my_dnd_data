@@ -1722,14 +1722,11 @@ function convertToEncounterTable() {
         // Add color classes based on type
         console.log('Adding row for data:', data);
         if (data.type === 'player') {
-            row.classList.add('player-row', 'color-row');
-            if (data.color) {
-                row.style.setProperty('--player-color', data.color);
-            }
+            console.log('player');
+            console.log(data);
         } else if (data.type === 'monster' || data.type === 'creature') {
-            row.classList.add('monster-row', 'color-row');
-        } else if (data.type === 'custom') {
-            row.classList.add('custom-row', 'color-row');
+            console.log('monster/creature');
+            console.log(data);
         }
         row.style.position = 'relative';
         // Define which columns are editable and their types
