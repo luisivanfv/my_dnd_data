@@ -1718,8 +1718,11 @@ function convertToEncounterTable() {
     controls.appendChild(clearButton);
     
     // Initialize and render table data
-        console.log('>>> 2');
+    console.log('>>> 2');
+    console.log(tableData);
     tableData = initializeTableData();
+    console.log(tableData);
+    console.log('<<< 2');
     renderTable();
     
     // Assemble everything
