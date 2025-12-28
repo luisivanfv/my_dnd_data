@@ -1333,7 +1333,7 @@ function initializeTableData() {
                         type: 'player',
                         sourceKey: playerKey,
                         color: playerInfo.color || '#4a5568',
-                        textColor: playerInfo.textColor || 'white'
+                        textColor: playerInfo.textColor
                     });
                 }
             }
