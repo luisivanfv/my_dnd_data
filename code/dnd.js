@@ -1651,7 +1651,7 @@ function convertToEncounterTable() {
     function renderTable() {
       tbody.innerHTML = '';
       tableData.forEach((rowDataaa, index) => {
-        console.log('rowData');
+        console.log('rowDataaa');
         console.log(rowDataaa);
         console.log('index');
         console.log(index);
