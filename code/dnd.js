@@ -1293,11 +1293,11 @@ function convertToEncounterTable() {
     
     // Function to initialize data from localStorage players and monsters
     function initializeTableData() {
-        const tableData = [];
+        const tableForData = [];
         let idCounter = 1;
         
         console.log('Beginning');
-        console.warn(tableData);
+        console.warn(tableForData);
         // Get player data from localStorage
         try {
             const playerData = JSON.parse(localStorage.getItem('players'));
@@ -1309,7 +1309,7 @@ function convertToEncounterTable() {
                     console.log(playerKey);
                     console.log(playerInfo);
                     if (playerInfo && typeof playerInfo === 'object') {
-                        tableData.push({
+                        tableForData.push({
                             id: idCounter++,
                             initiative: 0,
                             name: toUpper(playerInfo.name),
@@ -1324,7 +1324,7 @@ function convertToEncounterTable() {
                     }
                 }
                 console.log('Players loaded to table');
-                console.warn(tableData);
+                console.warn(tableForData);
             }
         } catch (error) {
             console.error('Error loading player data:', error);
@@ -1340,7 +1340,7 @@ function convertToEncounterTable() {
                     const monsterInfo = monsterData[monsterKey];
                     
                     if (monsterInfo && typeof monsterInfo === 'object') {
-                        tableData.push({
+                        tableForData.push({
                             id: idCounter++,
                             initiative: 0,
                             name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
@@ -1355,15 +1355,15 @@ function convertToEncounterTable() {
                     }
                 }
                 console.log('Monsters loaded to table');
-                console.warn(tableData);
+                console.warn(tableForData);
             }
         } catch (error) {
             console.error('Error loading monster data:', error);
         }
         
         // Save this initialized data to localStorage (encounterData) for persistence
-        console.error(tableData);
-        return tableData;
+        console.error(tableForData);
+        return tableForData;
     }
     
     // Function to create a modal prompt for numbers only
