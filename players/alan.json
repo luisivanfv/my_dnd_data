@@ -1,5 +1,6 @@
 {
     "name": "Alan",
+    "color": "darkred",
     "class": "Blood Hunter, Warlock",
     "ac": "15",
     "maxHp": "11"

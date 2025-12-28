@@ -1,5 +1,6 @@
 {
     "name": "Myrna",
+    "color": "brown",
     "class": "Rogue",
     "ac": "15",
     "maxHp": "11"
