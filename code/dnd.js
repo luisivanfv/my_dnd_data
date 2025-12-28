@@ -1397,15 +1397,19 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
     // Add appropriate class based on type
     if (data.type === 'player') {
         row.classList.add('player-row');
+        row.classList.add('color-row'); // Add this for alternating pattern
         // Set custom color if provided
         if (data.color) {
             row.style.setProperty('--player-color', data.color);
         }
     } else if (data.type === 'monster' || data.type === 'creature') {
         row.classList.add('monster-row');
+        row.classList.add('color-row'); // Add this for alternating pattern
     } else if (data.type === 'custom') {
         row.classList.add('custom-row');
+        row.classList.add('color-row'); // Add this for alternating pattern
     }
+    row.style.position = 'relative';
 
     // No need for the alternating row logic since CSS handles it
     const columns = [
@@ -2008,11 +2012,11 @@ function addEncounterTableStyles() {
             background-color: #e0f7fa;
         }
         
-        .encounter-table tr:nth-child(even) {
+        .encounter-table tr:not(.color-row):nth-child(even) {
             background-color: #f9f9f9;
         }
         
-        .encounter-table tr:hover {
+        .encounter-table tr:not(.color-row):hover {
             background-color: #f5f5f5;
         }
         
@@ -2052,15 +2056,12 @@ function addEncounterTableStyles() {
         }
     `;
     style.textContent += `
-        /* Row coloring */
+        /* Row coloring - must be more specific than existing rules */
         .encounter-table tr.player-row {
             background-color: var(--player-color, #4a5568) !important;
         }
         
-        .encounter-table tr.monster-row {
-            background-color: #dc2626 !important;
-        }
-        
+        .encounter-table tr.monster-row,
         .encounter-table tr.creature-row {
             background-color: #dc2626 !important;
         }
@@ -2069,8 +2070,32 @@ function addEncounterTableStyles() {
             background-color: #6b7280 !important;
         }
         
-        /* Alternating pattern overlay */
-        .encounter-table tr::before {
+        /* Override the existing :nth-child rules for colored rows */
+        .encounter-table tr.player-row:nth-child(even),
+        .encounter-table tr.monster-row:nth-child(even),
+        .encounter-table tr.creature-row:nth-child(even),
+        .encounter-table tr.custom-row:nth-child(even) {
+            background-color: inherit !important;
+        }
+        
+        .encounter-table tr.player-row:nth-child(odd),
+        .encounter-table tr.monster-row:nth-child(odd),
+        .encounter-table tr.creature-row:nth-child(odd),
+        .encounter-table tr.custom-row:nth-child(odd) {
+            background-color: inherit !important;
+        }
+        
+        /* Override hover effect for colored rows */
+        .encounter-table tr.player-row:hover,
+        .encounter-table tr.monster-row:hover,
+        .encounter-table tr.creature-row:hover,
+        .encounter-table tr.custom-row:hover {
+            background-color: inherit !important;
+            filter: brightness(1.1) !important;
+        }
+        
+        /* Alternating pattern using overlay */
+        .encounter-table tr.color-row::before {
             content: '';
             position: absolute;
             top: 0;
@@ -2078,19 +2103,21 @@ function addEncounterTableStyles() {
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: 1;
         }
         
-        .encounter-table tr:nth-child(even)::before {
-            background-color: rgba(255, 255, 255, 0.1);
+        .encounter-table tr.color-row:nth-child(even)::before {
+            background-color: rgba(255, 255, 255, 0.15);
         }
         
-        .encounter-table tr:nth-child(odd)::before {
-            background-color: rgba(0, 0, 0, 0.1);
+        .encounter-table tr.color-row:nth-child(odd)::before {
+            background-color: rgba(0, 0, 0, 0.15);
         }
         
-        /* Make rows positioned for the pseudo-element */
-        .encounter-table tr {
+        /* Make sure cell content is above the overlay */
+        .encounter-table tr.color-row td {
             position: relative;
+            z-index: 2;
         }
     `;
     document.head.appendChild(style);
