@@ -1571,8 +1571,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         { key: 'hp', editable: true, type: 'text' },
         { key: 'maxHp', editable: false, type: 'text' },
         { key: 'tempHp', editable: true, type: 'text' },
-        { key: 'conditions', editable: true, type: 'text' },
-        { key: 'notes', editable: true, type: 'text' }
+        { key: 'conditions', editable: true, type: 'text' }
     ];
     
     columns.forEach((column) => {
@@ -2360,10 +2359,6 @@ function addEncounterTableStyles() {
         .encounter-table td.editable-cell {
             cursor: pointer;
             transition: background-color 0.2s;
-        }
-        
-        .encounter-table td.editable-cell:hover {
-            background-color: #e0f7fa;
         }
         
         .encounter-table tr:not(.color-row):nth-child(even) {
