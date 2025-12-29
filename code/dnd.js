@@ -1754,7 +1754,7 @@ function convertToEncounterTable() {
             // Only make certain cells editable
             console.log('column.key:', column.key, 'Data type:', data.type, 'Cell value:', cellValue);
             if (column.editable && 
-                !(column.key === '#' && data.type === 'creature')) {
+                !(column.key === 'initiative' && data.type === 'creature')) {
                 cell.style.cursor = 'pointer';
                 cell.classList.add('editable-cell');
                 cell.addEventListener('click', () => {
