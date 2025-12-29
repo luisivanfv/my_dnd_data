@@ -1791,6 +1791,7 @@ function convertToEncounterTable() {
                 link.className = 'lazy-preview-link';
                 link.textContent = cellValue;
                 link.style.color = textColor;
+                cell.appendChild(link);
             }
             row.appendChild(cell);
         });
