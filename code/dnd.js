@@ -1937,7 +1937,7 @@ function setInitiative(element, name, id, dexterity) {
     });
     console.log(window.encounterTableData);
     sortTableData(window.encounterTableData);
-    window.encounterTableRender();
+    renderTable();
 }
 
 // Optional: Add CSS styles for the table
