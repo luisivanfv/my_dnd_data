@@ -1314,7 +1314,7 @@ function initializeTableData() {
                 const playerInfo = playerData[playerKey];
                 if (playerInfo && typeof playerInfo === 'object') {
                     tableForData.push({
-                        id: idCounter++,
+                        id: '',
                         initiative: 0,
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
@@ -1798,6 +1798,12 @@ function convertToEncounterTable() {
                             </a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
+            } else if (column.key === 'id' && data.type === 'creature') {
+                cell.textContent = '';
+                const count = Array.from(document.querySelectorAll('td[data-key="name"]')).filter(cell => {
+                    return cell.textContent.trim() === data.sourceKey;
+                }).length;
+                console.log(`ID cell for creature ${data.sourceKey}, count: ${count}`);
             }
             row.appendChild(cell);
         });
