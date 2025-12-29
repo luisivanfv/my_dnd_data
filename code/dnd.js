@@ -1798,7 +1798,7 @@ function convertToEncounterTable() {
                             style="color: #ffffff; font-size: 15px; cursor: pointer;">
                                 ${toPrettyListName(data.sourceKey)}
                             </a>`;
-            } else if (column.key === '#' && data.type === 'creature') {
+            } else if (column.key === 'initiative' && data.type === 'creature') {
                 console.log('Adding initiative link for creature:', data.initiative);
                 const link = document.createElement('a');
                 link.text = data.initiative;
