@@ -2053,7 +2053,6 @@ function convertToEncounterTable() {
                 const link = document.createElement('a');
                 link.style.color = textColor;
                 link.style.cursor = 'pointer';
-                link.style.textDecoration = 'underline';
                 
                 // Load creature data
                 const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
@@ -2087,12 +2086,19 @@ function convertToEncounterTable() {
                 
                 if (data.type === 'creature') {
                     const link = document.createElement('a');
-                    link.className = 'lazy-preview-link';
-                    link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
+                    //link.className = 'lazy-preview-link';
+                    const creatureSlug = data.sourceKey.replaceAll(' ', '-').toLowerCase();
+                    /*link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
                     link['data-url'] = link.href;
                     link.textContent = toPrettyListName(data.sourceKey);
-                    link.style.color = textColor;
+                    link.style.color = textColor;*/
                     nameContainer.appendChild(link);
+                    link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${creatureSlug}"
+                            data-url="creature?name=${creatureSlug}"
+                            data-text="${toPrettyListName(creatureSlug)}"
+                            style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+                                ${toPrettyListName(creatureSlug)}
+                            </a>`;
                 } else {
                     nameContainer.textContent = data.name;
                     nameContainer.style.color = textColor;
