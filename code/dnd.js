@@ -1710,13 +1710,7 @@ function convertToEncounterTable() {
     
     // Store showNumberPrompt globally
     window.encounterTableShowNumberPrompt = showNumberPrompt;
-    function setInitiative(element, dexterity) {
-        const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
-        const roll = Math.floor(Math.random() * 20) + 1;
-        const initiative = roll + dexMod;
-        element.textContent = initiative;
-        sortTableData(window.encounterTableData);
-    }
+    
     // Function to add a new row to the DOM
     function addRowToDOM(data) {
         const row = document.createElement('tr');
@@ -1922,6 +1916,13 @@ function convertToEncounterTable() {
     
     console.log('Encounter table initialized. Global references set.');
     console.log('Table data length:', window.encounterTableData.length);
+}
+function setInitiative(element, dexterity) {
+    const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
+    const roll = Math.floor(Math.random() * 20) + 1;
+    const initiative = roll + dexMod;
+    element.textContent = initiative;
+    sortTableData(window.encounterTableData);
 }
 
 // Optional: Add CSS styles for the table
