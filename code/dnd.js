@@ -1796,6 +1796,16 @@ function convertToEncounterTable() {
                             style="color: #ffffff; font-size: 15px; cursor: pointer;">
                                 ${toPrettyListName(data.sourceKey)}
                             </a>`;
+            } else if (column.key === '#' && data.type === 'creature') {
+                const link = document.createElement('a');
+                link.text = data.initiative;
+                link.textContent = data.initiative;
+                link.style.color = textColor;
+                cell.textContent = '';
+                cell.appendChild(link);
+                alert('Initiative thingy!');
+                const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
+                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.dex}')"></a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
@@ -2053,6 +2063,13 @@ function addEncounterTableStyles() {
         }
     `;
     document.head.appendChild(style);
+}
+
+function setInitiative(element, dexterity) {
+    const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
+    const roll = Math.floor(Math.random() * 20) + 1;
+    const initiative = roll + dexMod;
+    element.textContent = initiative;
 }
 
 // Export the function for manual use
