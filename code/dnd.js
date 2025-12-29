@@ -2071,9 +2071,7 @@ function convertToEncounterTable() {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
                 if (data.type === 'creature') {
-                    const count = Array.from(document.querySelectorAll('td[data-key="name"]')).filter(cell => {
-                        return cell.textContent.trim() === data.sourceKey;
-                    }).length;
+                    const count = Array.from(document.querySelectorAll('td[data-key="type"]')).length;
                     cell.textContent = count + 1;
                 } else if (data.type === 'player') {
                     cell.textContent = '';
@@ -2096,7 +2094,7 @@ function convertToEncounterTable() {
                     link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${creatureSlug}"
                             data-url="creature?name=${creatureSlug}"
                             data-text="${toPrettyListName(creatureSlug)}"
-                            style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+                            style="color: #fafafa; font-size: 15px; cursor: pointer;">
                                 ${toPrettyListName(creatureSlug)}
                             </a>`;
                 } else {
