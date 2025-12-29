@@ -1494,34 +1494,70 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         row.appendChild(cell);
     });
     
-    // Add delete button cell
-    const deleteCell = document.createElement('td');
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = '×';
-    deleteButton.style.cssText = `
-        background: #ff4444;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        font-size: 16px;
-        line-height: 1;
-    `;
-    deleteButton.addEventListener('click', () => {
-        const rowIndex = tableData.findIndex(item => item.id === data.id);
-        if (rowIndex !== -1) {
-            tableData.splice(rowIndex, 1);
-            // Update IDs after deletion
-            tableData.forEach((row, idx) => {
-                row.id = idx + 1;
-            });
-            renderTableFunc();
-        }
+    // Add edit button cell
+    const editCell = document.createElement('td');
+    const editButton = document.createElement('button');
+    editButton.className = 'edit-button';
+    editButton.innerHTML = '✎'; // Pencil icon
+    editButton.title = 'Click for actions, right-click to edit notes';
+
+    // Left click - show context menu
+    editButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+        if (rowIndex === -1) return;
+        
+        showContextMenu(event.clientX, event.clientY, 
+            ['Damage', 'Heal', '---', 'Destroy'], 
+            (option) => {
+                if (option === 'Damage') {
+                    showDamageModal(0, (damageAmount) => {
+                        const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
+                        window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
+                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        renderTable();
+                    });
+                } else if (option === 'Heal') {
+                    showHealingModal(0, (healAmount) => {
+                        const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
+                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        renderTable();
+                    });
+                } else if (option === 'Destroy') {
+                    if (confirm(`Are you sure you want to remove ${data.name}?`)) {
+                        window.encounterTableData.splice(rowIndex, 1);
+                        renderTable();
+                    }
+                }
+            }
+        );
     });
-    deleteCell.appendChild(deleteButton);
-    row.appendChild(deleteCell);
+
+    // Right click - edit notes
+    editButton.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+        if (rowIndex === -1) return;
+        
+        showNotesModal(window.encounterTableData[rowIndex].notes || '', (newNotes) => {
+            window.encounterTableData[rowIndex].notes = newNotes;
+            // Update the notes cell
+            const row = editButton.closest('tr');
+            if (row) {
+                const notesCell = row.querySelector('td[data-key="notes"]');
+                if (notesCell) {
+                    notesCell.textContent = newNotes || '';
+                }
+            }
+        });
+    });
+
+    editCell.appendChild(editButton);
+    row.appendChild(editCell);
     
     tbody.appendChild(row);
 }
@@ -1778,9 +1814,9 @@ function convertToEncounterTable() {
             { key: 'initiative', editable: true, type: 'number' },
             { key: 'name', editable: false, type: 'text' },
             { key: 'ac', editable: true, type: 'number' },
-            { key: 'hp', editable: false, type: 'text' },
-            { key: 'maxHp', editable: false, type: 'text' },
-            { key: 'tempHp', editable: false, type: 'text' },
+            { key: 'hp', editable: true, type: 'text' },
+            { key: 'maxHp', editable: true, type: 'text' },
+            { key: 'tempHp', editable: true, type: 'text' },
             { key: 'conditions', editable: false, type: 'text' },
             { key: 'notes', editable: false, type: 'text' }
         ];
@@ -1823,25 +1859,7 @@ function convertToEncounterTable() {
             } else {
                 cell.style.cursor = 'default';
             }
-            if(column.key === 'name' && data.type === 'creature') {
-                console.log('Adding lazy preview link for creature:', cellValue);
-                const link = document.createElement('a');
-                link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
-                link['data-url'] = link.href;
-                link.className = 'lazy-preview-link';
-                link.text = cellValue;
-                link.textContent = cellValue;
-                link.style.color = textColor;
-
-                cell.textContent = '';
-                cell.appendChild(link);
-                link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
-                            data-url="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
-                            data-text="${toPrettyListName(data.sourceKey)}"
-                            style="color: #ffffff; font-size: 15px; cursor: pointer;">
-                                ${toPrettyListName(data.sourceKey)}
-                            </a>`;
-            } else if (column.key === 'initiative' && data.type === 'creature') {
+            if (column.key === 'initiative' && data.type === 'creature') {
                 console.log('Adding initiative link for creature:', data.initiative);
                 const link = document.createElement('a');
                 link.style.color = textColor;
@@ -1871,6 +1889,53 @@ function convertToEncounterTable() {
                 } else if (data.type === 'player') {
                     cell.textContent = '';
                 }
+            } else if (column.key === 'name') {
+                // Create container for name with tooltip functionality
+                const nameContainer = document.createElement('div');
+                nameContainer.style.position = 'relative';
+                nameContainer.style.display = 'inline-block';
+                
+                if (data.type === 'creature') {
+                    const link = document.createElement('a');
+                    link.className = 'lazy-preview-link';
+                    link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
+                    link['data-url'] = link.href;
+                    link.textContent = toPrettyListName(data.sourceKey);
+                    link.style.color = textColor;
+                    nameContainer.appendChild(link);
+                } else {
+                    nameContainer.textContent = data.name;
+                    nameContainer.style.color = textColor;
+                }
+                
+                // Add tooltip on hover
+                let tooltipTimeout;
+                nameContainer.addEventListener('mouseenter', (event) => {
+                    if (data.notes && data.notes.trim() !== '') {
+                        tooltipTimeout = setTimeout(() => {
+                            showTooltip(event.clientX + 10, event.clientY + 10, data.notes);
+                        }, 500); // Delay before showing tooltip
+                    }
+                });
+                
+                nameContainer.addEventListener('mouseleave', () => {
+                    clearTimeout(tooltipTimeout);
+                    const existingTooltip = document.querySelector('.tooltip');
+                    if (existingTooltip) {
+                        document.body.removeChild(existingTooltip);
+                    }
+                });
+                
+                nameContainer.addEventListener('mousemove', (event) => {
+                    const existingTooltip = document.querySelector('.tooltip');
+                    if (existingTooltip && data.notes && data.notes.trim() !== '') {
+                        existingTooltip.style.left = (event.clientX + 10) + 'px';
+                        existingTooltip.style.top = (event.clientY + 10) + 'px';
+                    }
+                });
+                
+                cell.textContent = '';
+                cell.appendChild(nameContainer);
             }
             row.appendChild(cell);
         });
@@ -1905,6 +1970,31 @@ function convertToEncounterTable() {
         row.appendChild(deleteCell);
         
         tbody.appendChild(row);
+
+        let rowTooltipTimeout;
+        row.addEventListener('mouseenter', (event) => {
+            if (data.notes && data.notes.trim() !== '') {
+                rowTooltipTimeout = setTimeout(() => {
+                    showTooltip(event.clientX + 10, event.clientY + 10, data.notes);
+                }, 500);
+            }
+        });
+
+        row.addEventListener('mouseleave', () => {
+            clearTimeout(rowTooltipTimeout);
+            const existingTooltip = document.querySelector('.tooltip');
+            if (existingTooltip) {
+                document.body.removeChild(existingTooltip);
+            }
+        });
+
+        row.addEventListener('mousemove', (event) => {
+            const existingTooltip = document.querySelector('.tooltip');
+            if (existingTooltip && data.notes && data.notes.trim() !== '') {
+                existingTooltip.style.left = (event.clientX + 10) + 'px';
+                existingTooltip.style.top = (event.clientY + 10) + 'px';
+            }
+        });
     }
     
     // Function to render the entire table
@@ -2155,9 +2245,437 @@ function addEncounterTableStyles() {
             z-index: 2;
         }
     `;
+    style.textContent += `
+        /* Edit button styles */
+        .encounter-table .edit-button {
+            background: transparent;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .encounter-table .edit-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Context menu styles */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 150px;
+        }
+        
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            color: #333;
+            transition: background-color 0.2s;
+        }
+        
+        .context-menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background-color: #ddd;
+            margin: 4px 0;
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: fixed;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            max-width: 300px;
+            z-index: 1001;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+    `;
     document.head.appendChild(style);
 }
+// Show context menu at cursor position
+function showContextMenu(x, y, options, callback) {
+    // Remove any existing context menu
+    const existingMenu = document.querySelector('.context-menu');
+    if (existingMenu) {
+        document.body.removeChild(existingMenu);
+    }
+    
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+    
+    options.forEach((option, index) => {
+        if (option === '---') {
+            const divider = document.createElement('div');
+            divider.className = 'context-menu-divider';
+            menu.appendChild(divider);
+        } else {
+            const item = document.createElement('div');
+            item.className = 'context-menu-item';
+            item.textContent = option;
+            item.addEventListener('click', () => {
+                document.body.removeChild(menu);
+                callback(option);
+            });
+            menu.appendChild(item);
+        }
+    });
+    
+    document.body.appendChild(menu);
+    
+    // Close menu when clicking outside
+    const closeMenu = (e) => {
+        if (!menu.contains(e.target)) {
+            document.body.removeChild(menu);
+            document.removeEventListener('click', closeMenu);
+        }
+    };
+    
+    setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+    }, 10);
+}
 
+// Show tooltip
+function showTooltip(x, y, text) {
+    // Remove any existing tooltip
+    const existingTooltip = document.querySelector('.tooltip');
+    if (existingTooltip) {
+        document.body.removeChild(existingTooltip);
+    }
+    
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    tooltip.textContent = text;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    
+    document.body.appendChild(tooltip);
+    
+    return tooltip;
+}
+
+// Apply damage to a creature/player
+function applyDamage(rowData, damageAmount) {
+    let remainingDamage = parseInt(damageAmount);
+    let newTempHp = parseInt(rowData.tempHp) || 0;
+    let newHp = parseInt(rowData.hp) || 0;
+    
+    // Apply to temp HP first
+    if (newTempHp > 0) {
+        if (remainingDamage >= newTempHp) {
+            remainingDamage -= newTempHp;
+            newTempHp = 0;
+        } else {
+            newTempHp -= remainingDamage;
+            remainingDamage = 0;
+        }
+    }
+    
+    // Apply remaining damage to HP
+    if (remainingDamage > 0) {
+        newHp = Math.max(0, newHp - remainingDamage);
+    }
+    
+    return {
+        tempHp: newTempHp.toString(),
+        hp: newHp.toString()
+    };
+}
+
+// Apply healing to a creature/player
+function applyHealing(rowData, healAmount) {
+    let currentHp = parseInt(rowData.hp) || 0;
+    let maxHp = parseInt(rowData.maxHp) || 0;
+    let heal = parseInt(healAmount);
+    
+    // Heal but don't exceed max HP
+    const newHp = Math.min(maxHp, currentHp + heal);
+    
+    return {
+        hp: newHp.toString()
+    };
+}
+
+// Show damage modal
+function showDamageModal(currentValue, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'damage-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+    `;
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue;
+    input.min = '0';
+    input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Apply Damage';
+    confirmButton.style.backgroundColor = '#dc2626';
+    confirmButton.style.color = 'white';
+    confirmButton.addEventListener('click', () => {
+        const value = parseInt(input.value);
+        if (!isNaN(value) && value >= 0) {
+            callback(value);
+        }
+        document.body.removeChild(modal);
+    });
+    
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const value = parseInt(input.value);
+            if (!isNaN(value) && value >= 0) {
+                callback(value);
+            }
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode('Enter damage amount:'));
+    modalContent.appendChild(input);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    input.focus();
+    input.select();
+    
+    return modal;
+}
+
+// Show healing modal (similar to damage but with different text)
+function showHealingModal(currentValue, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'healing-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+    `;
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue;
+    input.min = '0';
+    input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Apply Healing';
+    confirmButton.style.backgroundColor = '#10b981';
+    confirmButton.style.color = 'white';
+    confirmButton.addEventListener('click', () => {
+        const value = parseInt(input.value);
+        if (!isNaN(value) && value >= 0) {
+            callback(value);
+        }
+        document.body.removeChild(modal);
+    });
+    
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const value = parseInt(input.value);
+            if (!isNaN(value) && value >= 0) {
+                callback(value);
+            }
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode('Enter healing amount:'));
+    modalContent.appendChild(input);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    input.focus();
+    input.select();
+    
+    return modal;
+}
+
+// Show notes modal
+function showNotesModal(currentNotes, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'notes-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 400px;
+        max-width: 600px;
+    `;
+    
+    const textarea = document.createElement('textarea');
+    textarea.value = currentNotes || '';
+    textarea.style.cssText = `
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+        resize: vertical;
+        font-family: inherit;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Save Notes';
+    confirmButton.style.backgroundColor = '#4a5568';
+    confirmButton.style.color = 'white';
+    confirmButton.addEventListener('click', () => {
+        callback(textarea.value);
+        document.body.removeChild(modal);
+    });
+    
+    textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            callback(textarea.value);
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode('Enter notes:'));
+    modalContent.appendChild(textarea);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    textarea.focus();
+    textarea.select();
+    
+    return modal;
+}
 
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
