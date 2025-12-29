@@ -1919,7 +1919,7 @@ function convertToEncounterTable() {
     console.log('Encounter table initialized. Global references set.');
     console.log('Table data length:', window.encounterTableData.length);
 }
-function setInitiative(element, name, id, dexterity, renderTableFunc) {
+function setInitiative(element, name, id, dexterity) {
     console.log('setInitiative called for:', name, 'ID:', id, 'Dexterity:', dexterity);
     const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
     const roll = Math.floor(Math.random() * 20) + 1;
@@ -1937,7 +1937,7 @@ function setInitiative(element, name, id, dexterity, renderTableFunc) {
     });
     console.log(window.encounterTableData);
     sortTableData(window.encounterTableData);
-    renderTableFunc();
+    window.encounterTableRender();
 }
 
 // Optional: Add CSS styles for the table
