@@ -1794,6 +1794,13 @@ function convertToEncounterTable() {
                 link.text = cellValue;
                 link.textContent = cellValue;
                 link.style.color = textColor;
+
+                link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
+                            data-url="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
+                            data-text="${toPrettyListName(data.sourceKey)}"
+                            style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+                                ${toPrettyListName(data.sourceKey)}
+                            </a>`;
                 cell.textContent = '';
                 cell.appendChild(link);
             }
