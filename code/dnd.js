@@ -1205,7 +1205,7 @@ function selectedInSearchBar(selectedValue) {
     const slugName = selectedValue.replaceAll(' ', '-').toLowerCase();
     const data = JSON.parse(localStorage.getItem(`statblocks_${slugName}.json`));
     
-    // Extract HP from format like "45 (5d10 + 20)" -> "45"
+    // Extract HP
     let hp = '0';
     if (data.hitPoints) {
         const hpMatch = data.hitPoints.match(/^(\d+)/);
@@ -1214,11 +1214,15 @@ function selectedInSearchBar(selectedValue) {
         }
     }
     
-    // Use window.encounterTableData for the ID calculation
-    const nextId = window.encounterTableData ? window.encounterTableData.length + 1 : 1;
+    // Find the next available ID
+    let nextId = 1;
+    if (window.encounterTableData && window.encounterTableData.length > 0) {
+        const maxId = Math.max(...window.encounterTableData.map(row => row.id || 0));
+        nextId = maxId + 1;
+    }
     
     const dataToAdd = {
-        id: nextId,
+        id: nextId, // Use unique ID
         initiative: 0,
         name: selectedValue,
         ac: data.armorClass || 10,
@@ -1233,18 +1237,10 @@ function selectedInSearchBar(selectedValue) {
         textColor: 'white'
     };
     
-    // Directly add to the table using global references
     if (window.encounterTableData && window.encounterTableRender) {
-        // Add to table data
         window.encounterTableData.push(dataToAdd);
-        
-        // Auto-sort by initiative
         sortTableData(window.encounterTableData);
-        
-        // Re-render the table
         window.encounterTableRender();
-    } else {
-        console.error('Table references not found. Table might not be initialized yet.');
     }
 }
 
@@ -1314,7 +1310,7 @@ function initializeTableData() {
                 const playerInfo = playerData[playerKey];
                 if (playerInfo && typeof playerInfo === 'object') {
                     tableForData.push({
-                        id: '',
+                        id: idCounter++,
                         initiative: 0,
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
@@ -1372,21 +1368,24 @@ function initializeTableData() {
 function sortTableData(tableData) {
     console.log('Sorting table data...');
     console.log('Before sort:', JSON.stringify(tableData));
+    
+    // Sort by initiative descending, then by name
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
         const initB = parseInt(b.initiative) || 0;
         
         if (initA === initB) {
+            // If same initiative, creatures before players, then by name
+            if (a.type === 'creature' && b.type !== 'creature') return -1;
+            if (a.type !== 'creature' && b.type === 'creature') return 1;
             return a.name.localeCompare(b.name);
         }
         
         return initB - initA; // Higher initiative first
     });
+    
     console.log('After sort:', JSON.stringify(tableData));
-    // Update IDs
-    /*tableData.forEach((row, index) => {
-        row.id = index + 1;
-    });*/
+    // Don't update IDs - keep original IDs to maintain references
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
@@ -1427,25 +1426,65 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             cell.classList.add('editable-cell');
             
             cell.addEventListener('click', () => {
-                const currentValue = cell.textContent;
-                if (column.type === 'number') {
-                    showNumberPromptFunc(currentValue, (newValue) => {
+            const currentValue = cell.textContent;
+            
+            // Special handling for initiative column
+            if (column.key === 'initiative') {
+                if (data.type === 'player') {
+                    // For players, open modal
+                    showNumberPrompt(currentValue, (newValue) => {
                         cell.textContent = newValue;
-                        // Find the row in tableData by ID
-                        const rowIndex = tableData.findIndex(item => item.id === data.id);
+                        // Update the specific player row
+                        const rowIndex = window.encounterTableData.findIndex(item => 
+                            item.id === data.id && item.name === data.name
+                        );
                         
                         if (rowIndex !== -1) {
-                            tableData[rowIndex][column.key] = newValue;
+                            window.encounterTableData[rowIndex][column.key] = newValue;
+                            sortTableData(window.encounterTableData);
+                            renderTable();
+                        }
+                    });
+                } else if (data.type === 'creature') {
+                    // For creatures, call setInitiative (handled separately)
+                    // This case should be handled in the special creature initiative code above
+                } else {
+                    // For other types, use standard prompt
+                    if (column.type === 'number') {
+                        showNumberPrompt(currentValue, (newValue) => {
+                            cell.textContent = newValue;
+                            const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
                             
-                            // Auto-sort if initiative changed
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex][column.key] = newValue;
+                                
+                                if (column.key === 'initiative') {
+                                    sortTableData(window.encounterTableData);
+                                    renderTable();
+                                }
+                            }
+                        });
+                    }
+                }
+            } else {
+                // Non-initiative columns use standard handling
+                if (column.type === 'number') {
+                    showNumberPrompt(currentValue, (newValue) => {
+                        cell.textContent = newValue;
+                        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+                        
+                        if (rowIndex !== -1) {
+                            window.encounterTableData[rowIndex][column.key] = newValue;
+                            
                             if (column.key === 'initiative') {
-                                sortTableData(tableData);
-                                renderTableFunc();
+                                sortTableData(window.encounterTableData);
+                                renderTable();
                             }
                         }
                     });
                 }
-            });
+            }
+        });
         } else {
             cell.style.cursor = 'default';
         }
@@ -1803,13 +1842,22 @@ function convertToEncounterTable() {
             } else if (column.key === 'initiative' && data.type === 'creature') {
                 console.log('Adding initiative link for creature:', data.initiative);
                 const link = document.createElement('a');
-                link.text = data.initiative;
-                link.textContent = data.initiative;
                 link.style.color = textColor;
+                link.style.cursor = 'pointer';
+                
+                // Load creature data
+                const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
+                
+                // Set current initiative value (not hardcoded 10)
+                link.textContent = data.initiative || '0';
+                
+                // Add click handler
+                link.onclick = () => {
+                    setInitiative(link, data.name, data.id, creatureData.dex || 10);
+                };
+                
                 cell.textContent = '';
                 cell.appendChild(link);
-                const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
-                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.name}', '${data.id}', '${creatureData.dex}', ${renderTable})">10</a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
@@ -1921,23 +1969,37 @@ function convertToEncounterTable() {
 }
 function setInitiative(element, name, id, dexterity) {
     console.log('setInitiative called for:', name, 'ID:', id, 'Dexterity:', dexterity);
-    const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
+    
+    // Parse dexterity correctly (it might be a string like "14 (modifier)")
+    let dexValue = dexterity;
+    if (typeof dexterity === 'string') {
+        // Extract just the number if it's in format "14 (+2)"
+        const match = dexterity.match(/\d+/);
+        if (match) dexValue = parseInt(match[0]);
+    }
+    
+    const dexMod = Math.floor((parseInt(dexValue) - 10) / 2);
     const roll = Math.floor(Math.random() * 20) + 1;
     const initiative = roll + dexMod;
+    
     element.textContent = initiative;
-    console.log(element.toString());
-    console.log(window.encounterTableData);
-    window.encounterTableData = window.encounterTableData.map((row) => {
-        console.log(`[${row.name}], [${row.id}]`);
-        console.log(`[${name}], [${id}]`);
-        if (name == row.name && id == row.id) {
-            return { ...row, initiative: initiative };
-        }
-        return row;
-    });
-    console.log(window.encounterTableData);
+    
+    // Update the table data - find by ID AND name to be more specific
+    const rowIndex = window.encounterTableData.findIndex(row => 
+        row.name === name && row.id == id
+    );
+    
+    if (rowIndex !== -1) {
+        window.encounterTableData[rowIndex].initiative = initiative;
+        console.log(`Updated initiative for ${name} to ${initiative}`);
+    } else {
+        console.error(`Could not find row with name: ${name}, id: ${id}`);
+    }
+    
+    // Sort the table
     sortTableData(window.encounterTableData);
-    // THIS LINE CAUSES ERROR:
+    
+    // Re-render the table
     if (window.encounterTableRender) {
         window.encounterTableRender();
     } else {
