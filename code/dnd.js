@@ -1796,6 +1796,8 @@ function convertToEncounterTable() {
                             style="color: #ffffff; font-size: 15px; cursor: pointer;">
                                 ${toPrettyListName(data.sourceKey)}
                             </a>`;
+            } else if (column.key === 'ac' && data.type === 'creature') {
+                cell.textContent = data.ac.split('(')[0].trim();
             }
             row.appendChild(cell);
         });
