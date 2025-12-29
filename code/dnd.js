@@ -1370,6 +1370,8 @@ function initializeTableData() {
 }
 // Helper function for sorting
 function sortTableData(tableData) {
+    console.log('Sorting table data...');
+    console.log('Before sort:', JSON.stringify(tableData));
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
         const initB = parseInt(b.initiative) || 0;
@@ -1380,11 +1382,11 @@ function sortTableData(tableData) {
         
         return initB - initA; // Higher initiative first
     });
-    
+    console.log('After sort:', JSON.stringify(tableData));
     // Update IDs
-    tableData.forEach((row, index) => {
+    /*tableData.forEach((row, index) => {
         row.id = index + 1;
-    });
+    });*/
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
@@ -1931,7 +1933,6 @@ function setInitiative(element, name, id, dexterity) {
         if (name == row.name && id == row.id) {
             return { ...row, initiative: initiative };
         }
-        //console.log(row);
         return row;
     });
     console.log(window.encounterTableData);
