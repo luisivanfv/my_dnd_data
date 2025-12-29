@@ -14,6 +14,7 @@ const secondsPopupShown = 5;
 const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
 window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window.latestCommitHash}/`;
 
+
 window.initializeExternalScript = async function() {
     document.body.classList.add('loading');
         //await loadEncounterTables();
@@ -39,7 +40,167 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
-
+// Make helper functions globally available
+window.showNumberPrompt = function(currentValue, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'number-prompt-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+    `;
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue;
+    input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'OK';
+    confirmButton.addEventListener('click', () => {
+        const value = input.value; // Don't parse as int to allow text for HP
+        callback(value);
+        document.body.removeChild(modal);
+    });
+    
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const value = input.value;
+            callback(value);
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode('Enter value:'));
+    modalContent.appendChild(input);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    input.focus();
+    input.select();
+    
+    return modal;
+};
+// Add this global function for text prompts
+window.showTextPrompt = function(currentValue, callback, title = 'Enter text:') {
+    const modal = document.createElement('div');
+    modal.className = 'text-prompt-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+        max-width: 500px;
+    `;
+    
+    const textarea = document.createElement('textarea');
+    textarea.value = currentValue;
+    textarea.style.cssText = `
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+        resize: vertical;
+        font-family: inherit;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'OK';
+    confirmButton.addEventListener('click', () => {
+        callback(textarea.value);
+        document.body.removeChild(modal);
+    });
+    
+    textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            callback(textarea.value);
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode(title));
+    modalContent.appendChild(textarea);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    textarea.focus();
+    textarea.select();
+    
+    return modal;
+};
 async function loadLocations() {
     Array.from(document.getElementsByClassName('location')).forEach(async (element) => {
         const locationSlug = getUrlParameter('name');
@@ -1817,8 +1978,7 @@ function convertToEncounterTable() {
             { key: 'hp', editable: true, type: 'text' },
             { key: 'maxHp', editable: true, type: 'text' },
             { key: 'tempHp', editable: true, type: 'text' },
-            { key: 'conditions', editable: false, type: 'text' },
-            { key: 'notes', editable: false, type: 'text' }
+            { key: 'conditions', editable: true, type: 'text' }
         ];
         
         columns.forEach((column) => {
@@ -1835,14 +1995,28 @@ function convertToEncounterTable() {
                 cell.classList.add('editable-cell');
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
-                    if (column.type === 'number') {
-                        showNumberPrompt(currentValue, (newValue) => {
+                    
+                    // Use the globally available showNumberPrompt
+                    if (column.type === 'number' || column.key === 'hp' || column.key === 'tempHp' || column.key === 'maxHp') {
+                        window.showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
+                            
                             // Find the row in window.encounterTableData by ID
                             const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
                             
                             if (rowIndex !== -1) {
                                 window.encounterTableData[rowIndex][column.key] = newValue;
+                                
+                                // For HP-related fields, also update the data model
+                                if (column.key === 'hp') {
+                                    // Ensure HP doesn't exceed max HP
+                                    const maxHp = parseInt(window.encounterTableData[rowIndex].maxHp) || 0;
+                                    const newHp = parseInt(newValue) || 0;
+                                    if (newHp > maxHp) {
+                                        cell.textContent = maxHp;
+                                        window.encounterTableData[rowIndex].hp = maxHp.toString();
+                                    }
+                                }
                                 
                                 // Auto-sort if initiative changed
                                 if (column.key === 'initiative') {
@@ -1861,11 +2035,12 @@ function convertToEncounterTable() {
                 const link = document.createElement('a');
                 link.style.color = textColor;
                 link.style.cursor = 'pointer';
+                link.style.textDecoration = 'underline';
                 
                 // Load creature data
                 const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
                 
-                // Set current initiative value (not hardcoded 10)
+                // Set current initiative value
                 link.textContent = data.initiative || '0';
                 
                 // Add click handler
@@ -2366,7 +2541,9 @@ function showContextMenu(x, y, options, callback) {
             item.className = 'context-menu-item';
             item.textContent = option;
             item.addEventListener('click', () => {
-                document.body.removeChild(menu);
+                if (document.body.contains(menu)) {
+                    document.body.removeChild(menu);
+                }
                 callback(option);
             });
             menu.appendChild(item);
@@ -2377,7 +2554,7 @@ function showContextMenu(x, y, options, callback) {
     
     // Close menu when clicking outside
     const closeMenu = (e) => {
-        if (!menu.contains(e.target)) {
+        if (menu && document.body.contains(menu) && !menu.contains(e.target)) {
             document.body.removeChild(menu);
             document.removeEventListener('click', closeMenu);
         }
