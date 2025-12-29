@@ -1807,7 +1807,7 @@ function convertToEncounterTable() {
                 cell.textContent = '';
                 cell.appendChild(link);
                 const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
-                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.dex}')">10</a>`;
+                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.name}', '${creatureData.id}', '${creatureData.dex}')">10</a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
@@ -1917,7 +1917,8 @@ function convertToEncounterTable() {
     console.log('Encounter table initialized. Global references set.');
     console.log('Table data length:', window.encounterTableData.length);
 }
-function setInitiative(element, dexterity) {
+function setInitiative(element, name, id, dexterity) {
+    console.log('setInitiative called for:', name, 'ID:', id, 'Dexterity:', dexterity);
     const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
     const roll = Math.floor(Math.random() * 20) + 1;
     const initiative = roll + dexMod;
@@ -1925,7 +1926,7 @@ function setInitiative(element, dexterity) {
     console.log(element.toString());
     console.log(window.encounterTableData);
     window.encounterTableData = window.encounterTableData.map((row) => {
-        if (row.name === 'asdf') {
+        if (name === row.name && id === row.id) {
             return { ...row, initiative: initiative };
         }
         console.log(row);
