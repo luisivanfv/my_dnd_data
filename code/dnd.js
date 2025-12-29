@@ -1937,7 +1937,12 @@ function setInitiative(element, name, id, dexterity) {
     });
     console.log(window.encounterTableData);
     sortTableData(window.encounterTableData);
-    renderTable();
+    // THIS LINE CAUSES ERROR:
+    if (window.encounterTableRender) {
+        window.encounterTableRender();
+    } else {
+        console.error('renderTable function not found');
+    }
 }
 
 // Optional: Add CSS styles for the table
