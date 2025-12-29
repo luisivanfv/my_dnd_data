@@ -1926,10 +1926,11 @@ function setInitiative(element, name, id, dexterity) {
     console.log(element.toString());
     console.log(window.encounterTableData);
     window.encounterTableData = window.encounterTableData.map((row) => {
+        console.log(row.name, ', ', row.id);
         if (name === row.name && id === row.id) {
             return { ...row, initiative: initiative };
         }
-        console.log(row);
+        //console.log(row);
         return row;
     });
     console.log(window.encounterTableData);
