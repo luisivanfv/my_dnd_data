@@ -1220,10 +1220,12 @@ function selectedInSearchBar(selectedValue) {
         const maxId = Math.max(...window.encounterTableData.map(row => row.id || 0));
         nextId = maxId + 1;
     }
-    
+    const dexMod = Math.floor((parseInt(dexValue) - 10) / 2);
+    const roll = Math.floor(Math.random() * 20) + 1;
+    const initiative = roll + dexMod;
     const dataToAdd = {
         id: nextId, // Use unique ID
-        initiative: 0,
+        initiative: initiative,
         name: selectedValue,
         ac: data.armorClass || 10,
         hp: hp,
@@ -1423,7 +1425,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         // Only make certain cells editable
         if (column.editable) {
             cell.style.cursor = 'pointer';
-            cell.classList.add('editable-cell');
+            //cell.classList.add('editable-cell');
             
             cell.addEventListener('click', () => {
             const currentValue = cell.textContent;
