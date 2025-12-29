@@ -1829,9 +1829,6 @@ function convertToEncounterTable() {
             // Set cell content
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
             cell.textContent = cellValue;
-            
-            // Only make certain cells editable
-            console.log('column.key:', column.key, 'Data type:', data.type, 'Cell value:', cellValue);
             if (column.editable && 
                 !(column.key === 'initiative' && data.type === 'creature')) {
                 cell.style.cursor = 'pointer';
@@ -1939,35 +1936,70 @@ function convertToEncounterTable() {
             }
             row.appendChild(cell);
         });
+        // Add edit button cell
+    const editCell = document.createElement('td');
+    const editButton = document.createElement('button');
+    editButton.className = 'edit-button';
+    editButton.innerHTML = '✎'; // Pencil icon
+    editButton.title = 'Click for actions, right-click to edit notes';
+
+    // Left click - show context menu
+    editButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         
-        // Add delete button cell
-        const deleteCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = '×';
-        deleteButton.style.cssText = `
-            background: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 16px;
-            line-height: 1;
-        `;
-        deleteButton.addEventListener('click', () => {
-            const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
-            if (rowIndex !== -1) {
-                window.encounterTableData.splice(rowIndex, 1);
-                // Update IDs after deletion
-                window.encounterTableData.forEach((row, idx) => {
-                    row.id = idx + 1;
-                });
-                renderTable();
+        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+        if (rowIndex === -1) return;
+        
+        showContextMenu(event.clientX, event.clientY, 
+            ['Damage', 'Heal', '---', 'Destroy'], 
+            (option) => {
+                if (option === 'Damage') {
+                    showDamageModal(0, (damageAmount) => {
+                        const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
+                        window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
+                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        renderTable();
+                    });
+                } else if (option === 'Heal') {
+                    showHealingModal(0, (healAmount) => {
+                        const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
+                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        renderTable();
+                    });
+                } else if (option === 'Destroy') {
+                    if (confirm(`Are you sure you want to remove ${data.name}?`)) {
+                        window.encounterTableData.splice(rowIndex, 1);
+                        renderTable();
+                    }
+                }
+            }
+        );
+    });
+
+    // Right click - edit notes
+    editButton.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+        if (rowIndex === -1) return;
+        
+        showNotesModal(window.encounterTableData[rowIndex].notes || '', (newNotes) => {
+            window.encounterTableData[rowIndex].notes = newNotes;
+            // Update the notes cell
+            const row = editButton.closest('tr');
+            if (row) {
+                const notesCell = row.querySelector('td[data-key="notes"]');
+                if (notesCell) {
+                    notesCell.textContent = newNotes || '';
+                }
             }
         });
-        deleteCell.appendChild(deleteButton);
-        row.appendChild(deleteCell);
+    });
+
+    editCell.appendChild(editButton);
+    row.appendChild(editCell);
         
         tbody.appendChild(row);
 
