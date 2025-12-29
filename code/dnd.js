@@ -1588,11 +1588,16 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', '#', 'Name', '<img width="64" height="64" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.textContent = headerText;
         headerRow.appendChild(th);
+        if(headerText === 'AC') {
+            const armorClassIcon = document.createElement('span');
+            th.appendChild(armorClassIcon);
+            armorClassIcon.innerHTML = '<img width="64" height="64" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>';
+        }
     });
     
     thead.appendChild(headerRow);
