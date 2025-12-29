@@ -1557,7 +1557,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         row.style.backgroundColor = data.color || 'darkblue';
         row.style.color = data.textColor 
     } else if (data.type === 'monster' || data.type === 'creature') {
-        row.classList.add('monster-row');
         row.style.backgroundColor = 'darkred';
         row.style.color = 'white';
     }
@@ -2071,7 +2070,8 @@ function convertToEncounterTable() {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
                 if (data.type === 'creature') {
-                    cell.textContent = Array.from(document.getElementsByClassName('monster-row')).length + 1;
+                    const count = Array.from(document.querySelectorAll('td[data-key="type"]')).length;
+                    cell.textContent = count + 1;
                 } else if (data.type === 'player') {
                     cell.textContent = '';
                 }
