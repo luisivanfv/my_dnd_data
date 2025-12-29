@@ -1786,6 +1786,7 @@ function convertToEncounterTable() {
             console.log('cellValue:', cellValue, 'for column:', column.key);
             if(column.key === 'name' && data.type === 'creature') {
                 console.log('Adding lazy preview link for creature:', cellValue);
+                console.log(JSON.parse(localStorage.getItem('statblocks_' + data.sourceKey.replaceAll(' ', '-').toLowerCase() + '.json')));
                 const link = document.createElement('a');
                 link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
                 link['data-url'] = link.href;
