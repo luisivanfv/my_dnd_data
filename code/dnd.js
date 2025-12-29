@@ -1591,11 +1591,16 @@ function convertToEncounterTable() {
     const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
+        th.style.textAlign = 'center';
         headerRow.appendChild(th);
         if(headerText === 'AC') {
             const armorClassIcon = document.createElement('span');
             th.appendChild(armorClassIcon);
-            armorClassIcon.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>';
+            armorClassIcon.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/FAFAFA/shield.png" alt="shield"/>';
+        } else if(headerText === '#') {
+            const initiativeIcon = document.createElement('span');
+            th.appendChild(initiativeIcon);
+            initiativeIcon.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/FAFAFA/hand-cursor.png" alt="hand-cursor"/>';
         } else {
             th.textContent = headerText;
         }
@@ -1741,7 +1746,7 @@ function convertToEncounterTable() {
             const cell = document.createElement('td');
             cell.dataset.key = column.key;
             cell.style.color = textColor;
-            
+            cell.style.textAlign = 'center';
             // Set cell content
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
             cell.textContent = cellValue;
