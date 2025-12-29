@@ -1924,10 +1924,11 @@ function setInitiative(element, dexterity) {
     element.textContent = initiative;
     console.log(window.encounterTableData);
     window.encounterTableData = window.encounterTableData.map((row) => {
-        if (row.name === element.textContent) {
-            row.initiative = initiative;
+        if (row.name === 'asdf') {
+            return { ...row, initiative: initiative };
         }
-        return { ...row, initiative: initiative };
+        console.log(row);
+        return row;
     });
     console.log(window.encounterTableData);
     sortTableData(window.encounterTableData);
