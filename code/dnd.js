@@ -1905,6 +1905,15 @@ function convertToEncounterTable() {
     controls.appendChild(sortButton);
     controls.appendChild(reloadButton);
     controls.appendChild(clearButton);
+
+    
+    function setInitiative(element, dexterity) {
+        const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
+        const roll = Math.floor(Math.random() * 20) + 1;
+        const initiative = roll + dexMod;
+        element.textContent = initiative;
+        sortTableData(window.encounterTableData);
+    }
     
     // Initial render
     renderTable();
@@ -2067,12 +2076,6 @@ function addEncounterTableStyles() {
     document.head.appendChild(style);
 }
 
-function setInitiative(element, dexterity) {
-    const dexMod = Math.floor((parseInt(dexterity) - 10) / 2);
-    const roll = Math.floor(Math.random() * 20) + 1;
-    const initiative = roll + dexMod;
-    element.textContent = initiative;
-}
 
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
