@@ -1927,7 +1927,7 @@ function setInitiative(element, dexterity) {
         if (row.name === element.textContent) {
             row.initiative = initiative;
         }
-        return row;
+        return { ...row, initiative: initiative };
     });
     console.log(window.encounterTableData);
     sortTableData(window.encounterTableData);
