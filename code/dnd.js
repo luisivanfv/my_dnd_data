@@ -16,7 +16,6 @@ window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window
 
 window.initializeExternalScript = async function() {
     document.body.classList.add('loading');
-        initLazyPreviews();
         //await loadEncounterTables();
         //loadEncounterLoaders();
         //loadCustomAccordions();
@@ -36,6 +35,7 @@ window.initializeExternalScript = async function() {
         convertToSearchBar();
         addEncounterTableStyles();
         convertToEncounterTable();
+        initLazyPreviews();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
