@@ -1926,8 +1926,9 @@ function setInitiative(element, name, id, dexterity) {
     console.log(element.toString());
     console.log(window.encounterTableData);
     window.encounterTableData = window.encounterTableData.map((row) => {
-        console.log(row.name, ', ', row.id);
-        if (name === row.name && id === row.id) {
+        console.log(`[${row.name}], [${row.id}]`);
+        console.log(`[${name}], [${id}]`);
+        if (name == row.name && id == row.id) {
             return { ...row, initiative: initiative };
         }
         //console.log(row);
