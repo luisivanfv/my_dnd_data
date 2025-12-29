@@ -1591,12 +1591,13 @@ function convertToEncounterTable() {
     const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
-        th.textContent = headerText;
         headerRow.appendChild(th);
         if(headerText === 'AC') {
             const armorClassIcon = document.createElement('span');
             th.appendChild(armorClassIcon);
-            armorClassIcon.innerHTML = '<img width="64" height="64" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>';
+            armorClassIcon.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>';
+        } else {
+            th.textContent = headerText;
         }
     });
     
