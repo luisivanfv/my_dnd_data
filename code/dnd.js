@@ -1807,7 +1807,7 @@ function convertToEncounterTable() {
                 cell.textContent = '';
                 cell.appendChild(link);
                 const creatureData = JSON.parse(localStorage.getItem(`statblocks_${data.sourceKey.replaceAll(' ', '-').toLowerCase()}.json`));
-                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.name}', '${creatureData.id}', '${creatureData.dex}')">10</a>`;
+                link.outerHTML = `<a onclick="setInitiative(this, '${creatureData.name}', '${data.id}', '${creatureData.dex}')">10</a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
