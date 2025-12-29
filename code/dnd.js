@@ -45,7 +45,6 @@ async function loadLocations() {
         const locationSlug = getUrlParameter('name');
         if(!locationSlug) return;
         const locationData = JSON.parse(localStorage.getItem(`locations_${locationSlug}.json`));
-        console.log(locationData);
         html = `<div id="${locationSlug}" class="location">
             <span style="color: white">${enrichText(locationData.description, { fontColor: specialTextColor })}</span>
             `;
@@ -1106,7 +1105,6 @@ function convertToSearchBar() {
       const storedData = localStorage.getItem('statblocks');
       if (storedData) {
         searchData = JSON.parse(storedData);
-        console.log(searchData);
         if (!Array.isArray(searchData)) {
           console.warn('Data in localStorage is not an array');
           searchData = [];
@@ -1235,8 +1233,6 @@ function selectedInSearchBar(selectedValue) {
         textColor: 'white'
     };
     
-    console.log('Data to add:', dataToAdd);
-    
     // Directly add to the table using global references
     if (window.encounterTableData && window.encounterTableRender) {
         // Add to table data
@@ -1247,11 +1243,8 @@ function selectedInSearchBar(selectedValue) {
         
         // Re-render the table
         window.encounterTableRender();
-        console.log('Added creature to table via global reference');
     } else {
         console.error('Table references not found. Table might not be initialized yet.');
-        console.log('encounterTableData:', window.encounterTableData);
-        console.log('encounterTableRender:', window.encounterTableRender);
     }
 }
 
@@ -1395,16 +1388,11 @@ function sortTableData(tableData) {
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
-    console.log('1st');
     // Add appropriate class based on type
     if (data.type === 'player') {
-        console.log('player');
-        console.log(data);
         row.style.backgroundColor = data.color || 'darkblue';
         row.style.color = data.textColor 
     } else if (data.type === 'monster' || data.type === 'creature') {
-        console.log('monster/creature');
-        console.log(data);
         row.style.backgroundColor = 'darkred';
         row.style.color = 'white';
     }
@@ -1438,7 +1426,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             
             cell.addEventListener('click', () => {
                 const currentValue = cell.textContent;
-                console.log('Cell clicked 1:', column.key, currentValue);
                 if (column.type === 'number') {
                     showNumberPromptFunc(currentValue, (newValue) => {
                         cell.textContent = newValue;
@@ -1601,7 +1588,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['ID', '#', 'Name', '<img width="64" height="64" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/>', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.textContent = headerText;
@@ -1716,7 +1703,6 @@ function convertToEncounterTable() {
     // Function to add a new row to the DOM
     function addRowToDOM(data) {
         const row = document.createElement('tr');
-        console.log('2nd');
         // === ADD THESE LINES ===
         // Add color classes based on type
         let backgroundColor = 'darkblue';
@@ -1731,7 +1717,6 @@ function convertToEncounterTable() {
         row.style.backgroundColor = backgroundColor;
         row.style.color = textColor;
         // =======================
-        console.log('Adding row for data:', data);
         row.style.position = 'relative';
         // Define which columns are editable and their types
         const columns = [
@@ -1761,7 +1746,6 @@ function convertToEncounterTable() {
                 cell.classList.add('editable-cell');
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
-                    console.log('Cell clicked 2:', column.key, currentValue);
                     if (column.type === 'number') {
                         showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
@@ -1783,10 +1767,8 @@ function convertToEncounterTable() {
             } else {
                 cell.style.cursor = 'default';
             }
-            console.log('cellValue:', cellValue, 'for column:', column.key);
             if(column.key === 'name' && data.type === 'creature') {
                 console.log('Adding lazy preview link for creature:', cellValue);
-                console.log(JSON.parse(localStorage.getItem('statblocks_' + data.sourceKey.replaceAll(' ', '-').toLowerCase() + '.json')));
                 const link = document.createElement('a');
                 link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
                 link['data-url'] = link.href;
@@ -1800,7 +1782,7 @@ function convertToEncounterTable() {
                 link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
                             data-url="creature?name=${data.sourceKey.replaceAll(' ', '-').toLowerCase()}"
                             data-text="${toPrettyListName(data.sourceKey)}"
-                            style="color: ${window.colors.get('gambobe')}; font-size: ${lookerTxtSize}; cursor: pointer;">
+                            style="color: #ffffff; font-size: 15px; cursor: pointer;">
                                 ${toPrettyListName(data.sourceKey)}
                             </a>`;
             }
