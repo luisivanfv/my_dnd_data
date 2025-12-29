@@ -1220,7 +1220,7 @@ function selectedInSearchBar(selectedValue) {
         const maxId = Math.max(...window.encounterTableData.map(row => row.id || 0));
         nextId = maxId + 1;
     }
-    const dexMod = Math.floor((parseInt(dexValue) - 10) / 2);
+    const dexMod = Math.floor((parseInt(data.dex) - 10) / 2);
     const roll = Math.floor(Math.random() * 20) + 1;
     const initiative = roll + dexMod;
     const dataToAdd = {
