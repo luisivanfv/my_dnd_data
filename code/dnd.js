@@ -1798,12 +1798,15 @@ function convertToEncounterTable() {
                             </a>`;
             } else if (column.key === 'ac' && data.type === 'creature') {
                 cell.textContent = data.ac.split('(')[0].trim();
-            } else if (column.key === 'id' && data.type === 'creature') {
-                cell.textContent = '';
-                const count = Array.from(document.querySelectorAll('td[data-key="name"]')).filter(cell => {
-                    return cell.textContent.trim() === data.sourceKey;
-                }).length;
-                console.log(`ID cell for creature ${data.sourceKey}, count: ${count}`);
+            } else if (column.key === 'id') {
+                if (data.type === 'creature') {
+                    const count = Array.from(document.querySelectorAll('td[data-key="name"]')).filter(cell => {
+                        return cell.textContent.trim() === data.sourceKey;
+                    }).length;
+                    cell.textContent = count + 1;
+                } else if (data.type === 'player') {
+                    cell.textContent = '';
+                }
             }
             row.appendChild(cell);
         });
