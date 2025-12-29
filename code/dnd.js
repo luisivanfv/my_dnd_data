@@ -1996,8 +1996,26 @@ function convertToEncounterTable() {
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
                     
-                    // Use the globally available showNumberPrompt
-                    if (column.type === 'number' || column.key === 'hp' || column.key === 'tempHp' || column.key === 'maxHp') {
+                    if (column.key === 'conditions' || column.key === 'notes') {
+                        // Use text prompt for conditions and notes
+                        window.showTextPrompt(currentValue, (newValue) => {
+                            cell.textContent = newValue;
+                            
+                            // Find the row in window.encounterTableData by ID
+                            const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+                            
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex][column.key] = newValue;
+                                
+                                // If notes were updated and we're hovering over the name, update tooltip
+                                if (column.key === 'notes') {
+                                    // Update the data object's notes property
+                                    data.notes = newValue;
+                                }
+                            }
+                        }, `Enter ${column.key}:`);
+                    } else if (column.type === 'number' || column.key === 'hp' || column.key === 'tempHp' || column.key === 'maxHp') {
+                        // Use number prompt for numeric fields
                         window.showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
                             
