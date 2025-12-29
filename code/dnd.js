@@ -1922,6 +1922,11 @@ function setInitiative(element, dexterity) {
     const roll = Math.floor(Math.random() * 20) + 1;
     const initiative = roll + dexMod;
     element.textContent = initiative;
+    window.encounterTableData.forEach((row) => {
+        if (row.name === element.textContent) {
+            row.initiative = initiative;
+        }
+    });
     sortTableData(window.encounterTableData);
 }
 
