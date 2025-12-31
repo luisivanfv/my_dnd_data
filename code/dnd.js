@@ -1511,10 +1511,10 @@ function initializeTableData() {
         if(encounterName) {
             const encounterData = JSON.parse(localStorage.getItem(`encounters_${encounterName}.json`));
             if (encounterData && Array.isArray(encounterData.enemies)) {
-                const monsterData = JSON.parse(localStorage.getItem('monsters'));
                 let idCounter = 1;
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split(',')[0].trim()
+                    console.log(enemy);
                     const typeOfEnemy = enemy.split(',')[1].trim().toLowerCase().replaceAll(' ', '-');
                     const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
