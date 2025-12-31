@@ -4,5 +4,6 @@
     "textColor": "white",
     "class": "Cleric",
     "ac": "18",
+    "initiativeMod": "+0",
     "maxHp": "10"
 }

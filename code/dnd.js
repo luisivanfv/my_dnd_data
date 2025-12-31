@@ -1362,7 +1362,6 @@ window.encounterTableShowNumberPrompt = null;
 
 // The onclick function you requested
 function selectedInSearchBar(selectedValue) {
-    console.log('selectedInSearchBar was triggered with value:', selectedValue);
     const slugName = selectedValue.replaceAll(' ', '-').toLowerCase();
     const data = JSON.parse(localStorage.getItem(`statblocks_${slugName}.json`));
     
@@ -1375,11 +1374,21 @@ function selectedInSearchBar(selectedValue) {
         }
     }
     
-    // Find the next available ID
+    // Find the next available ID for creatures
     let nextId = 1;
     if (window.encounterTableData && window.encounterTableData.length > 0) {
-        const maxId = Math.max(...window.encounterTableData.map(row => row.id || 0));
-        nextId = maxId + 1;
+        // Only consider creature IDs when finding the next available number
+        const creatureIds = window.encounterTableData
+            .filter(row => row.type === 'creature')
+            .map(row => {
+                // Try to parse the ID, fall back to 0 if invalid
+                const id = parseInt(row.id);
+                return isNaN(id) ? 0 : id;
+            });
+        
+        if (creatureIds.length > 0) {
+            nextId = Math.max(...creatureIds) + 1;
+        }
     }
     const dexMod = Math.floor((parseInt(data.dex) - 10) / 2);
     const roll = Math.floor(Math.random() * 20) + 1;
@@ -1531,9 +1540,6 @@ function initializeTableData() {
 }
 // Helper function for sorting
 function sortTableData(tableData) {
-    console.log('Sorting table data...');
-    console.log('Before sort:', JSON.stringify(tableData));
-    
     // Sort by initiative descending, then by name
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
@@ -1548,9 +1554,6 @@ function sortTableData(tableData) {
         
         return initB - initA; // Higher initiative first
     });
-    
-    console.log('After sort:', JSON.stringify(tableData));
-    // Don't update IDs - keep original IDs to maintain references
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
     const row = document.createElement('tr');
@@ -1857,7 +1860,48 @@ function convertToEncounterTable() {
     
     // Initialize table data - use window.encounterTableData directly
     window.encounterTableData = initializeTableData();
-    
+    // Function to ensure creature IDs are preserved and unique
+    function ensureCreatureIds() {
+        const creatures = window.encounterTableData.filter(row => row.type === 'creature');
+        const players = window.encounterTableData.filter(row => row.type === 'player');
+        
+        // Track existing creature IDs
+        const existingIds = new Set();
+        let maxId = 0;
+        
+        // First pass: collect existing valid IDs
+        creatures.forEach(creature => {
+            const id = parseInt(creature.id);
+            if (!isNaN(id) && id > 0) {
+                existingIds.add(id);
+                maxId = Math.max(maxId, id);
+            }
+        });
+        
+        // Second pass: assign IDs to creatures without them or with duplicates
+        creatures.forEach((creature, index) => {
+            const currentId = parseInt(creature.id);
+            
+            // If ID is invalid, duplicate, or missing
+            if (isNaN(currentId) || currentId <= 0 || 
+                (existingIds.has(currentId) && 
+                creatures.filter(c => parseInt(c.id) === currentId).length > 1)) {
+                
+                // Find next available ID
+                let newId = currentId;
+                while (newId <= 0 || existingIds.has(newId)) {
+                    maxId++;
+                    newId = maxId;
+                }
+                
+                creature.id = newId;
+                existingIds.add(newId);
+            }
+        });
+        
+        // Recombine the data
+        window.encounterTableData = [...players, ...creatures];
+    }
     // Function to update global reference whenever tableData changes
     function updateTableData(newData) {
         window.encounterTableData = newData;
@@ -2051,7 +2095,6 @@ function convertToEncounterTable() {
                 cell.style.cursor = 'default';
             }
             if (column.key === 'initiative' && data.type === 'creature') {
-                console.log('Adding initiative link for creature:', data.initiative);
                 const link = document.createElement('a');
                 link.style.color = textColor;
                 link.style.cursor = 'pointer';
@@ -2073,7 +2116,38 @@ function convertToEncounterTable() {
                 cell.textContent = data.ac.split('(')[0].trim();
             } else if (column.key === 'id') {
                 if (data.type === 'creature') {
-                    cell.textContent = Array.from(document.getElementsByClassName('monster-row')).length + 1;
+                    // For creatures, show the ID from data (which should be unique)
+                    cell.textContent = data.id || '';
+                    // Make the ID cell editable for manual override
+                    cell.style.cursor = 'pointer';
+                    cell.classList.add('editable-cell');
+                    cell.addEventListener('click', () => {
+                        const currentValue = cell.textContent;
+                        window.showNumberPrompt(currentValue, (newValue) => {
+                            // Check if this ID is already taken by another creature
+                            const isTaken = window.encounterTableData.some(row => 
+                                row.type === 'creature' && 
+                                row.id == newValue && 
+                                row.id !== data.id
+                            );
+                            
+                            if (isTaken) {
+                                alert(`ID ${newValue} is already in use by another creature!`);
+                                return;
+                            }
+                            
+                            cell.textContent = newValue;
+                            
+                            // Update the data model
+                            const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex].id = newValue;
+                                // Keep the sort by initiative after ID change
+                                sortTableData(window.encounterTableData);
+                                renderTable();
+                            }
+                        });
+                    });
                 } else if (data.type === 'player') {
                     cell.textContent = '';
                 }
@@ -2229,6 +2303,8 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
+        // Ensure creature IDs are preserved and unique
+        ensureCreatureIds();
         tbody.innerHTML = '';
         window.encounterTableData.forEach((rowData) => {
             addRowToDOM(rowData);

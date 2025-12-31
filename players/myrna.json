@@ -4,5 +4,6 @@
     "textColor": "white",
     "class": "Rogue",
     "ac": "14",
+    "initiativeMod": "+3",
     "maxHp": "10"
 }
