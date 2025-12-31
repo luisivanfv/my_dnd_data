@@ -1617,7 +1617,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
 
     // No need for the alternating row logic since CSS handles it
     const columns = [
-        { key: 'id', editable: true, type: 'number' },
         { key: 'initiative', editable: true, type: 'number' },
         { key: 'name', editable: false, type: 'text' },
         { key: 'ac', editable: false, type: 'number' },
@@ -1902,7 +1901,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['#', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.style.textAlign = 'center';
@@ -2086,7 +2085,6 @@ function convertToEncounterTable() {
         row.style.position = 'relative';
         // Define which columns are editable and their types
         const columns = [
-            { key: 'id', editable: true, type: 'number' },
             { key: 'initiative', editable: true, type: 'number' },
             { key: 'name', editable: false, type: 'text' },
             { key: 'ac', editable: true, type: 'number' },
@@ -2266,30 +2264,96 @@ function convertToEncounterTable() {
                     cell.textContent = '';
                 }
             } else if (column.key === 'name') {
-                // Create container for name with tooltip functionality
+                // Create container for name with ID badge
                 const nameContainer = document.createElement('div');
-                nameContainer.style.position = 'relative';
-                nameContainer.style.display = 'inline-block';
+                nameContainer.style.display = 'flex';
+                nameContainer.style.alignItems = 'center';
+                nameContainer.style.gap = '8px';
+                nameContainer.style.minHeight = '40px';
                 
-                if (data.type === 'monster') {
-                    const link = document.createElement('a');
-                    //link.className = 'lazy-preview-link';
-                    const creatureSlug = data.sourceKey.replaceAll(' ', '-').toLowerCase();
-                    /*link.href = 'creature?name=' + data.sourceKey.replaceAll(' ', '-').toLowerCase();
-                    link['data-url'] = link.href;
-                    link.textContent = toPrettyListName(data.sourceKey);
-                    link.style.color = textColor;*/
-                    nameContainer.appendChild(link);
-                    link.outerHTML = `<a class="lazy-preview-link" href="creature?name=${creatureSlug}"
-                            data-url="creature?name=${creatureSlug}"
-                            data-text="${toPrettyListName(creatureSlug)}"
-                            style="color: #fafafa; font-size: 15px; cursor: pointer;">
-                                ${toPrettyListName(creatureSlug)}
-                            </a>`;
-                } else {
-                    nameContainer.textContent = data.name;
-                    nameContainer.style.color = textColor;
+                // Add ID badge for creatures
+                if (data.type === 'creature' || data.type === 'monster') {
+                    const idBadge = document.createElement('div');
+                    idBadge.className = 'creature-id-badge';
+                    idBadge.textContent = data.id || '';
+                    idBadge.title = `Monster ID: ${data.id || 'N/A'}`;
+                    
+                    // Style the badge
+                    idBadge.style.width = '24px';
+                    idBadge.style.height = '24px';
+                    idBadge.style.borderRadius = '50%';
+                    idBadge.style.backgroundColor = '#dc2626'; // Red circle
+                    idBadge.style.color = 'white';
+                    idBadge.style.display = 'flex';
+                    idBadge.style.alignItems = 'center';
+                    idBadge.style.justifyContent = 'center';
+                    idBadge.style.fontSize = '12px';
+                    idBadge.style.fontWeight = 'bold';
+                    idBadge.style.cursor = 'pointer';
+                    idBadge.style.flexShrink = '0';
+                    idBadge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+                    
+                    // Make badge editable on click
+                    idBadge.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const currentId = data.id || '';
+                        window.showNumberPrompt(currentId, (newId) => {
+                            // Check if ID is already taken
+                            const isTaken = window.encounterTableData.some(row => 
+                                (row.type === 'creature' || row.type === 'monster') && 
+                                row.id == newId && 
+                                row.id !== data.id
+                            );
+                            
+                            if (isTaken) {
+                                alert(`ID ${newId} is already in use by another creature!`);
+                                return;
+                            }
+                            
+                            // Update the data
+                            const rowIndex = window.encounterTableData.findIndex(item => 
+                                item.id === data.id && item.name === data.name
+                            );
+                            
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex].id = newId;
+                                data.id = newId;
+                                idBadge.textContent = newId;
+                                idBadge.title = `Monster ID: ${newId}`;
+                            }
+                        });
+                    });
+                    
+                    nameContainer.appendChild(idBadge);
                 }
+                
+                // Create the name content
+                if (data.type === 'creature' || data.type === 'monster') {
+                    const link = document.createElement('a');
+                    link.className = 'lazy-preview-link';
+                    const creatureSlug = data.sourceKey.replaceAll(' ', '-').toLowerCase();
+                    link.href = `creature?name=${creatureSlug}`;
+                    link.setAttribute('data-url', `creature?name=${creatureSlug}`);
+                    link.setAttribute('data-text', toPrettyListName(creatureSlug));
+                    link.textContent = toPrettyListName(data.sourceKey);
+                    link.style.color = textColor;
+                    link.style.textDecoration = 'none';
+                    link.style.fontSize = '15px';
+                    link.style.cursor = 'pointer';
+                    link.style.flexGrow = '1';
+                    
+                    nameContainer.appendChild(link);
+                } else {
+                    const nameText = document.createElement('span');
+                    nameText.textContent = data.name;
+                    nameText.style.color = textColor;
+                    nameText.style.flexGrow = '1';
+                    nameContainer.appendChild(nameText);
+                }
+                
+                cell.textContent = '';
+                cell.appendChild(nameContainer);
+                cell.style.padding = '8px';
                 
                 // Add tooltip on hover
                 let tooltipTimeout;
