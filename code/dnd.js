@@ -1513,9 +1513,9 @@ function initializeTableData() {
             if (encounterData && Array.isArray(encounterData.enemies)) {
                 let idCounter = 1;
                 encounterData.enemies.forEach((enemy) => {
-                    const numberOfEnemies = enemy.split(',')[0].trim()
+                    const numberOfEnemies = enemy.split('-')[0].trim()
                     console.log(enemy);
-                    const typeOfEnemy = enemy.split(',')[1].trim().toLowerCase().replaceAll(' ', '-');
+                    const typeOfEnemy = enemy.split('-')[1].trim().toLowerCase().replaceAll(' ', '-');
                     const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
                         const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
