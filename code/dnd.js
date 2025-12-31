@@ -1412,7 +1412,7 @@ function selectedInSearchBar(selectedValue) {
     
     if (window.encounterTableData && window.encounterTableRender) {
         window.encounterTableData.push(dataToAdd);
-        sortTableData(window.encounterTableData);
+        //sortTableData(window.encounterTableData);
         window.encounterTableRender();
     }
 }
@@ -1540,6 +1540,10 @@ function initializeTableData() {
 }
 // Helper function for sorting
 function sortTableData(tableData) {
+    console.log("Before sorting:");
+    tableData.forEach(row => {
+        console.log(`${row.type} ${row.name}: Initiative ${row.initiative}, ID ${row.id}`);
+    });
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
         const initB = parseInt(b.initiative) || 0;
@@ -1550,6 +1554,10 @@ function sortTableData(tableData) {
         }
         
         return initB - initA; // Higher initiative first
+    });
+    console.log("After sorting:");
+    tableData.forEach(row => {
+        console.log(`${row.type} ${row.name}: Initiative ${row.initiative}, ID ${row.id}`);
     });
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
@@ -1880,49 +1888,47 @@ function convertToEncounterTable() {
     
     // Initialize table data - use window.encounterTableData directly
     window.encounterTableData = initializeTableData();
-    // Function to ensure creature IDs are preserved and unique
+    // Function to ensure creature IDs are preserved and unique WITHOUT affecting order
     function ensureCreatureIds() {
-        // Separate creatures and players
-        const creatures = window.encounterTableData.filter(row => row.type === 'creature');
-        const nonCreatures = window.encounterTableData.filter(row => row.type !== 'creature');
-        
         // Track existing creature IDs
         const existingIds = new Set();
+        let maxId = 0;
         
-        // First, collect all valid existing IDs
-        creatures.forEach(creature => {
-            const id = parseInt(creature.id);
-            if (!isNaN(id) && id > 0) {
-                existingIds.add(id);
+        // First pass: collect all existing valid creature IDs
+        window.encounterTableData.forEach(row => {
+            if (row.type === 'creature') {
+                const id = parseInt(row.id);
+                if (!isNaN(id) && id > 0) {
+                    existingIds.add(id);
+                    maxId = Math.max(maxId, id);
+                }
             }
         });
         
-        // Find the maximum ID
-        let maxId = existingIds.size > 0 ? Math.max(...existingIds) : 0;
-        
-        // Assign IDs to creatures that need them
-        creatures.forEach(creature => {
-            const currentId = parseInt(creature.id);
-            
-            // If creature has no ID or invalid ID
-            if (isNaN(currentId) || currentId <= 0) {
-                maxId++;
-                creature.id = maxId;
-                existingIds.add(maxId);
-            } 
-            // If creature has duplicate ID
-            else if (creatures.filter(c => parseInt(c.id) === currentId).length > 1) {
-                maxId++;
-                creature.id = maxId;
-                existingIds.add(maxId);
+        // Second pass: fix any issues
+        window.encounterTableData.forEach(row => {
+            if (row.type === 'creature') {
+                const currentId = parseInt(row.id);
+                
+                // If creature has no ID, invalid ID, or duplicate ID
+                if (isNaN(currentId) || currentId <= 0 || 
+                    (existingIds.has(currentId) && 
+                    window.encounterTableData.filter(r => 
+                        r.type === 'creature' && parseInt(r.id) === currentId
+                    ).length > 1)) {
+                    
+                    // Find next available ID
+                    let newId = currentId;
+                    while (newId <= 0 || existingIds.has(newId)) {
+                        maxId++;
+                        newId = maxId;
+                    }
+                    
+                    row.id = newId;
+                    existingIds.add(newId);
+                }
             }
         });
-        
-        // Re-sort creatures by ID
-        creatures.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-        
-        // Recombine: non-creatures first, then creatures
-        window.encounterTableData = [...nonCreatures, ...creatures];
     }
     // Function to update global reference whenever tableData changes
     function updateTableData(newData) {
@@ -2348,8 +2354,12 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
-        // Ensure creature IDs are preserved and unique
+        // First, sort the table by initiative
+        sortTableData(window.encounterTableData);
+        
+        // Then ensure creature IDs are unique
         ensureCreatureIds();
+        
         tbody.innerHTML = '';
         window.encounterTableData.forEach((rowData) => {
             addRowToDOM(rowData);
