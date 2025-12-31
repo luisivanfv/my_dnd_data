@@ -2226,7 +2226,7 @@ function convertToEncounterTable() {
                 cell.textContent = '';
                 cell.appendChild(link);
             } else if (column.key === 'ac' && data.type === 'creature') {
-                cell.textContent = data.ac.split('(')[0].trim();
+                setIconShieldForAc(cell, data, textColor);
             } else if (column.key === 'id') {
                 if (data.type === 'creature') {
                     // For creatures, show the ID from data (which should be unique)
@@ -2510,6 +2510,83 @@ function convertToEncounterTable() {
     
     console.log('Encounter table initialized. Global references set.');
     console.log('Table data length:', window.encounterTableData.length);
+}
+function setIconShieldForAc(cell, data, textColor) {
+    // Create container for icon with text overlay
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.display = 'inline-flex';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    container.style.width = '50px'; // Fixed width for consistency
+    container.style.height = '50px';
+    container.style.cursor = 'pointer';
+    
+    // Create shield icon
+    const shieldIcon = document.createElement('img');
+    shieldIcon.src = 'https://img.icons8.com/sf-black-filled/64/FAFAFA/shield.png';
+    shieldIcon.alt = 'shield';
+    shieldIcon.width = 40;
+    shieldIcon.height = 40;
+    shieldIcon.style.position = 'absolute';
+    shieldIcon.style.zIndex = '1';
+    
+    // Create AC number overlay
+    const acText = document.createElement('div');
+    acText.textContent = data.ac || '10';
+    acText.style.position = 'absolute';
+    acText.style.zIndex = '2';
+    acText.style.color = textColor;
+    acText.style.fontWeight = 'bold';
+    acText.style.fontSize = '16px';
+    acText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
+    acText.style.display = 'flex';
+    acText.style.alignItems = 'center';
+    acText.style.justifyContent = 'center';
+    acText.style.width = '100%';
+    acText.style.height = '100%';
+    
+    // Add hover effect
+    container.addEventListener('mouseenter', () => {
+        shieldIcon.style.filter = 'brightness(1.2) drop-shadow(0 0 3px rgba(255,255,255,0.5))';
+        acText.style.fontSize = '18px'; // Slightly enlarge on hover
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        shieldIcon.style.filter = 'brightness(1)';
+        acText.style.fontSize = '16px';
+    });
+    
+    // Add click handler for editing
+    container.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent row click
+        const currentValue = acText.textContent;
+        window.showNumberPrompt(currentValue, (newValue) => {
+            // Update the data model
+            const rowIndex = window.encounterTableData.findIndex(item => {
+                if (data.type === 'player') {
+                    return item.name === data.name && item.type === 'player';
+                } else {
+                    return item.id === data.id;
+                }
+            });
+            
+            if (rowIndex !== -1) {
+                window.encounterTableData[rowIndex].ac = newValue;
+                data.ac = newValue; // Update local reference
+                acText.textContent = newValue;
+            }
+        });
+    });
+    
+    container.appendChild(shieldIcon);
+    container.appendChild(acText);
+    
+    // Clear cell and add container
+    cell.textContent = '';
+    cell.appendChild(container);
+    cell.style.textAlign = 'center';
+    cell.style.padding = '8px';
 }
 function setInitiative(element, name, id, dexterity) {
     console.log('setInitiative called for:', name, 'ID:', id, 'Dexterity:', dexterity);
@@ -3173,9 +3250,6 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     // Create container
     const container = document.createElement('div');
     container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
-    container.onmouseover = () => {
-        console.log('HP bar hovered:', currentHp, '/', maxHp, '(', percentage, '%)');
-    }
     container.style.position = 'relative';
     container.style.width = '100%';
     container.style.height = '100%';
@@ -3223,7 +3297,7 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     hpText.style.fontWeight = 'bold';
     hpText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
     hpText.style.zIndex = '2';
-    hpText.title = `${currentHp}/${maxHp} (${percentage}%)`;
+    hpText.title = `${percentage}% (${getHpStatusDescription(percentage)})`;
     
     container.appendChild(background);
     container.appendChild(foreground);
@@ -3231,7 +3305,14 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     
     return container;
 }
-
+function getHpStatusDescription(percentage) {
+    if(percentage <= 10.0) return 'Al borde de la muerte';
+    else if(percentage <= 30.0) return 'Severamente herido';
+    else if(percentage <= 50.0) return 'Muy herido';
+    else if(percentage <= 80.0) return 'Herido';
+    else if(percentage < 100.0) return 'Levemente herido';
+    return 'Intacto';
+}
 // Fallback function for invalid HP values
 function createSimpleHpDisplay(currentHp, maxHp, textColor) {
     const container = document.createElement('div');
