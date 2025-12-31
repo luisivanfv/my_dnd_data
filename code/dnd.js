@@ -2225,7 +2225,7 @@ function convertToEncounterTable() {
                 
                 cell.textContent = '';
                 cell.appendChild(link);
-            } else if (column.key === 'ac' && data.type === 'creature') {
+            } else if (column.key === 'ac' && data.type === 'monster') {
                 setIconShieldForAc(cell, data, textColor);
             } else if (column.key === 'id') {
                 if (data.type === 'creature') {
