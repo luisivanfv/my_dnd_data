@@ -1516,6 +1516,7 @@ function initializeTableData() {
                         notes: '',
                         type: 'monster',
                         sourceKey: monsterKey,
+                        whenDamagedReminder: monsterInfo.whenDamagedReminder || '',
                         color: '#dc2626' // Red for monsters
                     });
                 }
@@ -2704,7 +2705,7 @@ function showDamageModal(currentValue, creatureInfo, callback) {
             callback(value);
         }
         console.log(creatureInfo.name + ' damaged for ' + value + ' points.');
-        console.log(creatureInfo.whenDamagedReminder);
+        console.log(creatureInfo);
         document.body.removeChild(modal);
     });
     
