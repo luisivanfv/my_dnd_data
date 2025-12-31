@@ -1507,15 +1507,41 @@ function initializeTableData() {
     // Get monster data from encounter name (when available)
     try {
         const encounterName = getUrlParameter('name');
-        console.log('Encounter name from URL:', encounterName);
+        console.log('Loading enemies for encounter:', encounterName);
         if(encounterName) {
             const encounterData = JSON.parse(localStorage.getItem(`encounters_${encounterName}.json`));
-            console.log('Encounter data from localStorage:', encounterData);
-            /*if (encounterData && Array.isArray(encounterData.monsters)) {
-                encounterData.monsters.forEach((monsterEntry) => {});
-            }*/
+            if (encounterData && Array.isArray(encounterData.enemies)) {
+                const monsterData = JSON.parse(localStorage.getItem('monsters'));
+                let idCounter = 1;
+                encounterData.enemies.forEach((enemy) => {
+                    const numberOfEnemies = enemy.split(' ')[0].trim()
+                    const typeOfEnemy = enemy.split(' ')[1].trim();
+                    const monsterInfo = monsterData[typeOfEnemy];
+                    for(let n=0;n<parseInt(numberOfEnemies);n++) {
+                        const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
+                        const roll = Math.floor(Math.random() * 20) + 1;
+                        const initiative = roll + dexMod;
+                        tableForData.push({
+                            id: idCounter++,
+                            initiative: initiative,
+                            name: monsterInfo.name,
+                            ac: monsterInfo.ac || 10,
+                            hp: monsterInfo.hp || '0',
+                            maxHp: monsterInfo.hp || '0',
+                            tempHp: '0',
+                            conditions: '',
+                            notes: '',
+                            type: 'monster',
+                            sourceKey: monsterInfo.name,
+                            whenDamagedReminder: monsterInfo.whenDamagedReminder || '',
+                            color: '#dc2626' // Red for monsters
+                        });
+                    }
+                });
+            }
         }
-        const monsterData = JSON.parse(localStorage.getItem('monsters'));
+        console.log('After loading:', tableForData);
+        /*const monsterData = JSON.parse(localStorage.getItem('monsters'));
         if (monsterData && typeof monsterData === 'object') {
             const monsterKeys = Object.keys(monsterData);
             for (let i = 0; i < monsterKeys.length; i++) {
@@ -1540,7 +1566,7 @@ function initializeTableData() {
                     });
                 }
             }
-        }
+        }*/
     } catch (error) {
         console.error('Error loading monster data:', error);
     }
