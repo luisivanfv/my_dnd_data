@@ -1504,8 +1504,17 @@ function initializeTableData() {
         console.error('Error loading player data:', error);
     }
     
-    // Get monster data from localStorage (when available)
+    // Get monster data from encounter name (when available)
     try {
+        const encounterName = getQueryParam('name');
+        console.log('Encounter name from URL:', encounterName);
+        if(encounterName) {
+            const encounterData = JSON.parse(localStorage.getItem(`encounter_${encounterName}`));
+            console.log('Encounter data from localStorage:', encounterData);
+            /*if (encounterData && Array.isArray(encounterData.monsters)) {
+                encounterData.monsters.forEach((monsterEntry) => {});
+            }*/
+        }
         const monsterData = JSON.parse(localStorage.getItem('monsters'));
         if (monsterData && typeof monsterData === 'object') {
             const monsterKeys = Object.keys(monsterData);
