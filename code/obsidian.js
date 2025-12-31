@@ -51,7 +51,7 @@ async function loadExternalScript(url) {
 
 function getImagePreview(url, txt, color, fontSize) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    txt = txt.replace("Scoia'tael", "Scoiatael");
+    const cleanTxt = txt.replace("Scoia'tael", "Scoiatael");
     color = color ? color : 'darkred';
     fontSize = fontSize || txtSize;
     const isImage = imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
@@ -62,9 +62,9 @@ function getImagePreview(url, txt, color, fontSize) {
            target="_blank"
            class="image-preview-link"
            data-url="${url}"
-           data-text="${txt}"
+           data-text="${cleanTxt}"
            data-preview-id="${previewId}"
-           oncontextmenu="handleImagePreviewMouseEnter(event, '${previewId}', '${url}', '${txt}')"
+           oncontextmenu="handleImagePreviewMouseEnter(event, '${previewId}', '${url}', '${cleanTxt}')"
            onmouseleave="handleImagePreviewMouseLeave(event, '${previewId}')"
            style="color: ${color}; font-size: ${fontSize}; cursor: pointer; text-decoration: none;">
             ${txt}
