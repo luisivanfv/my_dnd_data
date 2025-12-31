@@ -2707,7 +2707,7 @@ function showDamageModal(currentValue, creatureInfo, callback) {
         }
         if(creatureInfo.whenDamagedReminder){
             if (creatureInfo.whenDamagedReminder.includes('['))
-                popup.show(creatureInfo.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creatureInfo.whenDamagedReminder.split(']')[1].trim(), 'white'));
+                popup.show(creatureInfo.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creatureInfo.whenDamagedReminder.split(']')[1].trim(), 'white'), 10);
             else
                 popup.show(creatureInfo.whenDamagedReminder);
         }
