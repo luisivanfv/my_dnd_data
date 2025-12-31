@@ -1679,7 +1679,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
                         renderTable();
-                    });
+                    }, window.encounterTableData[rowIndex]);
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
@@ -2644,7 +2644,7 @@ function applyHealing(rowData, healAmount) {
 }
 
 // Show damage modal
-function showDamageModal(currentValue, callback) {
+function showDamageModal(currentValue, callback, creatureInfo) {
     const modal = document.createElement('div');
     modal.className = 'damage-modal';
     modal.style.cssText = `
@@ -2703,6 +2703,8 @@ function showDamageModal(currentValue, callback) {
         if (!isNaN(value) && value >= 0) {
             callback(value);
         }
+        console.log(creatureInfo.name + ' damaged for ' + value + ' points.');
+        console.log(creatureInfo.whenDamagedReminder);
         document.body.removeChild(modal);
     });
     
