@@ -1527,11 +1527,12 @@ function initializeTableData() {
                         const roll = Math.floor(Math.random() * 20) + 1;
                         const initiative = roll + dexMod;
                         const hp = monsterInfo.hitPoints.split('(')[0].trim();
+                        const ac = monsterInfo.armorClass.split('(')[0].trim();
                         tableForData.push({
                             id: idCounter++,
                             initiative: initiative,
                             name: monsterInfo.name,
-                            ac: monsterInfo.ac || 10,
+                            ac: ac || 10,
                             hp: hp || '0',
                             maxHp: hp || '0',
                             tempHp: '0',
