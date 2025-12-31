@@ -2706,7 +2706,9 @@ function showDamageModal(currentValue, creatureInfo, callback) {
             callback(value);
         }
         console.log(creatureInfo.name + ' damaged for ' + value + ' points.');
-        console.log(creatureInfo);
+        if(creatureInfo.whenDamagedReminder){
+            popup.show(creatureInfo.whenDamagedReminder);
+        }
         document.body.removeChild(modal);
     });
     
