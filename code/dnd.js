@@ -2129,7 +2129,15 @@ function convertToEncounterTable() {
                             cell.textContent = newValue;
                             
                             // Find the row in window.encounterTableData by ID
-                            const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+                            const rowIndex = window.encounterTableData.findIndex(item => {
+                                if (data.type === 'player') {
+                                    // For players, match by name and type
+                                    return item.name === data.name && item.type === 'player';
+                                } else {
+                                    // For creatures, match by ID
+                                    return item.id === data.id;
+                                }
+                            });
                             
                             if (rowIndex !== -1) {
                                 window.encounterTableData[rowIndex][column.key] = newValue;
