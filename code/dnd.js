@@ -2204,9 +2204,6 @@ function convertToEncounterTable() {
                         });
                     }
                 });
-                if (column.key === 'hp') {
-                    updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
-                }
             } else {
                 cell.style.cursor = 'default';
             }
@@ -2339,6 +2336,8 @@ function convertToEncounterTable() {
                 
                 cell.textContent = '';
                 cell.appendChild(nameContainer);
+            } else if (column.key === 'hp') {
+                updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
             }
             row.appendChild(cell);
         });
