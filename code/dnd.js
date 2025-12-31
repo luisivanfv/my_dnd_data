@@ -1540,15 +1540,23 @@ function initializeTableData() {
 }
 // Helper function for sorting
 function sortTableData(tableData) {
-    // Sort by initiative descending, then by name
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
         const initB = parseInt(b.initiative) || 0;
         
         if (initA === initB) {
-            // If same initiative, creatures before players, then by name
+            // If same initiative, creatures before players
             if (a.type === 'creature' && b.type !== 'creature') return -1;
             if (a.type !== 'creature' && b.type === 'creature') return 1;
+            
+            // If both are creatures, sort by ID
+            if (a.type === 'creature' && b.type === 'creature') {
+                const idA = parseInt(a.id) || 0;
+                const idB = parseInt(b.id) || 0;
+                return idA - idB;
+            }
+            
+            // Otherwise sort by name
             return a.name.localeCompare(b.name);
         }
         
