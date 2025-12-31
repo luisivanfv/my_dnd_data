@@ -2270,7 +2270,7 @@ function convertToEncounterTable() {
                 nameContainer.style.position = 'relative';
                 nameContainer.style.display = 'inline-block';
                 
-                if (data.type === 'creature') {
+                if (data.type === 'monster') {
                     const link = document.createElement('a');
                     //link.className = 'lazy-preview-link';
                     const creatureSlug = data.sourceKey.replaceAll(' ', '-').toLowerCase();
@@ -2537,10 +2537,10 @@ function setIconShieldForAc(cell, data, textColor) {
     acText.textContent = data.ac || '10';
     acText.style.position = 'absolute';
     acText.style.zIndex = '2';
-    acText.style.color = textColor;
+    acText.style.color = 'black';
     acText.style.fontWeight = 'bold';
     acText.style.fontSize = '16px';
-    acText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
+    //acText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
     acText.style.display = 'flex';
     acText.style.alignItems = 'center';
     acText.style.justifyContent = 'center';
