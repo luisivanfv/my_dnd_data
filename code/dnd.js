@@ -1509,7 +1509,7 @@ function initializeTableData() {
         const encounterName = getUrlParameter('name');
         console.log('Encounter name from URL:', encounterName);
         if(encounterName) {
-            const encounterData = JSON.parse(localStorage.getItem(`encounters_${encounterName}`));
+            const encounterData = JSON.parse(localStorage.getItem(`encounters_${encounterName}.json`));
             console.log('Encounter data from localStorage:', encounterData);
             /*if (encounterData && Array.isArray(encounterData.monsters)) {
                 encounterData.monsters.forEach((monsterEntry) => {});
