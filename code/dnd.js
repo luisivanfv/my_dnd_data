@@ -1515,7 +1515,7 @@ function initializeTableData() {
                 let idCounter = 1;
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split(' ')[0].trim()
-                    const typeOfEnemy = enemy.split(' ')[1].trim();
+                    const typeOfEnemy = enemy.split(' ')[1].trim().toLowerCase().replaceAll(' ', '-');
                     const monsterInfo = monsterData[typeOfEnemy];
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
                         const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
