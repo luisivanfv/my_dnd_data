@@ -1521,7 +1521,7 @@ function initializeTableData() {
                         const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
                         const roll = Math.floor(Math.random() * 20) + 1;
                         const initiative = roll + dexMod;
-                        const hp = monsterInfo.hitPoints.split('(')[1].trim();
+                        const hp = monsterInfo.hitPoints.split('(')[0].trim();
                         tableForData.push({
                             id: idCounter++,
                             initiative: initiative,
