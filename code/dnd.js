@@ -2201,7 +2201,9 @@ function convertToEncounterTable() {
                         });
                     }
                 });
-                updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
+                if (column.key === 'hp') {
+                    updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
+                }
             } else {
                 cell.style.cursor = 'default';
             }
