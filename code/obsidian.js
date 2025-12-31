@@ -162,7 +162,7 @@ async function loadAllCreatures() {
     localStorage.setItem('players', JSON.stringify(players));
 }
 async function loadDirectoriesToStorage() {
-    const directories = ['characters', 'locations', 'spells', 'statblocks'];
+    const directories = ['characters', 'encounters', 'locations', 'spells', 'statblocks'];
     directories.forEach(async (directory) => {
         const filenames = await getFilenames(directory);
         localStorage.setItem(directory, JSON.stringify(filenames));
