@@ -2103,7 +2103,7 @@ function convertToEncounterTable() {
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
             cell.textContent = cellValue;
             if (column.editable && 
-                !(column.key === 'initiative' && data.type === 'creature')) {
+                !(column.key === 'initiative' && data.type === 'monster')) {
                 cell.style.cursor = 'pointer';
                 cell.classList.add('editable-cell');
                 cell.addEventListener('click', () => {
@@ -2207,7 +2207,7 @@ function convertToEncounterTable() {
             } else {
                 cell.style.cursor = 'default';
             }
-            if (column.key === 'initiative' && data.type === 'creature') {
+            if (column.key === 'initiative' && data.type === 'monster') {
                 const link = document.createElement('a');
                 link.style.color = textColor;
                 link.style.cursor = 'pointer';
@@ -2228,7 +2228,7 @@ function convertToEncounterTable() {
             } else if (column.key === 'ac' && data.type === 'monster') {
                 setIconShieldForAc(cell, data, textColor);
             } else if (column.key === 'id') {
-                if (data.type === 'creature') {
+                if (data.type === 'monster' || data.type === 'creature') {
                     // For creatures, show the ID from data (which should be unique)
                     cell.textContent = data.id || '';
                     // Make the ID cell editable for manual override
@@ -2239,7 +2239,7 @@ function convertToEncounterTable() {
                         window.showNumberPrompt(currentValue, (newValue) => {
                             // Check if this ID is already taken by another creature
                             const isTaken = window.encounterTableData.some(row => 
-                                row.type === 'creature' && 
+                                row.type === 'monster' && 
                                 row.id == newValue && 
                                 row.id !== data.id
                             );
@@ -2305,7 +2305,7 @@ function convertToEncounterTable() {
                     
                     // Find the data
                     const rowData = window.encounterTableData.find(item => {
-                        if (item.type === 'creature') {
+                        if (item.type === 'monster' || item.type === 'creature') {
                             return String(item.id) === rowId && item.name === rowName;
                         }
                         return item.name === rowName;
