@@ -2512,6 +2512,7 @@ function convertToEncounterTable() {
     console.log('Table data length:', window.encounterTableData.length);
 }
 function setIconShieldForAc(cell, data, textColor) {
+    console.log('setIconShieldForAc called for creature:', data.name);
     // Create container for icon with text overlay
     const container = document.createElement('div');
     container.style.position = 'relative';
