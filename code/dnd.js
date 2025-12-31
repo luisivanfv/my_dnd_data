@@ -3168,7 +3168,7 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     
     // Create container
     const container = document.createElement('div');
-    //container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
+    container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
     container.onmouseover = () => {
         console.log('HP bar hovered:', currentHp, '/', maxHp, '(', percentage, '%)');
     }
@@ -3185,7 +3185,7 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     background.style.left = '0';
     background.style.width = '100%';
     background.style.height = '100%';
-    background.style.backgroundColor = '#4a5568'; // Dark grey
+    background.style.backgroundColor = '#364051'; // Dark grey
     background.style.borderRadius = '4px';
     background.style.opacity = '0.7';
     
@@ -3220,23 +3220,6 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     hpText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
     hpText.style.zIndex = '2';
     hpText.title = `${currentHp}/${maxHp} (${percentage}%)`;
-    
-    // Add percentage indicator for low HP
-    if (percentage <= 50) {
-        const percentageBadge = document.createElement('div');
-        percentageBadge.className = 'hp-percentage-badge';
-        percentageBadge.textContent = `${percentage}%`;
-        percentageBadge.style.position = 'absolute';
-        percentageBadge.style.top = '2px';
-        percentageBadge.style.right = '2px';
-        percentageBadge.style.backgroundColor = 'rgba(0,0,0,0.7)';
-        percentageBadge.style.color = 'white';
-        percentageBadge.style.fontSize = '10px';
-        percentageBadge.style.padding = '1px 3px';
-        percentageBadge.style.borderRadius = '3px';
-        percentageBadge.style.zIndex = '3';
-        container.appendChild(percentageBadge);
-    }
     
     container.appendChild(background);
     container.appendChild(foreground);
