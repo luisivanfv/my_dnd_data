@@ -1743,13 +1743,45 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
+                        //renderTable();
+                        // Instead of full re-render, just update the HP display
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell) {
+                                updateHpDisplay(
+                                    hpCell, 
+                                    updatedStats.hp, 
+                                    window.encounterTableData[rowIndex].maxHp,
+                                    hpCell._hpData ? hpCell._hpData.textColor : 'white'
+                                );
+                            }
+                            
+                            // Also update temp HP if needed
+                            const tempHpCell = row.querySelector('td[data-key="tempHp"]');
+                            if (tempHpCell) {
+                                tempHpCell.textContent = updatedStats.tempHp;
+                            }
+                        }
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
+                        //renderTable();
+                        // Update the HP display
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell) {
+                                updateHpDisplay(
+                                    hpCell,
+                                    updatedStats.hp,
+                                    window.encounterTableData[rowIndex].maxHp,
+                                    hpCell._hpData ? hpCell._hpData.textColor : 'white'
+                                );
+                            }
+                        }
                     });
                 } else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${window.encounterTableData[rowIndex].name}?`)) {
@@ -3189,7 +3221,53 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     
     return container;
 }
-
+function updateHpDisplay(cell, newHp, maxHp, textColor) {
+    // Clear the cell
+    cell.textContent = '';
+    
+    // Create new progress bar with updated values
+    const updatedHpDisplay = createHpProgressBar(newHp, maxHp, textColor);
+    cell.appendChild(updatedHpDisplay);
+    
+    // Update stored data
+    if (cell._hpData) {
+        cell._hpData.current = newHp;
+    }
+}
+// Also create a function to update all HP displays (useful after damage/healing)
+function updateAllHpDisplays() {
+    const rows = document.querySelectorAll('.encounter-table tr');
+    rows.forEach((row, index) => {
+        if (index === 0) return; // Skip header row
+        
+        const hpCell = row.querySelector('td[data-key="hp"]');
+        if (hpCell && hpCell._hpData) {
+            // Find the corresponding data
+            const nameCell = row.querySelector('td[data-key="name"]');
+            const idCell = row.querySelector('td[data-key="id"]');
+            
+            if (nameCell) {
+                const name = nameCell.textContent.trim();
+                const id = idCell ? idCell.textContent.trim() : null;
+                
+                // Find the data in window.encounterTableData
+                const rowData = window.encounterTableData.find(item => {
+                    if (id && item.id) {
+                        // Creature with ID
+                        return String(item.id) === id && item.name === name;
+                    } else {
+                        // Player (no ID or empty ID)
+                        return item.name === name && item.type === 'player';
+                    }
+                });
+                
+                if (rowData) {
+                    updateHpDisplay(hpCell, rowData.hp, rowData.maxHp, hpCell._hpData.textColor);
+                }
+            }
+        }
+    });
+}
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
 window.addRowToDOM = addRowToDOM; // Make it available globally
