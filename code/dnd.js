@@ -2132,6 +2132,9 @@ function convertToEncounterTable() {
                         cell.textContent = '';
                         const hpDisplay = createHpProgressBar(data.hp, data.maxHp, textColor);
                         cell.appendChild(hpDisplay);
+    
+                        // Store the display elements for easy updating
+                        cell._hpData = { current: data.hp, max: data.maxHp, textColor: textColor };
                         
                         // Make cell editable
                         cell.style.cursor = 'pointer';
@@ -2152,10 +2155,16 @@ function convertToEncounterTable() {
                                 
                                 if (rowIndex !== -1) {
                                     window.encounterTableData[rowIndex].hp = newValue;
-                                    // Update the display
-                                    cell.textContent = '';
-                                    const updatedHpDisplay = createHpProgressBar(newValue, data.maxHp, textColor);
-                                    cell.appendChild(updatedHpDisplay);
+                                    data.hp = newValue; // Update local data reference
+                                    
+                                    // Update the display WITHOUT re-rendering the entire table
+                                    updateHpDisplay(cell, newValue, data.maxHp, textColor);
+                                    
+                                    // If initiative was changed, sort and re-render
+                                    if (column.key === 'initiative') {
+                                        sortTableData(window.encounterTableData);
+                                        renderTable();
+                                    }
                                 }
                             });
                         });
