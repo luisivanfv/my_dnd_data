@@ -1516,7 +1516,7 @@ function initializeTableData() {
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split(' ')[0].trim()
                     const typeOfEnemy = enemy.split(' ')[1].trim().toLowerCase().replaceAll(' ', '-');
-                    const monsterInfo = monsterData[typeOfEnemy];
+                    const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
                         const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
                         const roll = Math.floor(Math.random() * 20) + 1;
