@@ -2089,7 +2089,7 @@ function convertToEncounterTable() {
             { key: 'initiative', editable: true, type: 'number' },
             { key: 'name', editable: false, type: 'text' },
             { key: 'ac', editable: true, type: 'number' },
-            { key: 'hp', editable: true, type: 'text' },
+            { key: 'hp', editable: false, type: 'text' },
             { key: 'tempHp', editable: true, type: 'text' },
             { key: 'conditions', editable: true, type: 'text' }
         ];
