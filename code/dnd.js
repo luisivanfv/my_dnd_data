@@ -2124,7 +2124,42 @@ function convertToEncounterTable() {
                                 }
                             }
                         }, `Enter ${column.key}:`);
-                    } else if (column.type === 'number' || column.key === 'hp' || column.key === 'tempHp' || column.key === 'maxHp') {
+                    } else if (column.key === 'hp') {
+                        cell.style.padding = '4px'; // Reduce padding for better visual
+                        cell.style.textAlign = 'center';
+                        
+                        // Clear cell and add progress bar
+                        cell.textContent = '';
+                        const hpDisplay = createHpProgressBar(data.hp, data.maxHp, textColor);
+                        cell.appendChild(hpDisplay);
+                        
+                        // Make cell editable
+                        cell.style.cursor = 'pointer';
+                        cell.classList.add('editable-cell');
+                        cell.addEventListener('click', () => {
+                            const currentValue = data.hp;
+                            window.showNumberPrompt(currentValue, (newValue) => {
+                                data.hp = newValue;
+                                
+                                // Find and update the row
+                                const rowIndex = window.encounterTableData.findIndex(item => {
+                                    if (data.type === 'player') {
+                                        return item.name === data.name && item.type === 'player';
+                                    } else {
+                                        return item.id === data.id;
+                                    }
+                                });
+                                
+                                if (rowIndex !== -1) {
+                                    window.encounterTableData[rowIndex].hp = newValue;
+                                    // Update the display
+                                    cell.textContent = '';
+                                    const updatedHpDisplay = createHpProgressBar(newValue, data.maxHp, textColor);
+                                    cell.appendChild(updatedHpDisplay);
+                                }
+                            });
+                        });
+                    } else if (column.type === 'number' || column.key === 'tempHp' || column.key === 'maxHp') {
                         // Use number prompt for numeric fields
                         window.showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
@@ -3084,6 +3119,66 @@ function showNotesModal(currentNotes, callback) {
     textarea.select();
     
     return modal;
+}
+function createHpProgressBar(currentHp, maxHp, textColor) {
+    if (!currentHp || !maxHp) return currentHp || '0';
+    
+    const current = parseInt(currentHp);
+    const max = parseInt(maxHp);
+    
+    if (isNaN(current) || isNaN(max) || max <= 0) return currentHp;
+    
+    const percentage = Math.min(100, Math.round((current / max) * 100));
+    
+    // Determine bar color
+    let barColor;
+    let isCritical = false;
+    
+    if (percentage <= 25) {
+        barColor = '#dc2626'; // Red
+        isCritical = true;
+    } else if (percentage <= 50) {
+        barColor = '#f97316'; // Orange
+    } else if (percentage <= 75) {
+        barColor = '#eab308'; // Yellow
+    } else {
+        barColor = '#22c55e'; // Green
+    }
+    
+    // Create container with progress bar
+    const container = document.createElement('div');
+    container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
+    container.style.position = 'relative';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.minHeight = '40px'; // Ensure enough height for bar
+    
+    // Create progress bar
+    const progressBar = document.createElement('div');
+    progressBar.className = 'hp-progress-bar';
+    progressBar.style.width = `${percentage}%`;
+    progressBar.style.backgroundColor = barColor;
+    progressBar.style.borderRadius = '2px';
+    progressBar.title = `${percentage}% HP`;
+    
+    // Create HP text
+    const hpText = document.createElement('div');
+    hpText.className = 'hp-text';
+    hpText.textContent = currentHp;
+    hpText.style.color = textColor;
+    hpText.style.position = 'absolute';
+    hpText.style.top = '50%';
+    hpText.style.left = '50%';
+    hpText.style.transform = 'translate(-50%, -50%)';
+    hpText.style.width = '100%';
+    hpText.style.textAlign = 'center';
+    hpText.style.padding = '2px';
+    hpText.title = `${currentHp}/${maxHp} (${percentage}%)`;
+    
+    container.appendChild(progressBar);
+    container.appendChild(hpText);
+    
+    return container;
 }
 
 // Export the function for manual use
