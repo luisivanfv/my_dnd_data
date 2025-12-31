@@ -2705,7 +2705,6 @@ function showDamageModal(currentValue, creatureInfo, callback) {
         if (!isNaN(value) && value >= 0) {
             callback(value);
         }
-        console.log(creatureInfo.name + ' damaged for ' + value + ' points.');
         if(creatureInfo.whenDamagedReminder){
             if (creatureInfo.whenDamagedReminder.includes('['))
                 popup.show(creatureInfo.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creatureInfo.whenDamagedReminder.split(']')[1].trim(), 'white'));
