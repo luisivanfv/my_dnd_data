@@ -1545,18 +1545,7 @@ function sortTableData(tableData) {
         const initB = parseInt(b.initiative) || 0;
         
         if (initA === initB) {
-            // If same initiative, creatures before players
-            if (a.type === 'creature' && b.type !== 'creature') return -1;
-            if (a.type !== 'creature' && b.type === 'creature') return 1;
-            
-            // If both are creatures, sort by ID
-            if (a.type === 'creature' && b.type === 'creature') {
-                const idA = parseInt(a.id) || 0;
-                const idB = parseInt(b.id) || 0;
-                return idA - idB;
-            }
-            
-            // Otherwise sort by name
+            // If same initiative, sort by name instead of separating by type
             return a.name.localeCompare(b.name);
         }
         
@@ -1680,7 +1669,26 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         event.preventDefault();
         event.stopPropagation();
         
-        const rowIndex = window.encounterTableData.findIndex(item => item.id === data.id);
+        // Get the row data from the clicked row, not by searching array
+        const row = editButton.closest('tr');
+        const rowIdCell = row.querySelector('td[data-key="id"]');
+        const rowNameCell = row.querySelector('td[data-key="name"]');
+        
+        if (!rowIdCell || !rowNameCell) return;
+        
+        const rowId = rowIdCell.textContent.trim();
+        const rowName = rowNameCell.textContent.trim();
+        
+        // Find the row in the data by matching both ID and name for better accuracy
+        const rowIndex = window.encounterTableData.findIndex(item => {
+            // For creatures, match by ID and name
+            if (item.type === 'creature') {
+                return String(item.id) === rowId && item.name === rowName;
+            }
+            // For players, match by name (players don't have IDs)
+            return item.name === rowName;
+        });
+        
         if (rowIndex === -1) return;
         
         showContextMenu(event.clientX, event.clientY, 
@@ -1700,10 +1708,12 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         renderTable();
                     });
                 } else if (option === 'Destroy') {
-                    if (confirm(`Are you sure you want to remove ${data.name}?`)) {
+                    if (confirm(`Are you sure you want to remove ${window.encounterTableData[rowIndex].name}?`)) {
+                        // Store the data for logging
+                        const toRemove = window.encounterTableData[rowIndex];
+                        console.log(`Removing: ${toRemove.name} (ID: ${toRemove.id}, Type: ${toRemove.type})`);
+                        
                         window.encounterTableData.splice(rowIndex, 1);
-                        // After removal, ensure remaining creature IDs are still sequential
-                        ensureCreatureIds();
                         renderTable();
                     }
                 }
@@ -1872,45 +1882,47 @@ function convertToEncounterTable() {
     window.encounterTableData = initializeTableData();
     // Function to ensure creature IDs are preserved and unique
     function ensureCreatureIds() {
+        // Separate creatures and players
         const creatures = window.encounterTableData.filter(row => row.type === 'creature');
-        const players = window.encounterTableData.filter(row => row.type === 'player');
+        const nonCreatures = window.encounterTableData.filter(row => row.type !== 'creature');
         
         // Track existing creature IDs
         const existingIds = new Set();
-        let maxId = 0;
         
-        // First pass: collect existing valid IDs
+        // First, collect all valid existing IDs
         creatures.forEach(creature => {
             const id = parseInt(creature.id);
             if (!isNaN(id) && id > 0) {
                 existingIds.add(id);
-                maxId = Math.max(maxId, id);
             }
         });
         
-        // Second pass: assign IDs to creatures without them or with duplicates
-        creatures.forEach((creature, index) => {
+        // Find the maximum ID
+        let maxId = existingIds.size > 0 ? Math.max(...existingIds) : 0;
+        
+        // Assign IDs to creatures that need them
+        creatures.forEach(creature => {
             const currentId = parseInt(creature.id);
             
-            // If ID is invalid, duplicate, or missing
-            if (isNaN(currentId) || currentId <= 0 || 
-                (existingIds.has(currentId) && 
-                creatures.filter(c => parseInt(c.id) === currentId).length > 1)) {
-                
-                // Find next available ID
-                let newId = currentId;
-                while (newId <= 0 || existingIds.has(newId)) {
-                    maxId++;
-                    newId = maxId;
-                }
-                
-                creature.id = newId;
-                existingIds.add(newId);
+            // If creature has no ID or invalid ID
+            if (isNaN(currentId) || currentId <= 0) {
+                maxId++;
+                creature.id = maxId;
+                existingIds.add(maxId);
+            } 
+            // If creature has duplicate ID
+            else if (creatures.filter(c => parseInt(c.id) === currentId).length > 1) {
+                maxId++;
+                creature.id = maxId;
+                existingIds.add(maxId);
             }
         });
         
-        // Recombine the data
-        window.encounterTableData = [...players, ...creatures];
+        // Re-sort creatures by ID
+        creatures.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        
+        // Recombine: non-creatures first, then creatures
+        window.encounterTableData = [...nonCreatures, ...creatures];
     }
     // Function to update global reference whenever tableData changes
     function updateTableData(newData) {
@@ -2096,6 +2108,11 @@ function convertToEncounterTable() {
                                 if (column.key === 'initiative') {
                                     sortTableData(window.encounterTableData);
                                     renderTable();
+                                    // Add this after the renderTable call in your context menu handler
+                                    console.log('Current table data after delete:');
+                                    window.encounterTableData.forEach((row, idx) => {
+                                        console.log(`${idx}: ${row.name} (ID: ${row.id}, Type: ${row.type}, Initiative: ${row.initiative})`);
+                                    });
                                 }
                             }
                         });
