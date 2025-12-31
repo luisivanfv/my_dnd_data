@@ -51,6 +51,7 @@ async function loadExternalScript(url) {
 
 function getImagePreview(url, txt, color, fontSize) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    txt = txt.replace("Scoia'tael", "Scoiatael");
     color = color ? color : 'darkred';
     fontSize = fontSize || txtSize;
     const isImage = imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
