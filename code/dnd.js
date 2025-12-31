@@ -2207,10 +2207,28 @@ function convertToEncounterTable() {
                 // Add tooltip on hover
                 let tooltipTimeout;
                 nameContainer.addEventListener('mouseenter', (event) => {
-                    if (data.notes && data.notes.trim() !== '') {
+                    // Get current row data
+                    const row = nameContainer.closest('tr');
+                    const rowIdCell = row.querySelector('td[data-key="id"]');
+                    const rowNameCell = row.querySelector('td[data-key="name"]');
+                    
+                    if (!rowIdCell || !rowNameCell) return;
+                    
+                    const rowId = rowIdCell.textContent.trim();
+                    const rowName = rowNameCell.textContent.trim();
+                    
+                    // Find the data
+                    const rowData = window.encounterTableData.find(item => {
+                        if (item.type === 'creature') {
+                            return String(item.id) === rowId && item.name === rowName;
+                        }
+                        return item.name === rowName;
+                    });
+                    
+                    if (rowData && rowData.notes && rowData.notes.trim() !== '') {
                         tooltipTimeout = setTimeout(() => {
-                            showTooltip(event.clientX + 10, event.clientY + 10, data.notes);
-                        }, 500); // Delay before showing tooltip
+                            showTooltip(event.clientX + 10, event.clientY + 10, rowData.notes);
+                        }, 500);
                     }
                 });
                 
