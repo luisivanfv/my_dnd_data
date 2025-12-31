@@ -655,7 +655,7 @@ function hideLazyPreview() {
 async function renameWikisWithNames() {
     if(getUrlParameter('name'))
         Array.from(document.getElementsByClassName('wiki-page-name')).forEach((element) => {
-            const name = toUpper(getUrlParameter('name').replaceAll('-', ' '));
+            const name = toUpper(getUrlParameter('name').replaceAll('-', ' ')).replace("Scoiatael", "Scoia'tael");
             element.innerHTML = name;
             document.title = name;
         });

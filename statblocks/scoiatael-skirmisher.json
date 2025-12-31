@@ -6,9 +6,13 @@
         "icon": "footprint",
         "sound": "walking_gravel"
     }, {
-        "name": "Disarm",
+        "name": "Longbow disarm",
         "icon": "disarm",
         "sound": "drop_wood"
+    }, {
+        "name": "Sword disarm",
+        "icon": "disarm",
+        "sound": "sword_disarm"
     }
   ],
   "creatureType": "Medium Humanoid (Elf), Any Alignment",
