@@ -2525,7 +2525,7 @@ function setIconShieldForAc(cell, data, textColor) {
     
     // Create shield icon
     const shieldIcon = document.createElement('img');
-    shieldIcon.src = 'https://img.icons8.com/sf-black-filled/64/FAFAFA/shield.png';
+    shieldIcon.src = `https://img.icons8.com/sf-black-filled/64/${customDarkGrey}/shield.png`;
     shieldIcon.alt = 'shield';
     shieldIcon.width = 40;
     shieldIcon.height = 40;
@@ -2537,7 +2537,7 @@ function setIconShieldForAc(cell, data, textColor) {
     acText.textContent = data.ac || '10';
     acText.style.position = 'absolute';
     acText.style.zIndex = '2';
-    acText.style.color = 'black';
+    acText.style.color = 'white';
     acText.style.fontWeight = 'bold';
     acText.style.fontSize = '16px';
     //acText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
@@ -3210,6 +3210,7 @@ function showNotesModal(currentNotes, callback) {
     
     return modal;
 }
+const customDarkGrey = '#364051'; // Custom dark grey color
 // Function to create HP progress bar with both numbers and grey background
 function createHpProgressBar(currentHp, maxHp, textColor) {
     if (!currentHp || !maxHp) {
@@ -3264,7 +3265,7 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     background.style.left = '0';
     background.style.width = '100%';
     background.style.height = '100%';
-    background.style.backgroundColor = '#364051'; // Dark grey
+    background.style.backgroundColor = customDarkGrey; // Dark grey
     background.style.borderRadius = '4px';
     background.style.opacity = '0.7';
     
