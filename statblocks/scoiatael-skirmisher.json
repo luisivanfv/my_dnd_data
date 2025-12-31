@@ -1,0 +1,70 @@
+{
+  "name": "Scoia'tael Skirmisher",
+  "sounds": [],
+  "creatureType": "Medium Humanoid (Elf), Any Alignment",
+  "armorClass": "16 (studded leather)",
+  "hitPoints": "75 (10d8 + 30)",
+  "speed": "30 ft.",
+  "str": "11",
+  "dex": "18",
+  "con": "16",
+  "int": "13",
+  "wis": "13",
+  "cha": "10",
+  "strSave": "+0",
+  "dexSave": "+4",
+  "conSave": "+3",
+  "intSave": "+1",
+  "wisSave": "+1",
+  "chaSave": "+0",
+  "savingThrows": "",
+  "skills": "Acrobatics +6, Perception +5",
+  "damageVulnerabilities": "",
+  "damageResistances": "",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Passive Perception 17",
+  "languages": "Elder Speech (and usually Common Speech)",
+  "challenge": "4 (1,100 XP)",
+  "proficiencyBonus": "+2",
+  "description": "",
+  "passives": [
+    {
+      "name": "Forest Shadow",
+      "description": "&nbsp;The skirmisher has advantage on stealth checks, and they count as having full cover when they have three-quarters cover.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The skirmisher makes two Shortsword or Longbow attacks.",
+      "sound": null
+    },
+    {
+      "name": "Shortsword",
+      "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage.",
+      "sound": null
+    },
+    {
+      "name": "Longbow",
+      "description": "Ranged Weapon Attack: +6 to hit, range 150/600 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
+      "sound": null
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Guerrilla Tactics (2/Day)",
+      "description": "&nbsp;When the skirmisher takes damage, it can use its reaction to take half damage, and temporarily retreat for&nbsp;two turns. While retreating, it doesn't provoke opportunity attacks, has 10 extra feet of movement speed and has advantage on stealth checks, but has disadvantage on attack rolls and saving throws.",
+      "sound": null
+    }
+  ],
+  "bonusActions": [
+    {
+      "name": "Poison Arrow",
+      "description": "&nbsp;The skirmisher can poison an arrow, making its next attack roll with a longbow deal an additional&nbsp; d6 poison damage and poison the target. It may do this only if it didn't use this bonus action on its previous turn.",
+      "sound": null
+    }
+  ],
+  "legendaryActions": []
+}
