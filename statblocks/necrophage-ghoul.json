@@ -40,18 +40,13 @@
   "description": "After the&nbsp;Northern Wars,&nbsp;necrophages&nbsp;generally grew bolder and multiplied in the&nbsp;Northern Kingdoms; ghouls, a sub-species, became the most common corpse-eaters, usually found roaming around in packs, distinguishable from their cousins,&nbsp;alghouls, by the sickly paleness of their visage.",
   "passives": [
     {
-      "name": "Necrophage stench",
+      "name": "Necrophage Stench",
       "description": "&nbsp; Whenever a necrophage receives damage, all creatures within 5 feet of it must make a DC 8 Constitution saving throw or become poisoned.",
       "sound": null
     },
     {
       "name": "Feeding Frenzy",
-      "description": "&nbsp; Necrophages gain a +1 bonus to attack rolls for each dead corpse in a 60 feet radius of it.",
-      "sound": null
-    },
-    {
-      "name": "Last Supper",
-      "description": "&nbsp; Ghouls&nbsp;gain advantage on attack rolls when they drop below 10% HP, but have a -5 penalty to AC.",
+      "description": "&nbsp; Necrophages gain a +1 bonus to attack rolls for each creature who has died in its presence during combat.",
       "sound": null
     }
   ],
@@ -63,11 +58,11 @@
     },
     {
       "name": "Claws",
-      "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+      "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be poisoned until the end of its next turn.",
       "sound": "claw"
     }, {
       "name": "Bite",
-      "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) piercing damage.",
+      "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) piercing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be poisoned until the end of its next turn.",
       "sound": "monster_bite"
     }
   ],

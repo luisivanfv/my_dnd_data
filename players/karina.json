@@ -3,6 +3,6 @@
     "color": "yellow",
     "textColor": "black",
     "class": "Sorcerer",
-    "ac": "15",
-    "maxHp": "11"
+    "ac": "13",
+    "maxHp": "7"
 }

@@ -3,6 +3,6 @@
     "color": "darkgreen",
     "textColor": "white",
     "class": "Cleric",
-    "ac": "15",
-    "maxHp": "11"
+    "ac": "18",
+    "maxHp": "10"
 }
