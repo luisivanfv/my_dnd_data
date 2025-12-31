@@ -1674,12 +1674,12 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             ['Damage', 'Heal', '---', 'Destroy'], 
             (option) => {
                 if (option === 'Damage') {
-                    showDamageModal(0, (damageAmount) => {
+                    showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
                         renderTable();
-                    }, window.encounterTableData[rowIndex]);
+                    });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
@@ -2151,7 +2151,7 @@ function convertToEncounterTable() {
             ['Damage', 'Heal', '---', 'Destroy'], 
             (option) => {
                 if (option === 'Damage') {
-                    showDamageModal(0, (damageAmount) => {
+                    showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
@@ -2644,7 +2644,7 @@ function applyHealing(rowData, healAmount) {
 }
 
 // Show damage modal
-function showDamageModal(currentValue, callback, creatureInfo) {
+function showDamageModal(currentValue, creatureInfo, callback) {
     const modal = document.createElement('div');
     modal.className = 'damage-modal';
     modal.style.cssText = `
