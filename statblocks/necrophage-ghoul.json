@@ -1,0 +1,77 @@
+{
+  "name": "Necrophage Ghoul",
+  "sounds": [
+    {
+      "name": "Breath",
+      "icon": "laugh",
+      "sound": "undead_breath"
+    }, {
+      "name": "Growl",
+      "icon": "speak",
+      "sound": "big_growl"
+    }
+  ],
+  "creatureType": "Medium Undead, Chaotic Evil",
+  "armorClass": "12",
+  "hitPoints": "22 (5d8)",
+  "speed": "30 ft.",
+  "str": "13",
+  "dex": "15",
+  "con": "10",
+  "int": "7",
+  "wis": "10",
+  "cha": "6",
+  "strSave": "+1",
+  "dexSave": "+2",
+  "conSave": "+0",
+  "intSave": "-2",
+  "wisSave": "+0",
+  "chaSave": "-2",
+  "savingThrows": "",
+  "skills": "",
+  "damageVulnerabilities": "",
+  "damageResistances": "",
+  "damageImmunities": "Poison",
+  "conditionImmunities": "Charmed, Exhaustion, Poisoned",
+  "senses": "Darkvision 60 ft., Passive Perception 10",
+  "languages": "Common",
+  "challenge": "1/2 (100 XP)",
+  "proficiencyBonus": "+2",
+  "description": "After the&nbsp;Northern Wars,&nbsp;necrophages&nbsp;generally grew bolder and multiplied in the&nbsp;Northern Kingdoms; ghouls, a sub-species, became the most common corpse-eaters, usually found roaming around in packs, distinguishable from their cousins,&nbsp;alghouls, by the sickly paleness of their visage.",
+  "passives": [
+    {
+      "name": "Necrophage stench",
+      "description": "&nbsp; Whenever a necrophage receives damage, all creatures within 5 feet of it must make a DC 8 Constitution saving throw or become poisoned.",
+      "sound": null
+    },
+    {
+      "name": "Feeding Frenzy",
+      "description": "&nbsp; Necrophages gain a +1 bonus to attack rolls for each dead corpse in a 60 feet radius of it.",
+      "sound": null
+    },
+    {
+      "name": "Last Supper",
+      "description": "&nbsp; Ghouls&nbsp;gain advantage on attack rolls when they drop below 10% HP, but have a -5 penalty to AC.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Necrophagy",
+      "description": "&nbsp; A necrophage may use a bonus action to feast on a&nbsp;corpse that died no more than 3 days ago, and heal&nbsp;five&nbsp;times the level of the creature.",
+      "sound": "monster_eating"
+    },
+    {
+      "name": "Claws",
+      "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+      "sound": "claw"
+    }, {
+      "name": "Bite",
+      "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) piercing damage.",
+      "sound": "monster_bite"
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}
