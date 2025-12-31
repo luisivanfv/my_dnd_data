@@ -2201,6 +2201,7 @@ function convertToEncounterTable() {
                         });
                     }
                 });
+                updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
             } else {
                 cell.style.cursor = 'default';
             }
@@ -2431,6 +2432,7 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
+        console.warn('Rendering table...');
         // First, sort the table by initiative
         sortTableData(window.encounterTableData);
         
