@@ -2527,8 +2527,8 @@ function setIconShieldForAc(cell, data, textColor) {
     const shieldIcon = document.createElement('img');
     shieldIcon.src = `https://img.icons8.com/sf-black-filled/64/${customDarkGrey.replace('#', '')}/shield.png`;
     shieldIcon.alt = 'shield';
-    shieldIcon.width = 40;
-    shieldIcon.height = 40;
+    shieldIcon.width = 50;
+    shieldIcon.height = 50;
     shieldIcon.style.position = 'absolute';
     shieldIcon.style.zIndex = '1';
     
