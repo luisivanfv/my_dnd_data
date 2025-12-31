@@ -1481,7 +1481,9 @@ function initializeTableData() {
             for (let i = 0; i < playerKeys.length; i++) {
                 const playerKey = playerKeys[i];
                 const playerInfo = playerData[playerKey];
-                const dexMod = Math.floor((parseInt(playerInfo.initiativeMod) - 10) / 2);
+                const dexMod = playerInfo.initiativeMod.includes('+') ?
+                    parseInt(playerInfo.initiativeMod.split('+')[1]) :
+                    parseInt(playerInfo.initiativeMod);
                 const roll = Math.floor(Math.random() * 20) + 1;
                 const initiative = roll + dexMod;
                 if (playerInfo && typeof playerInfo === 'object') {
