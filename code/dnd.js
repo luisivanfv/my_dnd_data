@@ -3147,21 +3147,31 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     // Determine bar color
     let barColor;
     let isCritical = false;
+    let rangePerColor = 14.28; // Approximately 100/7
     
-    if (percentage <= 25) {
+    if (percentage <= rangePerColor * 1) {
         barColor = '#dc2626'; // Red
         isCritical = true;
-    } else if (percentage <= 50) {
+    } else if (percentage <= rangePerColor * 2) {
+        barColor = '#eb4d1e'; // Orange
+    } else if (percentage <= rangePerColor * 3) {
         barColor = '#f97316'; // Orange
-    } else if (percentage <= 75) {
+    } else if (percentage <= rangePerColor * 4) {
+        barColor = '#f2930f'; // Dark Yellow
+    } else if (percentage <= rangePerColor * 5) {
         barColor = '#eab308'; // Yellow
+    } else if (percentage <= rangePerColor * 6) {
+        barColor = '#86bc33'; // Light Green
     } else {
         barColor = '#22c55e'; // Green
     }
     
     // Create container
     const container = document.createElement('div');
-    container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
+    //container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
+    container.onmouseover = () => {
+        console.log('HP bar hovered:', currentHp, '/', maxHp, '(', percentage, '%)');
+    }
     container.style.position = 'relative';
     container.style.width = '100%';
     container.style.height = '100%';
