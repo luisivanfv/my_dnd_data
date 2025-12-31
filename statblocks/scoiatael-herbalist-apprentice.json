@@ -1,0 +1,69 @@
+{
+  "name": "Scoia'tael Herbalist Apprentice",
+  "sounds": [
+    {
+        "name": "Walking outside",
+        "icon": "footprint",
+        "sound": "walking_gravel"
+    },{
+        "name": "Sword disarm",
+        "icon": "disarm",
+        "sound": "sword_disarm"
+    }
+  ],
+  "creatureType": "Medium Humanoid (Elf), Any Alignment",
+  "armorClass": "10 (2d12)",
+  "hitPoints": "",
+  "speed": "30 ft.",
+  "str": "9",
+  "dex": "12",
+  "con": "10",
+  "int": "12",
+  "wis": "14",
+  "cha": "9",
+  "strSave": "-1",
+  "dexSave": "+1",
+  "conSave": "+0",
+  "intSave": "+1",
+  "wisSave": "+2",
+  "chaSave": "-1",
+  "savingThrows": "",
+  "skills": "Medicine +4",
+  "damageVulnerabilities": "",
+  "damageResistances": "Poison",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Passive Perception 16",
+  "languages": "Elder Speech (and usually Common Speech)",
+  "challenge": "1/4 (50 XP)",
+  "proficiencyBonus": "+2",
+  "description": "",
+  "passives": [
+    {
+      "name": "Spellcasting",
+      "description": "The apprentice is a 1st-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 12, +4 to hit with spell attacks). The&nbsp;apprentice has following spells prepared:<br><br>Cantrips (at will): light , sacred flame , thaumaturgy<br><br>1st level (3 slots): cure wounds , sanctuary",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Dagger",
+      "description": "&nbsp;Melee or Ranged Weapon Attack: &nbsp; +5 to hit, reach 5 ft. or range 20/60 ft., one target.&nbsp; Hit: &nbsp;5 (1d4 + 3) piercing damage plus 10 (3d6) poison damage.",
+      "sound": "sword"
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [
+    {
+      "name": "Desperate Mending (3/Day)",
+      "description": "&nbsp; The apprentice&nbsp;can use a bonus action to attempt to mend an ally's wounds. The apprentice touches a creature within 5 feet and rolls a d10. On a roll of 1 or 2, the apprentice deals 1d10 damage to the creature. On a roll of&nbsp;3 through 5, the apprentice stabilizes the creature and it regains 1 hit point. On a roll of 6 or higher, the creature regains hit points equal to the number rolled. If this reduces the creature to 0 hit points, the apprentice must succeed on a DC 13&nbsp;Wisdom saving throw or become frightened of all creatures for 1 minute . On a successful save, the apprentice is not frightened but is stunned until the end of its next turn.",
+      "sound": null
+    },
+    {
+      "name": "Nimble Training (4/Day)",
+      "description": "&nbsp;The skirmisher can disengage as a bonus action, and it gets 5 extra feet of movement speed while disengaging.",
+      "sound": null
+    }
+  ],
+  "legendaryActions": []
+}

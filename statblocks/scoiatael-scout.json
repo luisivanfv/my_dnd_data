@@ -1,0 +1,74 @@
+{
+  "name": "Scoia'tael Scout",
+  "sounds": [],
+  "creatureType": "Medium Humanoid (Elf), Any Alignment",
+  "armorClass": "14 (leather armor)",
+  "hitPoints": "32 (8d8)",
+  "speed": "30 ft.",
+  "str": "11",
+  "dex": "18",
+  "con": "16",
+  "int": "12",
+  "wis": "13",
+  "cha": "9",
+  "strSave": "+0",
+  "dexSave": "+4",
+  "conSave": "+3",
+  "intSave": "+1",
+  "wisSave": "+1",
+  "chaSave": "-1",
+  "savingThrows": "",
+  "skills": "Acrobatics +6, Perception +5",
+  "damageVulnerabilities": "",
+  "damageResistances": "",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Passive Perception 15",
+  "languages": "Elder Speech (and usually Common Speech)",
+  "challenge": "1 (200 XP)",
+  "proficiencyBonus": "+2",
+  "description": "Most scoia'tael&nbsp;members have at one point or another been assigned as scouts for a commando, which means most scoia'tael scouts are generally more junior members of the organization, and generally younger. They are trained in both close and long range combat, and they emphasize retreat and caution over heroics. All scoia'tael members are trained to have a vial of poison at hand, to enhance their attacks and to have more opportunities if they were to get captured.",
+  "passives": [
+    {
+      "name": "Forest Shadow",
+      "description": "&nbsp;The skirmisher has advantage on stealth checks, and they count as having full cover when they have three-quarters cover.",
+      "sound": null
+    },
+    {
+      "name": "Sneak Attack (1/Turn)",
+      "description": "&nbsp;The&nbsp;scout deals an extra 7&nbsp; (2d6) &nbsp;damage when it hits a target with a weapon attack and has advantage on the attack roll, or when the target is within 5 feet of an ally of the&nbsp;scout that isn't&nbsp;incapacitated&nbsp;and the scout doesn't have disadvantage on the attack roll.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The archer makes two Shortsword, Shortbow or Dagger&nbsp;attacks.",
+      "sound": null
+    },
+    {
+      "name": "Shortsword",
+      "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage.",
+      "sound": "sword"
+    },
+    {
+      "name": "Shortbow",
+      "description": "Ranged Weapon Attack: +6 to hit, range 80/320 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
+      "sound": "sword"
+    },
+    {
+      "name": "Dagger",
+      "description": "&nbsp;Melee or Ranged Weapon Attack: &nbsp; +6 &nbsp;to hit, reach 5 ft. or range 20/60 ft., one target.&nbsp; Hit: &nbsp;5&nbsp; (1d4 + 3) &nbsp;piercing damage plus 10&nbsp; (3d6) &nbsp;poison damage.",
+      "sound": "sword"
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [
+    {
+      "name": "Nimble Training (4/Day)",
+      "description": "&nbsp;The&nbsp;scout can disengage as a bonus action, and it gets 5 extra feet of movement speed while disengaging.",
+      "sound": null
+    }
+  ],
+  "legendaryActions": []
+}
