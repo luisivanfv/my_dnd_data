@@ -2707,7 +2707,10 @@ function showDamageModal(currentValue, creatureInfo, callback) {
         }
         console.log(creatureInfo.name + ' damaged for ' + value + ' points.');
         if(creatureInfo.whenDamagedReminder){
-            popup.show(creatureInfo.whenDamagedReminder);
+            if (creatureInfo.whenDamagedReminder.includes('['))
+                popup.show(creatureInfo.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creatureInfo.whenDamagedReminder.split(']')[1].trim(), 'white'));
+            else
+                popup.show(creatureInfo.whenDamagedReminder);
         }
         document.body.removeChild(modal);
     });

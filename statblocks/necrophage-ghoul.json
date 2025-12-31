@@ -38,7 +38,7 @@
   "challenge": "1/2 (100 XP)",
   "proficiencyBonus": "+2",
   "description": "After the&nbsp;Northern Wars,&nbsp;necrophages&nbsp;generally grew bolder and multiplied in the&nbsp;Northern Kingdoms; ghouls, a sub-species, became the most common corpse-eaters, usually found roaming around in packs, distinguishable from their cousins,&nbsp;alghouls, by the sickly paleness of their visage.",
-  "whenDamagedReminder": "Necrophage Stench: All creatures within 5 feet must make a DC 8 Constitution saving throw or become poisoned.",
+  "whenDamagedReminder": "[Necrophage Stench:] All creatures within 5 feet must make a DC 8 Constitution saving throw or become poisoned.",
   "passives": [
     {
       "name": "Necrophage Stench",
