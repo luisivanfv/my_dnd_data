@@ -1743,45 +1743,13 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        //renderTable();
-                        // Instead of full re-render, just update the HP display
-                        const row = editButton.closest('tr');
-                        if (row) {
-                            const hpCell = row.querySelector('td[data-key="hp"]');
-                            if (hpCell) {
-                                updateHpDisplay(
-                                    hpCell, 
-                                    updatedStats.hp, 
-                                    window.encounterTableData[rowIndex].maxHp,
-                                    hpCell._hpData ? hpCell._hpData.textColor : 'white'
-                                );
-                            }
-                            
-                            // Also update temp HP if needed
-                            const tempHpCell = row.querySelector('td[data-key="tempHp"]');
-                            if (tempHpCell) {
-                                tempHpCell.textContent = updatedStats.tempHp;
-                            }
-                        }
+                        renderTable();
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        //renderTable();
-                        // Update the HP display
-                        const row = editButton.closest('tr');
-                        if (row) {
-                            const hpCell = row.querySelector('td[data-key="hp"]');
-                            if (hpCell) {
-                                updateHpDisplay(
-                                    hpCell,
-                                    updatedStats.hp,
-                                    window.encounterTableData[rowIndex].maxHp,
-                                    hpCell._hpData ? hpCell._hpData.textColor : 'white'
-                                );
-                            }
-                        }
+                        renderTable();
                     });
                 } else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${window.encounterTableData[rowIndex].name}?`)) {
@@ -2160,13 +2128,8 @@ function convertToEncounterTable() {
                         cell.style.padding = '4px'; // Reduce padding for better visual
                         cell.style.textAlign = 'center';
                         
-                        // Clear cell and add progress bar
-                        cell.textContent = '';
-                        const hpDisplay = createHpProgressBar(data.hp, data.maxHp, textColor);
-                        cell.appendChild(hpDisplay);
-    
-                        // Store the display elements for easy updating
-                        cell._hpData = { current: data.hp, max: data.maxHp, textColor: textColor };
+                        // ALWAYS create progress bar
+                        updateCellWithHpBar(cell, data.hp, data.maxHp, textColor);
                         
                         // Make cell editable
                         cell.style.cursor = 'pointer';
@@ -2187,16 +2150,10 @@ function convertToEncounterTable() {
                                 
                                 if (rowIndex !== -1) {
                                     window.encounterTableData[rowIndex].hp = newValue;
-                                    data.hp = newValue; // Update local data reference
-                                    
-                                    // Update the display WITHOUT re-rendering the entire table
-                                    updateHpDisplay(cell, newValue, data.maxHp, textColor);
-                                    
-                                    // If initiative was changed, sort and re-render
-                                    if (column.key === 'initiative') {
-                                        sortTableData(window.encounterTableData);
-                                        renderTable();
-                                    }
+                                    // Update the display
+                                    cell.textContent = '';
+                                    const updatedHpDisplay = createHpProgressBar(newValue, data.maxHp, textColor);
+                                    cell.appendChild(updatedHpDisplay);
                                 }
                             });
                         });
@@ -2479,22 +2436,11 @@ function convertToEncounterTable() {
         
         // Then ensure creature IDs are unique
         ensureCreatureIds();
-    
-        // Then ensure creature IDs are unique
-        ensureCreatureIds();
         
-        // Instead of always clearing, check if we need full re-render
-        const needsFullRender = checkIfNeedsFullRender();
-        
-        if (needsFullRender) {
-            tbody.innerHTML = '';
-            window.encounterTableData.forEach((rowData) => {
-                addRowToDOM(rowData);
-            });
-        } else {
-            // Just update HP displays without full re-render
-            updateAllHpDisplays();
-        }
+        tbody.innerHTML = '';
+        window.encounterTableData.forEach((rowData) => {
+            addRowToDOM(rowData);
+        });
     }
     
     // Store renderTable globally
@@ -3232,74 +3178,32 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     
     return container;
 }
-function updateHpDisplay(cell, newHp, maxHp, textColor) {
-    // Clear the cell
-    cell.textContent = '';
-    
-    // Create new progress bar with updated values
-    const updatedHpDisplay = createHpProgressBar(newHp, maxHp, textColor);
-    cell.appendChild(updatedHpDisplay);
-    
-    // Update stored data
-    if (cell._hpData) {
-        cell._hpData.current = newHp;
-    }
+// Helper function to update cell with HP bar
+function updateCellWithHpBar(cell, hp, maxHp, textColor) {
+    cell.innerHTML = ''; // Clear
+    const hpDisplay = createHpProgressBar(hp, maxHp, textColor);
+    cell.appendChild(hpDisplay);
 }
-// Also create a function to update all HP displays (useful after damage/healing)
-function updateAllHpDisplays() {
-    const rows = document.querySelectorAll('.encounter-table tr');
-    rows.forEach((row, index) => {
-        if (index === 0) return; // Skip header row
-        
-        const hpCell = row.querySelector('td[data-key="hp"]');
-        if (hpCell && hpCell._hpData) {
-            // Find the corresponding data
-            const nameCell = row.querySelector('td[data-key="name"]');
-            const idCell = row.querySelector('td[data-key="id"]');
-            
-            if (nameCell) {
-                const name = nameCell.textContent.trim();
-                const id = idCell ? idCell.textContent.trim() : null;
-                
-                // Find the data in window.encounterTableData
-                const rowData = window.encounterTableData.find(item => {
-                    if (id && item.id) {
-                        // Creature with ID
-                        return String(item.id) === id && item.name === name;
-                    } else {
-                        // Player (no ID or empty ID)
-                        return item.name === name && item.type === 'player';
-                    }
-                });
-                
-                if (rowData) {
-                    updateHpDisplay(hpCell, rowData.hp, rowData.maxHp, hpCell._hpData.textColor);
+// HP edit handler factory
+function createHpEditHandler(data, cell, textColor) {
+    return () => {
+        const currentValue = data.hp;
+        window.showNumberPrompt(currentValue, (newValue) => {
+            const rowIndex = window.encounterTableData.findIndex(item => {
+                if (data.type === 'player') {
+                    return item.name === data.name && item.type === 'player';
+                } else {
+                    return item.id === data.id;
                 }
+            });
+            
+            if (rowIndex !== -1) {
+                window.encounterTableData[rowIndex].hp = newValue;
+                data.hp = newValue;
+                updateCellWithHpBar(cell, newValue, data.maxHp, textColor);
             }
-        }
-    });
-}
-// Helper function to check if full re-render is needed
-function checkIfNeedsFullRender() {
-    // Check if number of rows matches data
-    const currentRows = document.querySelectorAll('.encounter-table tbody tr').length;
-    if (currentRows !== window.encounterTableData.length) {
-        return true; // Different number of rows, need full re-render
-    }
-    
-    // Check if any rows have been reordered (initiative changes)
-    const rows = document.querySelectorAll('.encounter-table tbody tr');
-    for (let i = 0; i < rows.length; i++) {
-        const nameCell = rows[i].querySelector('td[data-key="name"]');
-        if (nameCell) {
-            const name = nameCell.textContent.trim();
-            if (window.encounterTableData[i].name !== name) {
-                return true; // Order changed, need full re-render
-            }
-        }
-    }
-    
-    return false; // No structural changes needed
+        });
+    };
 }
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
