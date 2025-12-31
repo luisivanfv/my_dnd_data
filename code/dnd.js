@@ -1506,7 +1506,7 @@ function initializeTableData() {
     
     // Get monster data from encounter name (when available)
     try {
-        const encounterName = getUrlParameter('encounter');
+        const encounterName = getUrlParameter('name');
         console.log('Encounter name from URL:', encounterName);
         if(encounterName) {
             const encounterData = JSON.parse(localStorage.getItem(`encounter_${encounterName}`));
