@@ -1620,7 +1620,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         { key: 'initiative', editable: true, type: 'number' },
         { key: 'name', editable: false, type: 'text' },
         { key: 'ac', editable: false, type: 'number' },
-        { key: 'hp', editable: true, type: 'text' },
+        { key: 'hp', editable: false, type: 'text' },
         { key: 'tempHp', editable: true, type: 'text' },
         { key: 'conditions', editable: true, type: 'text' }
     ];
