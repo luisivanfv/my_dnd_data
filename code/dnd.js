@@ -1396,6 +1396,7 @@ function selectedInSearchBar(selectedValue) {
         notes: '',
         type: 'creature',
         sourceKey: selectedValue,
+        whenDamagedReminder: data.whenDamagedReminder,
         color: '#dc2626',
         textColor: 'white'
     };
