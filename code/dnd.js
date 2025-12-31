@@ -1702,6 +1702,8 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                 } else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${data.name}?`)) {
                         window.encounterTableData.splice(rowIndex, 1);
+                        // After removal, ensure remaining creature IDs are still sequential
+                        ensureCreatureIds();
                         renderTable();
                     }
                 }
