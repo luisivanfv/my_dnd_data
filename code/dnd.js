@@ -1481,10 +1481,13 @@ function initializeTableData() {
             for (let i = 0; i < playerKeys.length; i++) {
                 const playerKey = playerKeys[i];
                 const playerInfo = playerData[playerKey];
+                const dexMod = Math.floor((parseInt(playerInfo.initiativeMod) - 10) / 2);
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const initiative = roll + dexMod;
                 if (playerInfo && typeof playerInfo === 'object') {
                     tableForData.push({
                         id: idCounter++,
-                        initiative: 0,
+                        initiative: initiative,
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
                         hp: playerInfo.maxHp || '0',
@@ -3208,7 +3211,7 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     const hpText = document.createElement('div');
     hpText.className = 'hp-text';
     hpText.textContent = `${currentHp}/${maxHp}`;
-    hpText.style.color = textColor;
+    hpText.style.color = 'white';
     hpText.style.position = 'absolute';
     hpText.style.top = '50%';
     hpText.style.left = '50%';
