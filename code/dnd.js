@@ -1616,7 +1616,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         { key: 'name', editable: false, type: 'text' },
         { key: 'ac', editable: false, type: 'number' },
         { key: 'hp', editable: true, type: 'text' },
-        { key: 'maxHp', editable: false, type: 'text' },
         { key: 'tempHp', editable: true, type: 'text' },
         { key: 'conditions', editable: true, type: 'text' }
     ];
@@ -1897,7 +1896,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Max HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['ID', '#', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.style.textAlign = 'center';
@@ -2086,7 +2085,6 @@ function convertToEncounterTable() {
             { key: 'name', editable: false, type: 'text' },
             { key: 'ac', editable: true, type: 'number' },
             { key: 'hp', editable: true, type: 'text' },
-            { key: 'maxHp', editable: true, type: 'text' },
             { key: 'tempHp', editable: true, type: 'text' },
             { key: 'conditions', editable: true, type: 'text' }
         ];
@@ -2157,7 +2155,7 @@ function convertToEncounterTable() {
                                 }
                             });
                         });
-                    } else if (column.type === 'number' || column.key === 'tempHp' || column.key === 'maxHp') {
+                    } else if (column.type === 'number' || column.key === 'tempHp') {
                         // Use number prompt for numeric fields
                         window.showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
@@ -3122,13 +3120,19 @@ function showNotesModal(currentNotes, callback) {
     
     return modal;
 }
+// Function to create HP progress bar with both numbers and grey background
 function createHpProgressBar(currentHp, maxHp, textColor) {
-    if (!currentHp || !maxHp) return currentHp || '0';
+    if (!currentHp || !maxHp) {
+        currentHp = currentHp || '0';
+        maxHp = maxHp || '0';
+    }
     
     const current = parseInt(currentHp);
     const max = parseInt(maxHp);
     
-    if (isNaN(current) || isNaN(max) || max <= 0) return currentHp;
+    if (isNaN(current) || isNaN(max) || max <= 0) {
+        return createSimpleHpDisplay(currentHp, maxHp, textColor);
+    }
     
     const percentage = Math.min(100, Math.round((current / max) * 100));
     
@@ -3147,26 +3151,45 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
         barColor = '#22c55e'; // Green
     }
     
-    // Create container with progress bar
+    // Create container
     const container = document.createElement('div');
     container.className = `hp-cell-container ${isCritical ? 'hp-critical' : ''}`;
     container.style.position = 'relative';
     container.style.width = '100%';
     container.style.height = '100%';
-    container.style.minHeight = '40px'; // Ensure enough height for bar
+    container.style.minHeight = '40px';
     
-    // Create progress bar
-    const progressBar = document.createElement('div');
-    progressBar.className = 'hp-progress-bar';
-    progressBar.style.width = `${percentage}%`;
-    progressBar.style.backgroundColor = barColor;
-    progressBar.style.borderRadius = '2px';
-    progressBar.title = `${percentage}% HP`;
+    // Create background (grey for missing HP)
+    const background = document.createElement('div');
+    background.className = 'hp-background';
+    background.style.position = 'absolute';
+    background.style.top = '0';
+    background.style.left = '0';
+    background.style.width = '100%';
+    background.style.height = '100%';
+    background.style.backgroundColor = '#4a5568'; // Dark grey
+    background.style.borderRadius = '4px';
+    background.style.opacity = '0.7';
     
-    // Create HP text
+    // Create foreground (current HP)
+    const foreground = document.createElement('div');
+    foreground.className = 'hp-foreground';
+    foreground.style.position = 'absolute';
+    foreground.style.top = '0';
+    foreground.style.left = '0';
+    foreground.style.width = `${percentage}%`;
+    foreground.style.height = '100%';
+    foreground.style.backgroundColor = barColor;
+    foreground.style.borderRadius = '4px 0 0 4px';
+    if (percentage === 100) {
+        foreground.style.borderRadius = '4px'; // Full bar gets rounded corners
+    }
+    foreground.style.transition = 'width 0.3s ease';
+    
+    // Create HP text (current/max)
     const hpText = document.createElement('div');
     hpText.className = 'hp-text';
-    hpText.textContent = currentHp;
+    hpText.textContent = `${currentHp}/${maxHp}`;
     hpText.style.color = textColor;
     hpText.style.position = 'absolute';
     hpText.style.top = '50%';
@@ -3175,11 +3198,51 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     hpText.style.width = '100%';
     hpText.style.textAlign = 'center';
     hpText.style.padding = '2px';
+    hpText.style.fontWeight = 'bold';
+    hpText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
+    hpText.style.zIndex = '2';
     hpText.title = `${currentHp}/${maxHp} (${percentage}%)`;
     
-    container.appendChild(progressBar);
+    // Add percentage indicator for low HP
+    if (percentage <= 50) {
+        const percentageBadge = document.createElement('div');
+        percentageBadge.className = 'hp-percentage-badge';
+        percentageBadge.textContent = `${percentage}%`;
+        percentageBadge.style.position = 'absolute';
+        percentageBadge.style.top = '2px';
+        percentageBadge.style.right = '2px';
+        percentageBadge.style.backgroundColor = 'rgba(0,0,0,0.7)';
+        percentageBadge.style.color = 'white';
+        percentageBadge.style.fontSize = '10px';
+        percentageBadge.style.padding = '1px 3px';
+        percentageBadge.style.borderRadius = '3px';
+        percentageBadge.style.zIndex = '3';
+        container.appendChild(percentageBadge);
+    }
+    
+    container.appendChild(background);
+    container.appendChild(foreground);
     container.appendChild(hpText);
     
+    return container;
+}
+
+// Fallback function for invalid HP values
+function createSimpleHpDisplay(currentHp, maxHp, textColor) {
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    
+    const hpText = document.createElement('div');
+    hpText.textContent = `${currentHp}/${maxHp}`;
+    hpText.style.color = textColor;
+    hpText.style.fontWeight = 'bold';
+    
+    container.appendChild(hpText);
     return container;
 }
 // Helper function to update cell with HP bar
