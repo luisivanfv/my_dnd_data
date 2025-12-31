@@ -2479,11 +2479,22 @@ function convertToEncounterTable() {
         
         // Then ensure creature IDs are unique
         ensureCreatureIds();
+    
+        // Then ensure creature IDs are unique
+        ensureCreatureIds();
         
-        tbody.innerHTML = '';
-        window.encounterTableData.forEach((rowData) => {
-            addRowToDOM(rowData);
-        });
+        // Instead of always clearing, check if we need full re-render
+        const needsFullRender = checkIfNeedsFullRender();
+        
+        if (needsFullRender) {
+            tbody.innerHTML = '';
+            window.encounterTableData.forEach((rowData) => {
+                addRowToDOM(rowData);
+            });
+        } else {
+            // Just update HP displays without full re-render
+            updateAllHpDisplays();
+        }
     }
     
     // Store renderTable globally
@@ -3267,6 +3278,28 @@ function updateAllHpDisplays() {
             }
         }
     });
+}
+// Helper function to check if full re-render is needed
+function checkIfNeedsFullRender() {
+    // Check if number of rows matches data
+    const currentRows = document.querySelectorAll('.encounter-table tbody tr').length;
+    if (currentRows !== window.encounterTableData.length) {
+        return true; // Different number of rows, need full re-render
+    }
+    
+    // Check if any rows have been reordered (initiative changes)
+    const rows = document.querySelectorAll('.encounter-table tbody tr');
+    for (let i = 0; i < rows.length; i++) {
+        const nameCell = rows[i].querySelector('td[data-key="name"]');
+        if (nameCell) {
+            const name = nameCell.textContent.trim();
+            if (window.encounterTableData[i].name !== name) {
+                return true; // Order changed, need full re-render
+            }
+        }
+    }
+    
+    return false; // No structural changes needed
 }
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
