@@ -3,5 +3,5 @@
     "description": "Two necrophages ghouls attack the party.",
     "location": "Forest",
     "map": "Dark Swamp",
-    "enemies": ["2 Necrophage Ghoul"]
+    "enemies": ["2-Necrophage Ghoul"]
 }
