@@ -1998,7 +1998,7 @@ const dndConditions = [
     { name: 'Stunned', icon: '💫', color: '#eab308' },
     { name: 'Unconscious', icon: '💤', color: '#3b82f6' },
     { name: 'Exhaustion', icon: '😫', color: '#57534e' },
-    { name: 'Concentrating', icon: '🎯', color: '#8b5cf6' },
+    { name: 'Concentrating', icon: '<img width="50" height="50" src="https://img.icons8.com/ios-filled/50/8b5cf6/brain.png" alt="brain"/>', color: '#8b5cf6' },
     { name: 'Blessed', icon: '✨', color: '#fbbf24' },
     { name: 'Cursed', icon: '👹', color: '#7c2d12' },
     { name: 'Burning', icon: '🔥', color: '#ea580c' },
