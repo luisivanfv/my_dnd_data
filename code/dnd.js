@@ -1998,7 +1998,7 @@ const dndConditions = [
     { name: 'Stunned', icon: '💫', color: '#eab308' },
     { name: 'Unconscious', icon: '💤', color: '#3b82f6' },
     { name: 'Exhaustion', icon: '😫', color: '#57534e' },
-    { name: 'Concentrating', icon: '<img width="50" height="50" src="https://img.icons8.com/ios-filled/50/8b5cf6/brain.png" alt="brain"/>', color: '#8b5cf6' },
+    { name: 'Concentrating', icon: 'https://img.icons8.com/ios-filled/50/fefefe/brain.png', color: '#8b5cf6' },
     { name: 'Blessed', icon: '✨', color: '#fbbf24' },
     { name: 'Cursed', icon: '👹', color: '#7c2d12' },
     { name: 'Burning', icon: '🔥', color: '#ea580c' },
@@ -2091,8 +2091,8 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.style.cssText = `
             padding: 10px;
             border: 2px solid ${condition.color};
-            background: white;
-            color: ${condition.color};
+            background: ${condition.color};
+            color: white;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
@@ -2104,7 +2104,8 @@ function showConditionAddModal(currentConditions, callback) {
         `;
         
         conditionButton.innerHTML = `
-            <div style="font-size: 20px; margin-bottom: 5px;">${condition.icon}</div>
+            <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${condition.icon}"/></div>
+            
             <div>${condition.name}</div>
         `;
         
@@ -2461,7 +2462,7 @@ function updateConditionsDisplay(container, conditionsArray) {
         conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
         
         const iconSpan = document.createElement('span');
-        iconSpan.innerHTML = condition.icon;
+        iconSpan.innerHTML = `<img width="20" height="20" src="${condition.icon}" alt="brain"/>`;
         iconSpan.style.fontSize = '14px';
         
         const turnsSpan = document.createElement('span');
