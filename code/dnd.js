@@ -3437,14 +3437,21 @@ function createHpProgressBar(currentHp, maxHp, tempHp, textColor) {
     // Determine bar color for current HP
     let barColor;
     let isCritical = false;
+    let rangePerColor = 14.28; // Approximately 100/7
     
-    if (currentPercentage <= 25) {
+    if (percentage <= rangePerColor * 1) {
         barColor = '#dc2626'; // Red
         isCritical = true;
-    } else if (currentPercentage <= 50) {
+    } else if (percentage <= rangePerColor * 2) {
+        barColor = '#eb4d1e'; // Orange
+    } else if (percentage <= rangePerColor * 3) {
         barColor = '#f97316'; // Orange
-    } else if (currentPercentage <= 75) {
+    } else if (percentage <= rangePerColor * 4) {
+        barColor = '#f2930f'; // Dark Yellow
+    } else if (percentage <= rangePerColor * 5) {
         barColor = '#eab308'; // Yellow
+    } else if (percentage <= rangePerColor * 6) {
+        barColor = '#86bc33'; // Light Green
     } else {
         barColor = '#22c55e'; // Green
     }
@@ -3528,7 +3535,7 @@ function createHpProgressBar(currentHp, maxHp, tempHp, textColor) {
     }
     
     hpText.textContent = displayText;
-    hpText.style.color = textColor;
+    hpText.style.color = 'white';
     hpText.style.position = 'absolute';
     hpText.style.top = '50%';
     hpText.style.left = '50%';
