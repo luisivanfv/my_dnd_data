@@ -1704,7 +1704,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'],
             (option) => {
-                console.log('Selected option (2):', option);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
@@ -1754,7 +1753,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                     });
                 } else if (option === 'Add Temp HP') {
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
-                        console.log('Temp HP amount entered (2):', tempHpAmount);
                         window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                         // Update the HP display to show temp HP
                         const row = editButton.closest('tr');
@@ -1944,14 +1942,12 @@ function showTempHpModal(currentValue, callback) {
     cancelButton.addEventListener('click', () => {
         document.body.removeChild(modal);
     });
-    console.log('Creating Temp HP modal with current value:', currentValue);
     const confirmButton = document.createElement('button');
     confirmButton.textContent = 'Add Temp HP';
     confirmButton.style.backgroundColor = '#eab308'; // Yellow for temp HP
     confirmButton.style.color = 'black';
     confirmButton.addEventListener('click', () => {
         const value = parseInt(input.value);
-        console.log('Value entered for Temp HP:', value);
         if (!isNaN(value) && value >= 0) {
             callback(value);
         }
@@ -2113,11 +2109,9 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.addEventListener('click', () => {
             // Remove selection from all buttons
             conditionGrid.querySelectorAll('button').forEach(btn => {
-                console.log('Deselecting button:', btn);
                 btn.style.background = 'white'
                 btn.style.color = btn.style.borderColor;
                 const lastDivInBtn = btn.querySelector('div:last-child');
-                console.log('lastDivInBtn.innerHTML:', lastDivInBtn.innerHTML);
                 let toInnerHtml;
                 dndConditions.forEach(cond => {
                     if (lastDivInBtn && lastDivInBtn.textContent === cond.name) {
@@ -2302,10 +2296,10 @@ function showConditionManageModal(currentConditions, callback) {
             font-weight: bold;
             transition: opacity 0.2s;
         `;
-        
+        // asdf
         optionButton.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">${condition.icon}</span>
+                <span style="font-size: 18px;"><img width="30" height="30" src="${condition.icon}" /></span>
                 <span>${condition.name}</span>
             </div>
             <div>
@@ -3010,7 +3004,6 @@ function convertToEncounterTable() {
             } else if (column.key === 'conditions') {
                 // Add fresh event listeners
                 cell.addEventListener('click', function conditionsClickHandler(e) {
-                    console.log('Clicked on conditions cell');
                     e.preventDefault();
                     e.stopPropagation();
                     
@@ -3018,8 +3011,6 @@ function convertToEncounterTable() {
                     const currentConditions = cell._conditionsData || parseConditions(data.conditions || '');
                     
                     showConditionAddModal(currentConditions, (selectedCondition, turns) => {
-                        console.log('Adding condition:', selectedCondition, 'for turns:', turns);
-                        console.log('Current conditions:', currentConditions);
                         // Create a new array to avoid mutation issues
                         const updatedConditions = [...currentConditions];
                         
@@ -3030,7 +3021,6 @@ function convertToEncounterTable() {
                             // Update existing condition (replace, don't add new)
                             updatedConditions[existingIndex].turns = turns;
                         } else {
-                            console.log('Pushing new condition');
                             // Add new condition
                             updatedConditions.push({
                                 name: selectedCondition.name,
@@ -3042,7 +3032,6 @@ function convertToEncounterTable() {
                         
                         // Update the data model
                         const conditionsStr = stringifyConditions(updatedConditions);
-                        console.log('Updated conditions:', updatedConditions);
                         data.conditions = conditionsStr;
                         
                         // Find and update in window.encounterTableData
@@ -3056,12 +3045,10 @@ function convertToEncounterTable() {
                         
                         if (rowIndex !== -1) {
                             window.encounterTableData[rowIndex].conditions = conditionsStr;
-                            console.log('window.encounterTableData to:', window.encounterTableData);
                         }
                         
                         // Update the display
                         const displayContainer = cell;
-                        console.log('Display container:', displayContainer);
                         if (displayContainer) {
                             updateConditionsDisplay(displayContainer, updatedConditions);
                         }
@@ -3079,7 +3066,6 @@ function convertToEncounterTable() {
                     
                     showConditionManageModal(currentConditions, (action, conditionName) => {
                         if (action === 'remove') {
-                            console.log('Removing condition:', conditionName);
                             // Remove specific condition
                             const newConditions = currentConditions.filter(c => c.name !== conditionName);
                             
@@ -3109,7 +3095,6 @@ function convertToEncounterTable() {
                             cell._conditionsData = newConditions;
                             
                         } else if (action === 'passTurn') {
-                            console.log('Passing turn for all conditions');
                             // Decrease all condition timers by 1
                             const newConditions = currentConditions
                                 .map(condition => ({
@@ -3168,7 +3153,6 @@ function convertToEncounterTable() {
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
-                console.log('Selected option (1):', option);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
@@ -3184,14 +3168,11 @@ function convertToEncounterTable() {
                     });
                 } else if (option === 'Add Temp HP') {
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
-                    console.log('Temp HP amount entered (1):', tempHpAmount);
                     window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                     
                     const row = editButton.closest('tr');
                     if (row) {
-                        console.log('row...');
                         const hpCell = row.querySelector('td[data-key="hp"]');
-                        console.log(hpCell._rowData);
                         if (hpCell && hpCell._rowData) {
                             hpCell._rowData.tempHp = tempHpAmount.toString();
                             updateCellWithHpBar(
@@ -4265,7 +4246,6 @@ function getHpStatusDescription(percentage) {
 // Helper function to update cell with HP bar
 function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
     cell.innerHTML = ''; // Clear
-    console.log('updateCellWithHpBar called with:', {hp, maxHp, tempHp, textColor});
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
 }
