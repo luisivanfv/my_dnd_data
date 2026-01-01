@@ -3213,6 +3213,39 @@ function convertToEncounterTable() {
         }
     });
 
+    // Add to your table controls section in convertToEncounterTable:
+    const passAllTurnsButton = document.createElement('button');
+    passAllTurnsButton.textContent = 'Pass All Turns';
+    passAllTurnsButton.addEventListener('click', () => {
+        let anyConditionsUpdated = false;
+        
+        window.encounterTableData.forEach((rowData, index) => {
+            if (rowData.conditions && rowData.conditions.trim() !== '') {
+                const currentConditions = parseConditions(rowData.conditions);
+                const newConditions = currentConditions
+                    .map(condition => ({
+                        ...condition,
+                        turns: condition.turns - 1
+                    }))
+                    .filter(condition => condition.turns > 0);
+                
+                if (newConditions.length !== currentConditions.length) {
+                    anyConditionsUpdated = true;
+                    window.encounterTableData[index].conditions = stringifyConditions(newConditions);
+                }
+            }
+        });
+        
+        if (anyConditionsUpdated) {
+            renderTable();
+            popup.show('Turn passed for all creatures!');
+        } else {
+            popup.show('No conditions to update');
+        }
+    });
+
+    // Add to your controls container:
+    controls.appendChild(passAllTurnsButton);
     controls.appendChild(sortButton);
     controls.appendChild(reloadButton);
     controls.appendChild(clearButton);
