@@ -2461,7 +2461,7 @@ function updateConditionsDisplay(container, conditionsArray) {
         conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
         
         const iconSpan = document.createElement('span');
-        iconSpan.textContent = condition.icon;
+        iconSpan.innerHTML = condition.icon;
         iconSpan.style.fontSize = '14px';
         
         const turnsSpan = document.createElement('span');
