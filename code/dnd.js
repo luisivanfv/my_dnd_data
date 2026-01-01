@@ -3586,6 +3586,7 @@ function getHpStatusDescription(percentage) {
 // Helper function to update cell with HP bar
 function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
     cell.innerHTML = ''; // Clear
+    console.log('updateCellWithHpBar called with:', {hp, maxHp, tempHp, textColor});
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
 }
