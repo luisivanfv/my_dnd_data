@@ -2415,7 +2415,7 @@ function updateConditionsDisplay(container, conditionsArray) {
     container.innerHTML = '';
     container.style.display = 'flex';
     container.style.flexWrap = 'wrap';
-    container.style.gap = '4px';
+    //container.style.gap = '4px';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
     container.style.minHeight = '40px';
@@ -2428,6 +2428,7 @@ function updateConditionsDisplay(container, conditionsArray) {
         emptyText.style.color = '#9ca3af';
         emptyText.style.fontStyle = 'italic';
         emptyText.style.width = '100%';
+        emptyText.style.height = '100%';
         emptyText.style.textAlign = 'center';
         container.appendChild(emptyText);
         return;
@@ -2448,7 +2449,7 @@ function updateConditionsDisplay(container, conditionsArray) {
         conditionBadge.style.fontWeight = 'bold';
         conditionBadge.style.cursor = 'pointer';
         conditionBadge.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
-        conditionBadge.style.flexShrink = '0';
+        //conditionBadge.style.flexShrink = '0';
         conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
         
         const iconSpan = document.createElement('span');
