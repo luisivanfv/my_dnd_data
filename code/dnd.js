@@ -2202,6 +2202,7 @@ function convertToEncounterTable() {
             cell.style.textAlign = 'center';
             // Set cell content
             const cellValue = data[column.key] !== undefined ? data[column.key] : '';
+            cell._rowData = data;
             cell.textContent = cellValue;
             if (column.editable && 
                 !(column.key === 'initiative' && data.type === 'monster')) {
