@@ -2027,63 +2027,19 @@ function parseConditions(conditionsStr) {
     
     return conditions;
 }
-function createConditionsDisplay(conditionsArray) {
-    const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.flexWrap = 'wrap';
-    container.style.gap = '4px';
-    container.style.alignItems = 'center';
-    container.style.justifyContent = 'center';
-    container.style.minHeight = '40px';
-    container.style.padding = '4px';
-    
-    if (conditionsArray.length === 0) {
-        const emptyText = document.createElement('span');
-        emptyText.textContent = 'None';
-        emptyText.style.color = '#9ca3af';
-        emptyText.style.fontStyle = 'italic';
-        container.appendChild(emptyText);
-        return container;
-    }
-    
-    conditionsArray.forEach(condition => {
-        const conditionBadge = document.createElement('div');
-        conditionBadge.className = 'condition-badge';
-        conditionBadge.style.display = 'flex';
-        conditionBadge.style.alignItems = 'center';
-        conditionBadge.style.justifyContent = 'center';
-        conditionBadge.style.gap = '2px';
-        conditionBadge.style.padding = '4px 6px';
-        conditionBadge.style.borderRadius = '12px';
-        conditionBadge.style.backgroundColor = condition.color;
-        conditionBadge.style.color = 'white';
-        conditionBadge.style.fontSize = '12px';
-        conditionBadge.style.fontWeight = 'bold';
-        conditionBadge.style.cursor = 'pointer';
-        conditionBadge.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
-        conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
-        
-        const iconSpan = document.createElement('span');
-        iconSpan.textContent = condition.icon;
-        iconSpan.style.fontSize = '14px';
-        
-        const turnsSpan = document.createElement('span');
-        turnsSpan.textContent = condition.turns;
-        turnsSpan.style.marginLeft = '2px';
-        
-        conditionBadge.appendChild(iconSpan);
-        conditionBadge.appendChild(turnsSpan);
-        container.appendChild(conditionBadge);
-    });
-    
-    return container;
-}
 function stringifyConditions(conditionsArray) {
     if (conditionsArray.length === 0) return '';
     
     return conditionsArray.map(condition => `${condition.name}[${condition.turns}]`).join(', ');
 }
 function showConditionAddModal(currentConditions, callback) {
+    cleanupExistingModals();  sezdxzzs43
+    // Check if modal already exists
+    const existingModal = document.querySelector('.condition-add-modal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
     const modal = document.createElement('div');
     modal.className = 'condition-add-modal';
     modal.style.cssText = `
@@ -2157,12 +2113,17 @@ function showConditionAddModal(currentConditions, callback) {
             conditionGrid.querySelectorAll('button').forEach(btn => {
                 btn.style.background = 'white';
                 btn.style.color = btn.style.borderColor;
+                btn.style.fontWeight = 'normal';
             });
             
             // Select this button
             conditionButton.style.background = condition.color;
             conditionButton.style.color = 'white';
+            conditionButton.style.fontWeight = 'bold';
             selectedCondition = condition;
+            
+            // Enable add button
+            addButton.disabled = false;
         });
         
         conditionGrid.appendChild(conditionButton);
@@ -2197,9 +2158,9 @@ function showConditionAddModal(currentConditions, callback) {
     
     const cancelButton = document.createElement('button');
     cancelButton.textContent = 'Cancel';
-    cancelButton.addEventListener('click', () => {
+    /*cancelButton.addEventListener('click', () => {
         document.body.removeChild(modal);
-    });
+    });*/
     
     const addButton = document.createElement('button');
     addButton.textContent = 'Add Condition';
@@ -2241,9 +2202,32 @@ function showConditionAddModal(currentConditions, callback) {
         }
     });
     
+    const closeModal = () => {
+        if (document.body.contains(modal)) {
+            document.body.removeChild(modal);
+        }
+    };
+    
+    cancelButton.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    document.body.appendChild(modal);
+    
     return modal;
 }
 function showConditionManageModal(currentConditions, callback) {
+    // Check if modal already exists
+    const existingModal = document.querySelector('.condition-manage-modal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
     const modal = document.createElement('div');
     modal.className = 'condition-manage-modal';
     modal.style.cssText = `
@@ -2407,8 +2391,92 @@ function showConditionManageModal(currentConditions, callback) {
         }
     });
     
+    const closeModal = () => {
+        if (document.body.contains(modal)) {
+            document.body.removeChild(modal);
+        }
+    };
+    
+    cancelButton.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    document.body.appendChild(modal);
+    
     return modal;
 }
+function updateConditionsDisplay(container, conditionsArray) {
+    // Clear container
+    container.innerHTML = '';
+    container.style.display = 'flex';
+    container.style.flexWrap = 'wrap';
+    container.style.gap = '4px';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    container.style.minHeight = '40px';
+    container.style.padding = '4px';
+    container.style.width = '100%';
+    
+    if (!conditionsArray || conditionsArray.length === 0) {
+        const emptyText = document.createElement('span');
+        emptyText.textContent = 'None';
+        emptyText.style.color = '#9ca3af';
+        emptyText.style.fontStyle = 'italic';
+        emptyText.style.width = '100%';
+        emptyText.style.textAlign = 'center';
+        container.appendChild(emptyText);
+        return;
+    }
+    
+    conditionsArray.forEach(condition => {
+        const conditionBadge = document.createElement('div');
+        conditionBadge.className = 'condition-badge';
+        conditionBadge.style.display = 'flex';
+        conditionBadge.style.alignItems = 'center';
+        conditionBadge.style.justifyContent = 'center';
+        conditionBadge.style.gap = '2px';
+        conditionBadge.style.padding = '4px 6px';
+        conditionBadge.style.borderRadius = '12px';
+        conditionBadge.style.backgroundColor = condition.color;
+        conditionBadge.style.color = 'white';
+        conditionBadge.style.fontSize = '12px';
+        conditionBadge.style.fontWeight = 'bold';
+        conditionBadge.style.cursor = 'pointer';
+        conditionBadge.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
+        conditionBadge.style.flexShrink = '0';
+        conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
+        
+        const iconSpan = document.createElement('span');
+        iconSpan.textContent = condition.icon;
+        iconSpan.style.fontSize = '14px';
+        
+        const turnsSpan = document.createElement('span');
+        turnsSpan.textContent = condition.turns;
+        turnsSpan.style.marginLeft = '2px';
+        
+        conditionBadge.appendChild(iconSpan);
+        conditionBadge.appendChild(turnsSpan);
+        container.appendChild(conditionBadge);
+    });
+}
+function cleanupExistingModals() {
+    // Remove any existing condition modals
+    const addModal = document.querySelector('.condition-add-modal');
+    const manageModal = document.querySelector('.condition-manage-modal');
+    
+    if (addModal) document.body.removeChild(addModal);
+    if (manageModal) document.body.removeChild(manageModal);
+    
+    // Also clean up other modal types if needed
+    const tempHpModal = document.querySelector('.temp-hp-modal');
+    if (tempHpModal) document.body.removeChild(tempHpModal);
+}
+
 function convertToEncounterTable() {
     // Get the element with ID "encounter_table" or class "to-encounter-table"
     const element = document.getElementById('encounter_table') || 
@@ -2639,32 +2707,53 @@ function convertToEncounterTable() {
                     const currentValue = cell.textContent;
                     
                     if (column.key === 'conditions') {
+                        // Clear the cell completely
+                        cell.innerHTML = '';
+                        
                         // Parse current conditions
                         const currentConditions = parseConditions(data.conditions || '');
                         
-                        // Create display container
-                        const displayContainer = createConditionsDisplay(currentConditions);
+                        // Create display container with a unique ID
+                        const displayId = `conditions-display-${data.id || data.name.replace(/\s+/g, '-')}`;
+                        const displayContainer = document.createElement('div');
+                        displayContainer.id = displayId;
+                        
+                        // Update display
+                        updateConditionsDisplay(displayContainer, currentConditions);
                         cell.appendChild(displayContainer);
                         
                         // Store the conditions array for easy access
                         cell._conditionsData = currentConditions;
                         cell._rowData = data;
+                        cell._displayId = displayId;
                         
-                        // Left click - add condition
-                        cell.addEventListener('click', (e) => {
+                        // Use event delegation with a single handler
+                        // First, remove any existing listeners
+                        const oldCell = cell.cloneNode(true);
+                        cell.parentNode.replaceChild(oldCell, cell);
+                        cell = oldCell;
+                        
+                        // Add fresh event listeners
+                        cell.addEventListener('click', function conditionsClickHandler(e) {
                             e.preventDefault();
                             e.stopPropagation();
                             
+                            // Get fresh data from the stored reference
+                            const currentConditions = cell._conditionsData || parseConditions(data.conditions || '');
+                            
                             showConditionAddModal(currentConditions, (selectedCondition, turns) => {
+                                // Create a new array to avoid mutation issues
+                                const updatedConditions = [...currentConditions];
+                                
                                 // Check if condition already exists
-                                const existingIndex = currentConditions.findIndex(c => c.name === selectedCondition.name);
+                                const existingIndex = updatedConditions.findIndex(c => c.name === selectedCondition.name);
                                 
                                 if (existingIndex >= 0) {
-                                    // Update existing condition
-                                    currentConditions[existingIndex].turns = turns;
+                                    // Update existing condition (replace, don't add new)
+                                    updatedConditions[existingIndex].turns = turns;
                                 } else {
                                     // Add new condition
-                                    currentConditions.push({
+                                    updatedConditions.push({
                                         name: selectedCondition.name,
                                         turns: turns,
                                         icon: selectedCondition.icon,
@@ -2673,7 +2762,7 @@ function convertToEncounterTable() {
                                 }
                                 
                                 // Update the data model
-                                const conditionsStr = stringifyConditions(currentConditions);
+                                const conditionsStr = stringifyConditions(updatedConditions);
                                 data.conditions = conditionsStr;
                                 
                                 // Find and update in window.encounterTableData
@@ -2690,17 +2779,21 @@ function convertToEncounterTable() {
                                 }
                                 
                                 // Update the display
-                                cell.innerHTML = '';
-                                const updatedDisplay = createConditionsDisplay(currentConditions);
-                                cell.appendChild(updatedDisplay);
-                                cell._conditionsData = currentConditions;
+                                const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                                if (displayContainer) {
+                                    updateConditionsDisplay(displayContainer, updatedConditions);
+                                }
+                                
+                                // Update stored data
+                                cell._conditionsData = updatedConditions;
                             });
                         });
                         
-                        // Right click - manage conditions
-                        cell.addEventListener('contextmenu', (e) => {
+                        cell.addEventListener('contextmenu', function conditionsContextMenuHandler(e) {
                             e.preventDefault();
                             e.stopPropagation();
+                            
+                            const currentConditions = parseConditions(data.conditions || '');
                             
                             showConditionManageModal(currentConditions, (action, conditionName) => {
                                 if (action === 'remove') {
@@ -2724,9 +2817,12 @@ function convertToEncounterTable() {
                                     }
                                     
                                     // Update display
-                                    cell.innerHTML = '';
-                                    const updatedDisplay = createConditionsDisplay(newConditions);
-                                    cell.appendChild(updatedDisplay);
+                                    const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                                    if (displayContainer) {
+                                        updateConditionsDisplay(displayContainer, newConditions);
+                                    }
+                                    
+                                    // Update stored data
                                     cell._conditionsData = newConditions;
                                     
                                 } else if (action === 'passTurn') {
@@ -2736,7 +2832,7 @@ function convertToEncounterTable() {
                                             ...condition,
                                             turns: condition.turns - 1
                                         }))
-                                        .filter(condition => condition.turns > 0); // Remove conditions that reached 0
+                                        .filter(condition => condition.turns > 0);
                                     
                                     // Update the data
                                     const conditionsStr = stringifyConditions(newConditions);
@@ -2755,9 +2851,12 @@ function convertToEncounterTable() {
                                     }
                                     
                                     // Update display
-                                    cell.innerHTML = '';
-                                    const updatedDisplay = createConditionsDisplay(newConditions);
-                                    cell.appendChild(updatedDisplay);
+                                    const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                                    if (displayContainer) {
+                                        updateConditionsDisplay(displayContainer, newConditions);
+                                    }
+                                    
+                                    // Update stored data
                                     cell._conditionsData = newConditions;
                                 }
                             });
@@ -2765,6 +2864,7 @@ function convertToEncounterTable() {
                         
                         cell.style.cursor = 'pointer';
                         cell.style.padding = '4px';
+                        cell.style.position = 'relative';
                     } else if (column.key === 'hp') {
                         cell.style.padding = '4px'; // Reduce padding for better visual
                         cell.style.textAlign = 'center';
