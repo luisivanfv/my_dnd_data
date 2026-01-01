@@ -2413,14 +2413,17 @@ function showConditionManageModal(currentConditions, callback) {
 function updateConditionsDisplay(container, conditionsArray) {
     // Clear container
     container.innerHTML = '';
+    // Reset container styles to fill the cell
     container.style.display = 'flex';
     container.style.flexWrap = 'wrap';
-    //container.style.gap = '4px';
+    container.style.gap = '4px';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
-    container.style.minHeight = '40px';
+    container.style.minHeight = '40px'; // Match the height from your name cell
+    container.style.height = '100%'; // Fill the cell height
     container.style.padding = '4px';
     container.style.width = '100%';
+    container.style.boxSizing = 'border-box'; // Important: include padding in dimensions
     
     if (!conditionsArray || conditionsArray.length === 0) {
         const emptyText = document.createElement('span');
@@ -2430,6 +2433,8 @@ function updateConditionsDisplay(container, conditionsArray) {
         emptyText.style.width = '100%';
         emptyText.style.height = '100%';
         emptyText.style.textAlign = 'center';
+        emptyText.style.display = 'flex';
+        emptyText.style.alignItems = 'center';
         container.appendChild(emptyText);
         return;
     }
@@ -2440,14 +2445,16 @@ function updateConditionsDisplay(container, conditionsArray) {
         conditionBadge.style.display = 'flex';
         conditionBadge.style.alignItems = 'center';
         conditionBadge.style.justifyContent = 'center';
-        conditionBadge.style.gap = '2px';
-        conditionBadge.style.padding = '4px 6px';
+        conditionBadge.style.gap = '3px';
+        conditionBadge.style.padding = '6px 8px';
         conditionBadge.style.borderRadius = '12px';
         conditionBadge.style.backgroundColor = condition.color;
         conditionBadge.style.color = 'white';
-        conditionBadge.style.fontSize = '12px';
+        conditionBadge.style.fontSize = '13px';
         conditionBadge.style.fontWeight = 'bold';
         conditionBadge.style.cursor = 'pointer';
+        conditionBadge.style.minWidth = '40px'; // Minimum width for consistency
+        conditionBadge.style.height = '28px';
         conditionBadge.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
         //conditionBadge.style.flexShrink = '0';
         conditionBadge.title = `${condition.name} (${condition.turns} turn${condition.turns !== 1 ? 's' : ''} remaining)`;
