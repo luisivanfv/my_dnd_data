@@ -2214,6 +2214,8 @@ function showConditionAddModal(currentConditions, callback) {
                 callback(selectedCondition, turns);
                 document.body.removeChild(modal);
             }
+        } else if (e.key === 'Escape') {
+            document.body.removeChild(modal);
         }
     });
 
