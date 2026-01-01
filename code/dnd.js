@@ -1754,6 +1754,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                     });
                 } else if (option === 'Add Temp HP') {
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
+                        console.log('Temp HP amount entered (2):', tempHpAmount);
                         window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                         // Update the HP display to show temp HP
                         const row = editButton.closest('tr');
@@ -2539,6 +2540,7 @@ function convertToEncounterTable() {
                     });
                 } else if (option === 'Add Temp HP') {
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
+                    console.log('Temp HP amount entered (1):', tempHpAmount);
                     window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                     
                     const row = editButton.closest('tr');
