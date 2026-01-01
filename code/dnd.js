@@ -2077,7 +2077,7 @@ function showConditionAddModal(currentConditions, callback) {
     // Create condition grid
     const conditionGrid = document.createElement('div');
     conditionGrid.style.display = 'grid';
-    conditionGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    conditionGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
     conditionGrid.style.gap = '10px';
     conditionGrid.style.marginBottom = '20px';
     
