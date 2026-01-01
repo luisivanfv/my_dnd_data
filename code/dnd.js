@@ -2525,6 +2525,7 @@ function convertToEncounterTable() {
             }
         });
         if (rowIndex === -1) return;
+        console.log('Index found: ', rowIndex, ' for data: ', data);
         
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
