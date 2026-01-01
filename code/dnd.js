@@ -2552,6 +2552,7 @@ function convertToEncounterTable() {
                                 hpCell,
                                 hpCell._rowData.hp,
                                 hpCell._rowData.maxHp,
+                                hpCell._rowData.tempHp,
                                 tempHpAmount.toString(),
                                 hpCell._textColor || 'white'
                             );
