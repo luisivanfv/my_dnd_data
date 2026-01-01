@@ -2498,9 +2498,9 @@ function convertToEncounterTable() {
                 
                 cell.textContent = '';
                 cell.appendChild(nameContainer);
-            } else if (column.key === 'hp') {
-                updateCellWithHpBar(cell, data.hp, data.maxHp, 'black');
-            }
+            } /*else if (column.key === 'hp') {
+                updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp, 'black');
+            }*/
             row.appendChild(cell);
         });
         // Add edit button cell
