@@ -2402,6 +2402,7 @@ function showConditionManageModal(currentConditions, callback) {
     
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
+        console.log('click outside');
         if (e.target === modal) {
             document.body.removeChild(modal);
         }
@@ -2420,20 +2421,7 @@ function showConditionManageModal(currentConditions, callback) {
         if (e.target === modal) {
             //closeModal();
         }
-    });
-
-    modal.addEventListener('keypress', (e) => {
-        console.log('keypress', e.key);
-        if (e.key === 'Enter') {
-            callback('remove', condition.name);
-            document.body.removeChild(modal);
-            if (selectedCondition) {
-                const turns = parseInt(turnsInput.value) || 1;
-                callback(selectedCondition, turns);
-                document.body.removeChild(modal);
-            }
-        }
-    });
+    }); 
     
     document.body.appendChild(modal);
     
