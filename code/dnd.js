@@ -2691,7 +2691,7 @@ function convertToEncounterTable() {
         ];
         
         columns.forEach((column) => {
-            const cell = document.createElement('td');
+            let cell = document.createElement('td');
             cell.dataset.key = column.key;
             cell.style.color = textColor;
             cell.style.textAlign = 'center';
