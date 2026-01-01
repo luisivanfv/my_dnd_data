@@ -2853,12 +2853,12 @@ function addEncounterTableStyles() {
             padding: 12px;
             text-align: left;
             font-weight: bold;
-            border: 1px solid #ddd;
+            border: 1px solid rgb(54, 64, 81);
         }
         
         .encounter-table td {
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid rgb(54, 64, 81);
         }
         
         .encounter-table td.editable-cell {
