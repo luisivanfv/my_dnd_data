@@ -2309,15 +2309,18 @@ function showConditionManageModal(currentConditions, callback) {
         `;
         
         optionButton.addEventListener('click', () => {
+            console.log('click');
             callback('remove', condition.name);
             document.body.removeChild(modal);
         });
         
         optionButton.addEventListener('mouseenter', () => {
+            console.log('mouseenter');
             optionButton.style.opacity = '0.8';
         });
         
         optionButton.addEventListener('mouseleave', () => {
+            console.log('mouseleave');
             optionButton.style.opacity = '1';
         });
 
