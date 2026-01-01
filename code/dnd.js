@@ -2118,14 +2118,16 @@ function showConditionAddModal(currentConditions, callback) {
                 btn.style.color = btn.style.borderColor;
                 const lastDivInBtn = btn.querySelector('div:last-child');
                 console.log('lastDivInBtn.innerHTML:', lastDivInBtn.innerHTML);
+                let toInnerHtml;
                 dndConditions.forEach(cond => {
                     if (lastDivInBtn && lastDivInBtn.textContent === cond.name) {
-                        lastDivInBtn.innerHTML = `
+                        toInnerHtml = lastDivInBtn.innerHTML = `
                             <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${cond.icon}"/></div>`.replace('fefefe', cond.color.replace('#', '')) + `
                             <div>${cond.name}</div>
                         `;
                     }
                 });
+                btn.innerHTML = toInnerHtml;
                 btn.style.fontWeight = 'normal';
             });
             
