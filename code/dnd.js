@@ -1983,26 +1983,27 @@ function showTempHpModal(currentValue, callback) {
     return modal;
 }
 const dndConditions = [
-    { name: 'Blinded', icon: '👁️', color: '#4a5568' },
-    { name: 'Charmed', icon: '💖', color: '#db2777' },
-    { name: 'Deafened', icon: '👂', color: '#7c3aed' },
-    { name: 'Frightened', icon: '😨', color: '#dc2626' },
-    { name: 'Grappled', icon: '🤼', color: '#059669' },
-    { name: 'Incapacitated', icon: '😵', color: '#0ea5e9' },
-    { name: 'Invisible', icon: '👻', color: '#6366f1' },
-    { name: 'Paralyzed', icon: '⏸️', color: '#8b5cf6' },
-    { name: 'Petrified', icon: '🗿', color: '#78716c' },
-    { name: 'Poisoned', icon: '☠️', color: '#10b981' },
-    { name: 'Prone', icon: '⬇️', color: '#f59e0b' },
-    { name: 'Restrained', icon: '🔗', color: '#f97316' },
-    { name: 'Stunned', icon: '💫', color: '#eab308' },
-    { name: 'Unconscious', icon: '💤', color: '#3b82f6' },
-    { name: 'Exhaustion', icon: '😫', color: '#57534e' },
+    { name: 'Asleep', icon: 'https://img.icons8.com/sf-black/64/fefefe/sleep.png', color: '#6366f1' },
+    { name: 'Blinded', icon: 'https://img.icons8.com/sf-black-filled/64/fefefe/invisible.png', color: '#4a5568' },
+    { name: 'Charmed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/novel--v1.png', color: '#db2777' },
+    { name: 'Deafened', icon: 'https://img.icons8.com/external-smashingstocks-glyph-smashing-stocks/50/fefefe/external-ear-medical-smashingstocks-glyph-smashing-stocks.png', color: '#7c3aed' },
+    { name: 'Frightened', icon: 'https://img.icons8.com/ios-filled/50/fefefe/scream.png', color: '#dc2626' },
+    { name: 'Grappled', icon: 'https://img.icons8.com/external-stick-figures-gan-khoon-lay/51/fefefe/external-choke-fighting-stick-figures-gan-khoon-lay.png', color: '#059669' },
+    { name: 'Incapacitated', icon: 'https://img.icons8.com/ios-filled/50/fefefe/sleeping.png', color: '#0ea5e9' },
+    { name: 'Invisible', icon: 'https://img.icons8.com/ios-filled/50/fefefe/ghost.png', color: '#6366f1' },
+    { name: 'Paralyzed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/pause-squared.png', color: '#8b5cf6' },
+    { name: 'Petrified', icon: 'https://img.icons8.com/external-others-pike-picture/50/fefefe/external-Stone-prehistoric-others-pike-picture-4.png', color: '#78716c' },
+    { name: 'Poisoned', icon: 'https://img.icons8.com/ios-filled/50/fefefe/poison-bottle.png', color: '#10b981' },
+    { name: 'Prone', icon: 'https://img.icons8.com/ios-filled/50/fefefe/down.png', color: '#f59e0b' },
+    { name: 'Restrained', icon: 'https://img.icons8.com/external-febrian-hidayat-glyph-febrian-hidayat/50/fefefe/external-chain-ui-essential-febrian-hidayat-glyph-febrian-hidayat.png', color: '#f97316' },
+    { name: 'Stunned', icon: 'https://img.icons8.com/ios-filled/50/fefefe/faint-full-body.png', color: '#eab308' },
+    { name: 'Unconscious', icon: 'https://img.icons8.com/external-regular-kawalan-studio/24/fefefe/external-unconscious-medical-regular-kawalan-studio.png', color: '#3b82f6' },
+    { name: 'Exhaustion', icon: 'https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/32/fefefe/external-Tired-diabetes-jumpicon-(glyph)-jumpicon-glyph-ayub-irawan.png', color: '#57534e' },
     { name: 'Concentrating', icon: 'https://img.icons8.com/ios-filled/50/fefefe/brain.png', color: '#8b5cf6' },
-    { name: 'Blessed', icon: '✨', color: '#fbbf24' },
-    { name: 'Cursed', icon: '👹', color: '#7c2d12' },
-    { name: 'Burning', icon: '🔥', color: '#ea580c' },
-    { name: 'Frozen', icon: '❄️', color: '#0ea5e9' }
+    { name: 'Blessed', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/pray.png', color: '#fbbf24' },
+    { name: 'Cursed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/evil.png', color: '#7c2d12' },
+    { name: 'Burning', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/fire-element.png', color: '#ea580c' },
+    { name: 'Frozen', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/snowflake.png', color: '#0ea5e9' }
 ];
 function parseConditions(conditionsStr) {
     if (!conditionsStr || conditionsStr.trim() === '') return [];
@@ -2107,7 +2108,7 @@ function showConditionAddModal(currentConditions, callback) {
             <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${condition.icon}"/></div>
             
             <div>${condition.name}</div>
-        `.replace('fefefe', condition.color);
+        `.replace('fefefe', condition.color.replace('#', ''));
         
         conditionButton.addEventListener('click', () => {
             // Remove selection from all buttons
