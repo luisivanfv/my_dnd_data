@@ -1950,6 +1950,7 @@ function showTempHpModal(currentValue, callback) {
     confirmButton.style.color = 'black';
     confirmButton.addEventListener('click', () => {
         const value = parseInt(input.value);
+        console.log('Value entered for Temp HP:', value);
         if (!isNaN(value) && value >= 0) {
             callback(value);
         }
