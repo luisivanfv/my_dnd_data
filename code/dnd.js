@@ -2742,6 +2742,7 @@ function convertToEncounterTable() {
                             const currentConditions = cell._conditionsData || parseConditions(data.conditions || '');
                             
                             showConditionAddModal(currentConditions, (selectedCondition, turns) => {
+                                console.log('Adding condition:', selectedCondition, 'for turns:', turns);
                                 // Create a new array to avoid mutation issues
                                 const updatedConditions = [...currentConditions];
                                 
