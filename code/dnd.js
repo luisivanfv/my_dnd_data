@@ -3013,7 +3013,7 @@ function convertToEncounterTable() {
                         
                         // Update the data model
                         const conditionsStr = stringifyConditions(updatedConditions);
-                        console.log('Updated conditions string:', conditionsStr);
+                        console.log('Updated conditions:', updatedConditions);
                         data.conditions = conditionsStr;
                         
                         // Find and update in window.encounterTableData
@@ -3032,6 +3032,7 @@ function convertToEncounterTable() {
                         
                         // Update the display
                         const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                        console.log('Display container:', displayContainer);
                         if (displayContainer) {
                             updateConditionsDisplay(displayContainer, updatedConditions);
                         }
