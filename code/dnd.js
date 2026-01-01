@@ -1488,7 +1488,7 @@ function initializeTableData() {
                 const initiative = roll + dexMod;
                 if (playerInfo && typeof playerInfo === 'object') {
                     tableForData.push({
-                        id: idCounter++,
+                        id: playerInfo.name,
                         initiative: initiative,
                         name: toUpper(playerInfo.name),
                         ac: playerInfo.ac || 10,
@@ -2516,13 +2516,7 @@ function convertToEncounterTable() {
         event.stopPropagation();
         
         const rowIndex = window.encounterTableData.findIndex(item => {
-            if (data.type === 'player') {
-                // For players, match by name and type
-                return item.name === data.name && item.type === 'player';
-            } else {
-                // For creatures, match by ID
-                return item.id === data.id;
-            }
+            return item.id === data.id;
         });
         if (rowIndex === -1) return;
         console.log('Index found: ', rowIndex, ' for data: ', data);
