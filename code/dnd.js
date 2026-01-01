@@ -2107,7 +2107,7 @@ function showConditionAddModal(currentConditions, callback) {
             <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${condition.icon}"/></div>
             
             <div>${condition.name}</div>
-        `;
+        `.replace('fefefe', condition.color);
         
         conditionButton.addEventListener('click', () => {
             // Remove selection from all buttons
@@ -2120,6 +2120,11 @@ function showConditionAddModal(currentConditions, callback) {
             // Select this button
             conditionButton.style.background = condition.color;
             conditionButton.style.color = 'white';
+            conditionButton.innerHTML = `
+                <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${condition.icon}"/></div>
+                
+                <div>${condition.name}</div>
+            `;
             conditionButton.style.fontWeight = 'bold';
             selectedCondition = condition;
             
