@@ -2116,6 +2116,14 @@ function showConditionAddModal(currentConditions, callback) {
                 console.log('Deselecting button:', btn);
                 btn.style.background = 'white'
                 btn.style.color = btn.style.borderColor;
+                const lastDivInBtn = btn.querySelector('div:last-child');
+                console.log('lastDivInBtn.innerHTML:', lastDivInBtn.innerHTML);
+                dndConditions.forEach(cond => {
+                    if (lastDivInBtn && lastDivInBtn.textContent === cond.name) {
+                        lastDivInBtn.innerHTML = `
+                            <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${cond.icon}"/></div>`;
+                    }
+                });
                 btn.style.fontWeight = 'normal';
             });
             
