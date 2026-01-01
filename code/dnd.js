@@ -2033,7 +2033,7 @@ function stringifyConditions(conditionsArray) {
     return conditionsArray.map(condition => `${condition.name}[${condition.turns}]`).join(', ');
 }
 function showConditionAddModal(currentConditions, callback) {
-    cleanupExistingModals();  sezdxzzs43
+    cleanupExistingModals();
     // Check if modal already exists
     const existingModal = document.querySelector('.condition-add-modal');
     if (existingModal) {
