@@ -2568,7 +2568,7 @@ function convertToEncounterTable() {
         if (rowIndex === -1) return;
         
         showContextMenu(event.clientX, event.clientY, 
-            ['Damage', 'Heal', '---', 'Destroy'], 
+            ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
