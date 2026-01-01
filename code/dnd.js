@@ -2324,19 +2324,6 @@ function showConditionManageModal(currentConditions, callback) {
             optionButton.style.opacity = '1';
         });
 
-        optionButton.addEventListener('keypress', (e) => {
-            console.log('keypress', e.key);
-            if (e.key === 'Enter') {
-                callback('remove', condition.name);
-                document.body.removeChild(modal);
-                if (selectedCondition) {
-                    const turns = parseInt(turnsInput.value) || 1;
-                    callback(selectedCondition, turns);
-                    document.body.removeChild(modal);
-                }
-            }
-        });
-
         optionsContainer.appendChild(optionButton);
     });
     
@@ -2431,7 +2418,20 @@ function showConditionManageModal(currentConditions, callback) {
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeModal();
+            //closeModal();
+        }
+    });
+
+    modal.addEventListener('keypress', (e) => {
+        console.log('keypress', e.key);
+        if (e.key === 'Enter') {
+            callback('remove', condition.name);
+            document.body.removeChild(modal);
+            if (selectedCondition) {
+                const turns = parseInt(turnsInput.value) || 1;
+                callback(selectedCondition, turns);
+                document.body.removeChild(modal);
+            }
         }
     });
     
