@@ -3027,6 +3027,7 @@ function convertToEncounterTable() {
                         
                         if (rowIndex !== -1) {
                             window.encounterTableData[rowIndex].conditions = conditionsStr;
+                            console.log('window.encounterTableData to:', window.encounterTableData);
                         }
                         
                         // Update the display
