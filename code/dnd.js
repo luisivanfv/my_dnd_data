@@ -2478,14 +2478,14 @@ function convertToEncounterTable() {
                     link.style.textDecoration = 'none';
                     link.style.fontSize = '15px';
                     link.style.cursor = 'pointer';
-                    link.style.flexGrow = '1';
+                    //link.style.flexGrow = '1';
                     
                     nameContainer.appendChild(link);
                 } else {
                     const nameText = document.createElement('span');
                     nameText.textContent = data.name;
                     nameText.style.color = textColor;
-                    nameText.style.flexGrow = '1';
+                    //nameText.style.flexGrow = '1';
                     nameContainer.appendChild(nameText);
                 }
                 
