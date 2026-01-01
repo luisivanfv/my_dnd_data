@@ -1702,9 +1702,8 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         if (rowIndex === -1) return;
         
         showContextMenu(event.clientX, event.clientY, 
-            ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'],
+            ['Damage', 'Heal', '<img width="64" height="64" src="https://img.icons8.com/pastel-glyph/64/1A1A1A/like--v1.png" alt="like--v1"/>', '---', 'Destroy'],
             (option) => {
-                console.log('Selected option:', option, 'for row index:', rowIndex);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
@@ -1753,7 +1752,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         }
                     });
                 } else if (option === 'Add Temp HP') {
-                    console.log('Adding Temp HP to row index:', rowIndex);
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
                         window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                         // Update the HP display to show temp HP
@@ -2519,12 +2517,10 @@ function convertToEncounterTable() {
             return item.id === data.id;
         });
         if (rowIndex === -1) return;
-        console.log('Index found: ', rowIndex, ' for data: ', data);
         
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
-                console.log('Selected option (2):', option, 'for row index:', rowIndex);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
@@ -2609,7 +2605,6 @@ function convertToEncounterTable() {
     
     // Function to render the entire table
     function renderTable() {
-        console.warn('Rendering table...');
         // First, sort the table by initiative
         sortTableData(window.encounterTableData);
         
