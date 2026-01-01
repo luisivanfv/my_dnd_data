@@ -2545,7 +2545,9 @@ function convertToEncounterTable() {
                     
                     const row = editButton.closest('tr');
                     if (row) {
+                        console.log('row...');
                         const hpCell = row.querySelector('td[data-key="hp"]');
+                        console.log(hpCell);
                         if (hpCell && hpCell._rowData) {
                             hpCell._rowData.tempHp = tempHpAmount.toString();
                             updateCellWithHpBar(
