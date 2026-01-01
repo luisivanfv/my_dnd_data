@@ -2206,7 +2206,17 @@ function showConditionAddModal(currentConditions, callback) {
     modalContent.appendChild(turnsInput);
     modalContent.appendChild(buttonContainer);
     modal.appendChild(modalContent);
-    
+
+    modalContent.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            if (selectedCondition) {
+                const turns = parseInt(turnsInput.value) || 1;
+                callback(selectedCondition, turns);
+                document.body.removeChild(modal);
+            }
+        }
+    });
+
     document.body.appendChild(modal);
     
     // Close modal when clicking outside
@@ -2227,7 +2237,7 @@ function showConditionAddModal(currentConditions, callback) {
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeModal();
+            //closeModal();
         }
     });
     
