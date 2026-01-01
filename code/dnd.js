@@ -2113,6 +2113,7 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.addEventListener('click', () => {
             // Remove selection from all buttons
             conditionGrid.querySelectorAll('button').forEach(btn => {
+                console.log('Deselecting button:', btn);
                 btn.style.background = 'white'
                 btn.style.color = btn.style.borderColor;
                 btn.style.fontWeight = 'normal';
