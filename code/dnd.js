@@ -1943,7 +1943,7 @@ function showTempHpModal(currentValue, callback) {
     cancelButton.addEventListener('click', () => {
         document.body.removeChild(modal);
     });
-    
+    console.log('Creating Temp HP modal with current value:', currentValue);
     const confirmButton = document.createElement('button');
     confirmButton.textContent = 'Add Temp HP';
     confirmButton.style.backgroundColor = '#eab308'; // Yellow for temp HP
