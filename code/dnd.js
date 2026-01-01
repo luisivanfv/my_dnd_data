@@ -3156,8 +3156,9 @@ function convertToEncounterTable() {
     const editCell = document.createElement('td');
     const editButton = document.createElement('button');
     editButton.className = 'edit-button';
+    editButton.style.color = customDarkGrey;
     editButton.innerHTML = '✎'; // Pencil icon
-    editButton.title = 'Click for actions, right-click to edit notes';
+    editButton.title = data.notes;
 
     // Left click - show context menu
     editButton.addEventListener('click', (event) => {
