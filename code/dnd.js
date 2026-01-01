@@ -2420,7 +2420,7 @@ function convertToEncounterTable() {
                     idBadge.style.width = '24px';
                     idBadge.style.height = '24px';
                     idBadge.style.borderRadius = '50%';
-                    idBadge.style.backgroundColor = '#dc2626'; // Red circle
+                    idBadge.style.backgroundColor = '#364051'; // Red circle
                     idBadge.style.color = 'white';
                     idBadge.style.display = 'flex';
                     idBadge.style.alignItems = 'center';
