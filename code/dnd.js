@@ -2990,6 +2990,7 @@ function convertToEncounterTable() {
                     
                     showConditionAddModal(currentConditions, (selectedCondition, turns) => {
                         console.log('Adding condition:', selectedCondition, 'for turns:', turns);
+                        console.log('Current conditions:', currentConditions);
                         // Create a new array to avoid mutation issues
                         const updatedConditions = [...currentConditions];
                         
@@ -3000,6 +3001,7 @@ function convertToEncounterTable() {
                             // Update existing condition (replace, don't add new)
                             updatedConditions[existingIndex].turns = turns;
                         } else {
+                            console.log('Pushing new condition');
                             // Add new condition
                             updatedConditions.push({
                                 name: selectedCondition.name,
@@ -3011,6 +3013,7 @@ function convertToEncounterTable() {
                         
                         // Update the data model
                         const conditionsStr = stringifyConditions(updatedConditions);
+                        console.log('Updated conditions string:', conditionsStr);
                         data.conditions = conditionsStr;
                         
                         // Find and update in window.encounterTableData
