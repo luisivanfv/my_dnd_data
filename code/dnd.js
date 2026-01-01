@@ -142,8 +142,8 @@ window.showTextPrompt = function(currentValue, callback, title = 'Enter text:') 
         background: white;
         padding: 20px;
         border-radius: 8px;
-        min-width: 300px;
-        max-width: 500px;
+        min-width: 500px;
+        max-width: 600px;
     `;
     
     const textarea = document.createElement('textarea');
@@ -2057,8 +2057,8 @@ function showConditionAddModal(currentConditions, callback) {
         background: white;
         padding: 20px;
         border-radius: 8px;
-        min-width: 400px;
-        max-width: 500px;
+        min-width: 500px;
+        max-width: 600px;
         max-height: 80vh;
         overflow-y: auto;
     `;
