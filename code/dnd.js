@@ -2414,7 +2414,7 @@ function showConditionManageModal(currentConditions, callback) {
     modal.addEventListener('click', (e) => {
         console.log('click outside');
         if (e.target === modal) {
-            document.body.removeChild(modal);
+            //document.body.removeChild(modal);
         }
     });
     
