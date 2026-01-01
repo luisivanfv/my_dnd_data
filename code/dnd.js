@@ -2107,7 +2107,7 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.innerHTML = `
             <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${condition.icon}"/></div>
             
-            <div>${condition.name}</div>
+            <div style="color:${condition.color}">${condition.name}</div>
         `.replace('fefefe', condition.color.replace('#', ''));
         
         conditionButton.addEventListener('click', () => {
