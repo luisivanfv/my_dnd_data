@@ -1621,7 +1621,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         { key: 'name', editable: false, type: 'text' },
         { key: 'ac', editable: false, type: 'number' },
         { key: 'hp', editable: false, type: 'text' },
-        { key: 'tempHp', editable: true, type: 'text' },
         { key: 'conditions', editable: true, type: 'text' }
     ];
     
@@ -1740,22 +1739,75 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         if (rowIndex === -1) return;
         
         showContextMenu(event.clientX, event.clientY, 
-            ['Damage', 'Heal', '---', 'Destroy'], 
+            ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'],
             (option) => {
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
+                        
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell && hpCell._rowData) {
+                                hpCell._rowData.tempHp = updatedStats.tempHp;
+                                hpCell._rowData.hp = updatedStats.hp;
+                                updateCellWithHpBar(
+                                    hpCell, 
+                                    updatedStats.hp, 
+                                    hpCell._rowData.maxHp,
+                                    updatedStats.tempHp,
+                                    hpCell._textColor || 'white'
+                                );
+                            }
+                        }
+                        
+                        // Show damage reminder if applicable
+                        if (window.encounterTableData[rowIndex].whenDamagedReminder) {
+                            // ... existing reminder code ...
+                        }
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
+                        
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell && hpCell._rowData) {
+                                hpCell._rowData.hp = updatedStats.hp;
+                                updateCellWithHpBar(
+                                    hpCell,
+                                    updatedStats.hp,
+                                    hpCell._rowData.maxHp,
+                                    hpCell._rowData.tempHp || '0',
+                                    hpCell._textColor || 'white'
+                                );
+                            }
+                        }
                     });
-                } else if (option === 'Destroy') {
+                } else if (option === 'Add Temp HP') {
+                    showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
+                        window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
+                        // Update the HP display to show temp HP
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell && hpCell._rowData) {
+                                hpCell._rowData.tempHp = tempHpAmount.toString();
+                                updateCellWithHpBar(
+                                    hpCell,
+                                    hpCell._rowData.hp,
+                                    hpCell._rowData.maxHp,
+                                    hpCell._rowData.tempHp || '0',
+                                    hpCell._textColor || 'white'
+                                );
+                            }
+                        }
+                    });
+                }else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${window.encounterTableData[rowIndex].name}?`)) {
                         // Store the data for logging
                         const toRemove = window.encounterTableData[rowIndex];
@@ -1879,6 +1931,92 @@ function createNumberPrompt(currentValue, callback) {
   
   return modal;
 }
+function showTempHpModal(currentValue, callback) {
+    const modal = document.createElement('div');
+    modal.className = 'temp-hp-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+    `;
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue || '0';
+    input.min = '0';
+    input.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Add Temp HP';
+    confirmButton.style.backgroundColor = '#eab308'; // Yellow for temp HP
+    confirmButton.style.color = 'black';
+    confirmButton.addEventListener('click', () => {
+        const value = parseInt(input.value);
+        if (!isNaN(value) && value >= 0) {
+            callback(value);
+        }
+        document.body.removeChild(modal);
+    });
+    
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const value = parseInt(input.value);
+            if (!isNaN(value) && value >= 0) {
+                callback(value);
+            }
+            document.body.removeChild(modal);
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(confirmButton);
+    
+    modalContent.appendChild(document.createTextNode('Enter temporary HP amount:'));
+    modalContent.appendChild(input);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    input.focus();
+    input.select();
+    
+    return modal;
+}
 function convertToEncounterTable() {
     // Get the element with ID "encounter_table" or class "to-encounter-table"
     const element = document.getElementById('encounter_table') || 
@@ -1901,7 +2039,7 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['#', 'Name', 'AC', 'HP', 'Temp HP', 'Conditions', 'Notes'];
+    const headers = ['#', 'Name', 'AC', 'HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.style.textAlign = 'center';
@@ -2089,7 +2227,6 @@ function convertToEncounterTable() {
             { key: 'name', editable: false, type: 'text' },
             { key: 'ac', editable: true, type: 'number' },
             { key: 'hp', editable: false, type: 'text' },
-            { key: 'tempHp', editable: true, type: 'text' },
             { key: 'conditions', editable: true, type: 'text' }
         ];
         
@@ -2130,8 +2267,11 @@ function convertToEncounterTable() {
                         cell.style.padding = '4px'; // Reduce padding for better visual
                         cell.style.textAlign = 'center';
                         
-                        // ALWAYS create progress bar
-                        updateCellWithHpBar(cell, data.hp, data.maxHp, textColor);
+                        // Always create progress bar with temp HP support
+                        updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp || '0', textColor);
+                        // Store reference to data for editing
+                        cell._rowData = data;
+                        cell._textColor = textColor;
                         
                         // Make cell editable
                         cell.style.cursor = 'pointer';
@@ -2152,14 +2292,12 @@ function convertToEncounterTable() {
                                 
                                 if (rowIndex !== -1) {
                                     window.encounterTableData[rowIndex].hp = newValue;
-                                    // Update the display
-                                    cell.textContent = '';
-                                    const updatedHpDisplay = createHpProgressBar(newValue, data.maxHp, textColor);
-                                    cell.appendChild(updatedHpDisplay);
+                                    data.hp = newValue;
+                                    updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor);
                                 }
                             });
                         });
-                    } else if (column.type === 'number' || column.key === 'tempHp') {
+                    } else if (column.type === 'number') {
                         // Use number prompt for numeric fields
                         window.showNumberPrompt(currentValue, (newValue) => {
                             cell.textContent = newValue;
@@ -2968,7 +3106,7 @@ function showTooltip(x, y, text) {
     return tooltip;
 }
 
-// Apply damage to a creature/player
+// Apply damage to a creature/player (with temp HP support)
 function applyDamage(rowData, damageAmount) {
     let remainingDamage = parseInt(damageAmount);
     let newTempHp = parseInt(rowData.tempHp) || 0;
@@ -2996,13 +3134,13 @@ function applyDamage(rowData, damageAmount) {
     };
 }
 
-// Apply healing to a creature/player
+// Apply healing to a creature/player (temp HP not affected)
 function applyHealing(rowData, healAmount) {
     let currentHp = parseInt(rowData.hp) || 0;
     let maxHp = parseInt(rowData.maxHp) || 0;
     let heal = parseInt(healAmount);
     
-    // Heal but don't exceed max HP
+    // Heal but don't exceed max HP (temp HP doesn't count toward max)
     const newHp = Math.min(maxHp, currentHp + heal);
     
     return {
@@ -3276,8 +3414,8 @@ function showNotesModal(currentNotes, callback) {
     return modal;
 }
 const customDarkGrey = '#364051'; // Custom dark grey color
-// Function to create HP progress bar with both numbers and grey background
-function createHpProgressBar(currentHp, maxHp, textColor) {
+// Enhanced HP progress bar with temp HP support
+function createHpProgressBar(currentHp, maxHp, tempHp, textColor) {
     if (!currentHp || !maxHp) {
         currentHp = currentHp || '0';
         maxHp = maxHp || '0';
@@ -3285,31 +3423,28 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     
     const current = parseInt(currentHp);
     const max = parseInt(maxHp);
+    const temp = parseInt(tempHp) || 0;
     
     if (isNaN(current) || isNaN(max) || max <= 0) {
-        return createSimpleHpDisplay(currentHp, maxHp, textColor);
+        return createSimpleHpDisplay(currentHp, maxHp, tempHp, textColor);
     }
     
-    const percentage = Math.min(100, Math.round((current / max) * 100));
+    // Calculate percentages
+    const currentPercentage = Math.min(100, Math.round((current / max) * 100));
+    const tempPercentage = temp > 0 ? Math.min(100, Math.round((temp / max) * 100)) : 0;
+    const lostPercentage = Math.max(0, 100 - currentPercentage - tempPercentage);
     
-    // Determine bar color
+    // Determine bar color for current HP
     let barColor;
     let isCritical = false;
-    let rangePerColor = 14.28; // Approximately 100/7
     
-    if (percentage <= rangePerColor * 1) {
+    if (currentPercentage <= 25) {
         barColor = '#dc2626'; // Red
         isCritical = true;
-    } else if (percentage <= rangePerColor * 2) {
-        barColor = '#eb4d1e'; // Orange
-    } else if (percentage <= rangePerColor * 3) {
+    } else if (currentPercentage <= 50) {
         barColor = '#f97316'; // Orange
-    } else if (percentage <= rangePerColor * 4) {
-        barColor = '#f2930f'; // Dark Yellow
-    } else if (percentage <= rangePerColor * 5) {
+    } else if (currentPercentage <= 75) {
         barColor = '#eab308'; // Yellow
-    } else if (percentage <= rangePerColor * 6) {
-        barColor = '#86bc33'; // Light Green
     } else {
         barColor = '#22c55e'; // Green
     }
@@ -3321,39 +3456,79 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     container.style.width = '100%';
     container.style.height = '100%';
     container.style.minHeight = '40px';
+    container.style.overflow = 'hidden';
+    container.style.borderRadius = '4px';
     
-    // Create background (grey for missing HP)
-    const background = document.createElement('div');
-    background.className = 'hp-background';
-    background.style.position = 'absolute';
-    background.style.top = '0';
-    background.style.left = '0';
-    background.style.width = '100%';
-    background.style.height = '100%';
-    background.style.backgroundColor = customDarkGrey; // Dark grey
-    background.style.borderRadius = '4px';
-    background.style.opacity = '0.7';
-    
-    // Create foreground (current HP)
-    const foreground = document.createElement('div');
-    foreground.className = 'hp-foreground';
-    foreground.style.position = 'absolute';
-    foreground.style.top = '0';
-    foreground.style.left = '0';
-    foreground.style.width = `${percentage}%`;
-    foreground.style.height = '100%';
-    foreground.style.backgroundColor = barColor;
-    foreground.style.borderRadius = '4px 0 0 4px';
-    if (percentage === 100) {
-        foreground.style.borderRadius = '4px'; // Full bar gets rounded corners
+    // Create background for lost HP (grey)
+    if (lostPercentage > 0) {
+        const lostBackground = document.createElement('div');
+        lostBackground.className = 'hp-lost-background';
+        lostBackground.style.position = 'absolute';
+        lostBackground.style.top = '0';
+        lostBackground.style.left = '0';
+        lostBackground.style.width = '100%';
+        lostBackground.style.height = '100%';
+        lostBackground.style.backgroundColor = '#4a5568'; // Dark grey
+        lostBackground.style.opacity = '0.7';
+        lostBackground.style.zIndex = '1';
+        container.appendChild(lostBackground);
     }
-    foreground.style.transition = 'width 0.3s ease';
     
-    // Create HP text (current/max)
+    // Create foreground for current HP (colored)
+    if (currentPercentage > 0) {
+        const foreground = document.createElement('div');
+        foreground.className = 'hp-foreground';
+        foreground.style.position = 'absolute';
+        foreground.style.top = '0';
+        foreground.style.left = '0';
+        foreground.style.width = `${currentPercentage}%`;
+        foreground.style.height = '100%';
+        foreground.style.backgroundColor = barColor;
+        foreground.style.zIndex = '2';
+        foreground.style.boxShadow = 'inset 0 0 10px rgba(255,255,255,0.2)';
+        container.appendChild(foreground);
+    }
+    
+    // Create temp HP overlay (yellow)
+    if (tempPercentage > 0) {
+        const tempOverlay = document.createElement('div');
+        tempOverlay.className = 'hp-temp-overlay';
+        tempOverlay.style.position = 'absolute';
+        tempOverlay.style.top = '0';
+        tempOverlay.style.left = `${currentPercentage}%`;
+        tempOverlay.style.width = `${tempPercentage}%`;
+        tempOverlay.style.height = '100%';
+        tempOverlay.style.backgroundColor = '#eab308'; // Yellow
+        tempOverlay.style.opacity = '0.8';
+        tempOverlay.style.zIndex = '3';
+        tempOverlay.style.boxShadow = 'inset 0 0 10px rgba(255,255,255,0.3)';
+        container.appendChild(tempOverlay);
+        
+        // Add pattern to temp HP section
+        const tempPattern = document.createElement('div');
+        tempPattern.style.position = 'absolute';
+        tempPattern.style.top = '0';
+        tempPattern.style.left = '0';
+        tempPattern.style.width = '100%';
+        tempPattern.style.height = '100%';
+        tempPattern.style.backgroundImage = 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.1) 5px, rgba(255,255,255,0.1) 10px)';
+        tempOverlay.appendChild(tempPattern);
+    }
+    
+    // Create HP text (current/max+temp)
     const hpText = document.createElement('div');
     hpText.className = 'hp-text';
-    hpText.textContent = `${currentHp}/${maxHp}`;
-    hpText.style.color = 'white';
+    
+    // Format text based on temp HP
+    let displayText;
+    if (temp > 0) {
+        displayText = `${currentHp}/${maxHp}+${temp}`;
+    } else {
+        displayText = `${currentHp}/${maxHp}`;
+    }
+    
+    hpText.textContent = displayText;
+    hpText.style.color = textColor;
     hpText.style.position = 'absolute';
     hpText.style.top = '50%';
     hpText.style.left = '50%';
@@ -3363,13 +3538,66 @@ function createHpProgressBar(currentHp, maxHp, textColor) {
     hpText.style.padding = '2px';
     hpText.style.fontWeight = 'bold';
     hpText.style.textShadow = '0 0 3px rgba(0,0,0,0.8)';
-    hpText.style.zIndex = '2';
-    hpText.title = `${percentage}% (${getHpStatusDescription(percentage)})`;
+    hpText.style.zIndex = '4';
     
-    container.appendChild(background);
-    container.appendChild(foreground);
+    // Create tooltip with detailed info
+    let tooltipText = `${currentHp}/${maxHp} HP`;
+    if (temp > 0) {
+        tooltipText += ` + ${temp} temporary HP`;
+        const totalWithTemp = current + temp;
+        const totalPercentage = Math.round((totalWithTemp / max) * 100);
+        tooltipText += `\nTotal: ${totalWithTemp}/${max} (${totalPercentage}%)`;
+    } else {
+        const percentage = Math.round((current / max) * 100);
+        tooltipText += ` (${percentage}%)`;
+    }
+    hpText.title = tooltipText;
+    
     container.appendChild(hpText);
     
+    // Add temp HP indicator badge
+    if (temp > 0) {
+        const tempBadge = document.createElement('div');
+        tempBadge.className = 'hp-temp-badge';
+        tempBadge.textContent = `+${temp}`;
+        tempBadge.style.position = 'absolute';
+        tempBadge.style.top = '2px';
+        tempBadge.style.right = '2px';
+        tempBadge.style.backgroundColor = 'rgba(234, 179, 8, 0.9)'; // Yellow
+        tempBadge.style.color = 'black';
+        tempBadge.style.fontSize = '10px';
+        tempBadge.style.fontWeight = 'bold';
+        tempBadge.style.padding = '1px 4px';
+        tempBadge.style.borderRadius = '3px';
+        tempBadge.style.zIndex = '5';
+        tempBadge.style.boxShadow = '0 1px 3px rgba(0,0,0,0.3)';
+        container.appendChild(tempBadge);
+    }
+    
+    return container;
+}
+
+// Update the simple display function
+function createSimpleHpDisplay(currentHp, maxHp, tempHp, textColor) {
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    
+    let displayText = `${currentHp}/${maxHp}`;
+    if (tempHp && parseInt(tempHp) > 0) {
+        displayText += `+${tempHp}`;
+    }
+    
+    const hpText = document.createElement('div');
+    hpText.textContent = displayText;
+    hpText.style.color = textColor;
+    hpText.style.fontWeight = 'bold';
+    
+    container.appendChild(hpText);
     return container;
 }
 function getHpStatusDescription(percentage) {
@@ -3380,28 +3608,10 @@ function getHpStatusDescription(percentage) {
     else if(percentage < 100.0) return 'Levemente herido';
     return 'Intacto';
 }
-// Fallback function for invalid HP values
-function createSimpleHpDisplay(currentHp, maxHp, textColor) {
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.display = 'flex';
-    container.style.alignItems = 'center';
-    container.style.justifyContent = 'center';
-    
-    const hpText = document.createElement('div');
-    hpText.textContent = `${currentHp}/${maxHp}`;
-    hpText.style.color = textColor;
-    hpText.style.fontWeight = 'bold';
-    
-    container.appendChild(hpText);
-    return container;
-}
 // Helper function to update cell with HP bar
-function updateCellWithHpBar(cell, hp, maxHp, textColor) {
+function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
     cell.innerHTML = ''; // Clear
-    const hpDisplay = createHpProgressBar(hp, maxHp, textColor);
+    const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
 }
 // HP edit handler factory
