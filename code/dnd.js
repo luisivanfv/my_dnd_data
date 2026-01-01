@@ -2222,7 +2222,7 @@ function showConditionAddModal(currentConditions, callback) {
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            document.body.removeChild(modal);
+            //document.body.removeChild(modal);
         }
     });
     
