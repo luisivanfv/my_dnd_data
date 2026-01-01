@@ -3031,7 +3031,7 @@ function convertToEncounterTable() {
                         }
                         
                         // Update the display
-                        const displayContainer = cell.querySelector(`#${cell.id}`);
+                        const displayContainer = cell;
                         console.log('Display container:', displayContainer);
                         if (displayContainer) {
                             updateConditionsDisplay(displayContainer, updatedConditions);
