@@ -1702,8 +1702,9 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         if (rowIndex === -1) return;
         
         showContextMenu(event.clientX, event.clientY, 
-            ['Damage', 'Heal', '<img width="64" height="64" src="https://img.icons8.com/pastel-glyph/64/1A1A1A/like--v1.png" alt="like--v1"/>', '---', 'Destroy'],
+            ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'],
             (option) => {
+                console.log('Selected option (2):', option);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
@@ -2521,6 +2522,7 @@ function convertToEncounterTable() {
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
+                console.log('Selected option (1):', option);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
