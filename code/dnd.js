@@ -2121,7 +2121,9 @@ function showConditionAddModal(currentConditions, callback) {
                 dndConditions.forEach(cond => {
                     if (lastDivInBtn && lastDivInBtn.textContent === cond.name) {
                         lastDivInBtn.innerHTML = `
-                            <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${cond.icon}"/></div>`;
+                            <div style="font-size: 20px; margin-bottom: 5px;"><img width="30" height="30" src="${cond.icon}"/></div>`.replace('fefefe', cond.color.replace('#', '')) + `
+                            <div>${cond.name}</div>
+                        `;
                     }
                 });
                 btn.style.fontWeight = 'normal';
