@@ -1512,14 +1512,12 @@ function initializeTableData() {
     // Get monster data from encounter name (when available)
     try {
         const encounterName = getUrlParameter('name');
-        console.log('Loading enemies for encounter:', encounterName);
         if(encounterName) {
             const encounterData = JSON.parse(localStorage.getItem(`encounters_${encounterName}.json`));
             if (encounterData && Array.isArray(encounterData.enemies)) {
                 let idCounter = 1;
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split('-')[0].trim()
-                    console.log(enemy);
                     const typeOfEnemy = enemy.split('-')[1].trim().toLowerCase().replaceAll(' ', '-');
                     const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
@@ -1547,33 +1545,6 @@ function initializeTableData() {
                 });
             }
         }
-        console.log('After loading:', tableForData);
-        /*const monsterData = JSON.parse(localStorage.getItem('monsters'));
-        if (monsterData && typeof monsterData === 'object') {
-            const monsterKeys = Object.keys(monsterData);
-            for (let i = 0; i < monsterKeys.length; i++) {
-                const monsterKey = monsterKeys[i];
-                const monsterInfo = monsterData[monsterKey];
-                
-                if (monsterInfo && typeof monsterInfo === 'object') {
-                    tableForData.push({
-                        id: idCounter++,
-                        initiative: 0,
-                        name: monsterKey.charAt(0).toUpperCase() + monsterKey.slice(1),
-                        ac: monsterInfo.ac.split('(')[0].trim() || 10,
-                        hp: monsterInfo.hp || '0',
-                        maxHp: monsterInfo.hp || '0',
-                        tempHp: '0',
-                        conditions: '',
-                        notes: '',
-                        type: 'monster',
-                        sourceKey: monsterKey,
-                        whenDamagedReminder: monsterInfo.whenDamagedReminder || '',
-                        color: '#dc2626' // Red for monsters
-                    });
-                }
-            }
-        }*/
     } catch (error) {
         console.error('Error loading monster data:', error);
     }
@@ -1582,10 +1553,6 @@ function initializeTableData() {
 }
 // Helper function for sorting
 function sortTableData(tableData) {
-    console.log("Before sorting:");
-    tableData.forEach(row => {
-        console.log(`${row.type} ${row.name}: Initiative ${row.initiative}, ID ${row.id}`);
-    });
     tableData.sort((a, b) => {
         const initA = parseInt(a.initiative) || 0;
         const initB = parseInt(b.initiative) || 0;
@@ -1596,10 +1563,6 @@ function sortTableData(tableData) {
         }
         
         return initB - initA; // Higher initiative first
-    });
-    console.log("After sorting:");
-    tableData.forEach(row => {
-        console.log(`${row.type} ${row.name}: Initiative ${row.initiative}, ID ${row.id}`);
     });
 }
 function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFunc) {
@@ -1789,6 +1752,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         }
                     });
                 } else if (option === 'Add Temp HP') {
+                    console.log('Adding Temp HP to row index:', rowIndex);
                     showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
                         window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
                         // Update the HP display to show temp HP
@@ -1811,7 +1775,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                     if (confirm(`Are you sure you want to remove ${window.encounterTableData[rowIndex].name}?`)) {
                         // Store the data for logging
                         const toRemove = window.encounterTableData[rowIndex];
-                        console.log(`Removing: ${toRemove.name} (ID: ${toRemove.id}, Type: ${toRemove.type})`);
                         
                         window.encounterTableData.splice(rowIndex, 1);
                         renderTable();
@@ -2331,11 +2294,6 @@ function convertToEncounterTable() {
                                 if (column.key === 'initiative') {
                                     sortTableData(window.encounterTableData);
                                     renderTable();
-                                    // Add this after the renderTable call in your context menu handler
-                                    console.log('Current table data after delete:');
-                                    window.encounterTableData.forEach((row, idx) => {
-                                        console.log(`${idx}: ${row.name} (ID: ${row.id}, Type: ${row.type}, Initiative: ${row.initiative})`);
-                                    });
                                 }
                             }
                         });
@@ -2710,12 +2668,8 @@ function convertToEncounterTable() {
     tableContainer.appendChild(controls);
     tableContainer.appendChild(table);
     element.appendChild(tableContainer);
-    
-    console.log('Encounter table initialized. Global references set.');
-    console.log('Table data length:', window.encounterTableData.length);
 }
 function setIconShieldForAc(cell, data, textColor) {
-    console.log('setIconShieldForAc called for creature:', data.name);
     // Create container for icon with text overlay
     const container = document.createElement('div');
     container.style.position = 'relative';
@@ -2793,8 +2747,6 @@ function setIconShieldForAc(cell, data, textColor) {
     cell.style.padding = '8px';
 }
 function setInitiative(element, name, id, dexterity) {
-    console.log('setInitiative called for:', name, 'ID:', id, 'Dexterity:', dexterity);
-    
     // Parse dexterity correctly (it might be a string like "14 (modifier)")
     let dexValue = dexterity;
     if (typeof dexterity === 'string') {
@@ -2816,7 +2768,6 @@ function setInitiative(element, name, id, dexterity) {
     
     if (rowIndex !== -1) {
         window.encounterTableData[rowIndex].initiative = initiative;
-        console.log(`Updated initiative for ${name} to ${initiative}`);
     } else {
         console.error(`Could not find row with name: ${name}, id: ${id}`);
     }
