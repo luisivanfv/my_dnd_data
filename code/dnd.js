@@ -2416,6 +2416,7 @@ function updateConditionsDisplay(container, conditionsArray) {
     // Reset container styles to fill the cell
     container.style.display = 'flex';
     container.style.flexWrap = 'wrap';
+    container.style['border'] = 'none';
     container.style.gap = '4px';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
