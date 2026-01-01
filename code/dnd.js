@@ -2703,139 +2703,9 @@ function convertToEncounterTable() {
                 !(column.key === 'initiative' && data.type === 'monster')) {
                 cell.style.cursor = 'pointer';
                 cell.classList.add('editable-cell');
-                if (column.key === 'conditions') {
-                    cell.addEventListener('contextmenu', function conditionsContextMenuHandler(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const currentConditions = parseConditions(data.conditions || '');
-                        
-                        showConditionManageModal(currentConditions, (action, conditionName) => {
-                            if (action === 'remove') {
-                                // Remove specific condition
-                                const newConditions = currentConditions.filter(c => c.name !== conditionName);
-                                
-                                // Update the data
-                                const conditionsStr = stringifyConditions(newConditions);
-                                data.conditions = conditionsStr;
-                                
-                                const rowIndex = window.encounterTableData.findIndex(item => {
-                                    if (data.type === 'player') {
-                                        return item.name === data.name && item.type === 'player';
-                                    } else {
-                                        return item.id === data.id;
-                                    }
-                                });
-                                
-                                if (rowIndex !== -1) {
-                                    window.encounterTableData[rowIndex].conditions = conditionsStr;
-                                }
-                                
-                                // Update display
-                                const displayContainer = cell.querySelector(`#${cell._displayId}`);
-                                if (displayContainer) {
-                                    updateConditionsDisplay(displayContainer, newConditions);
-                                }
-                                
-                                // Update stored data
-                                cell._conditionsData = newConditions;
-                                
-                            } else if (action === 'passTurn') {
-                                // Decrease all condition timers by 1
-                                const newConditions = currentConditions
-                                    .map(condition => ({
-                                        ...condition,
-                                        turns: condition.turns - 1
-                                    }))
-                                    .filter(condition => condition.turns > 0);
-                                
-                                // Update the data
-                                const conditionsStr = stringifyConditions(newConditions);
-                                data.conditions = conditionsStr;
-                                
-                                const rowIndex = window.encounterTableData.findIndex(item => {
-                                    if (data.type === 'player') {
-                                        return item.name === data.name && item.type === 'player';
-                                    } else {
-                                        return item.id === data.id;
-                                    }
-                                });
-                                
-                                if (rowIndex !== -1) {
-                                    window.encounterTableData[rowIndex].conditions = conditionsStr;
-                                }
-                                
-                                // Update display
-                                const displayContainer = cell.querySelector(`#${cell._displayId}`);
-                                if (displayContainer) {
-                                    updateConditionsDisplay(displayContainer, newConditions);
-                                }
-                                
-                                // Update stored data
-                                cell._conditionsData = newConditions;
-                            }
-                        });
-                    });
-                }  
                 cell.addEventListener('click', () => {
                     const currentValue = cell.textContent;
-                    
-                    if (column.key === 'conditions') {
-                        console.log('Clicked on conditions cell');
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Get fresh data from the stored reference
-                        const currentConditions = cell._conditionsData || parseConditions(data.conditions || '');
-                        
-                        showConditionAddModal(currentConditions, (selectedCondition, turns) => {
-                            console.log('Adding condition:', selectedCondition, 'for turns:', turns);
-                            // Create a new array to avoid mutation issues
-                            const updatedConditions = [...currentConditions];
-                            
-                            // Check if condition already exists
-                            const existingIndex = updatedConditions.findIndex(c => c.name === selectedCondition.name);
-                            
-                            if (existingIndex >= 0) {
-                                // Update existing condition (replace, don't add new)
-                                updatedConditions[existingIndex].turns = turns;
-                            } else {
-                                // Add new condition
-                                updatedConditions.push({
-                                    name: selectedCondition.name,
-                                    turns: turns,
-                                    icon: selectedCondition.icon,
-                                    color: selectedCondition.color
-                                });
-                            }
-                            
-                            // Update the data model
-                            const conditionsStr = stringifyConditions(updatedConditions);
-                            data.conditions = conditionsStr;
-                            
-                            // Find and update in window.encounterTableData
-                            const rowIndex = window.encounterTableData.findIndex(item => {
-                                if (data.type === 'player') {
-                                    return item.name === data.name && item.type === 'player';
-                                } else {
-                                    return item.id === data.id;
-                                }
-                            });
-                            
-                            if (rowIndex !== -1) {
-                                window.encounterTableData[rowIndex].conditions = conditionsStr;
-                            }
-                            
-                            // Update the display
-                            const displayContainer = cell.querySelector(`#${cell._displayId}`);
-                            if (displayContainer) {
-                                updateConditionsDisplay(displayContainer, updatedConditions);
-                            }
-                            
-                            // Update stored data
-                            cell._conditionsData = updatedConditions;
-                        });
-                    } else if (column.key === 'hp') {
+                    if (column.key === 'hp') {
                         cell.style.padding = '4px'; // Reduce padding for better visual
                         cell.style.textAlign = 'center';
                         
@@ -3108,6 +2978,137 @@ function convertToEncounterTable() {
                 cell.appendChild(nameContainer);
             } else if (column.key === 'hp') {
                 updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp, 'black');
+            } else if (column.key === 'conditions') {
+                // Add fresh event listeners
+                cell.addEventListener('click', function conditionsClickHandler(e) {
+                    console.log('Clicked on conditions cell');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Get fresh data from the stored reference
+                    const currentConditions = cell._conditionsData || parseConditions(data.conditions || '');
+                    
+                    showConditionAddModal(currentConditions, (selectedCondition, turns) => {
+                        console.log('Adding condition:', selectedCondition, 'for turns:', turns);
+                        // Create a new array to avoid mutation issues
+                        const updatedConditions = [...currentConditions];
+                        
+                        // Check if condition already exists
+                        const existingIndex = updatedConditions.findIndex(c => c.name === selectedCondition.name);
+                        
+                        if (existingIndex >= 0) {
+                            // Update existing condition (replace, don't add new)
+                            updatedConditions[existingIndex].turns = turns;
+                        } else {
+                            // Add new condition
+                            updatedConditions.push({
+                                name: selectedCondition.name,
+                                turns: turns,
+                                icon: selectedCondition.icon,
+                                color: selectedCondition.color
+                            });
+                        }
+                        
+                        // Update the data model
+                        const conditionsStr = stringifyConditions(updatedConditions);
+                        data.conditions = conditionsStr;
+                        
+                        // Find and update in window.encounterTableData
+                        const rowIndex = window.encounterTableData.findIndex(item => {
+                            if (data.type === 'player') {
+                                return item.name === data.name && item.type === 'player';
+                            } else {
+                                return item.id === data.id;
+                            }
+                        });
+                        
+                        if (rowIndex !== -1) {
+                            window.encounterTableData[rowIndex].conditions = conditionsStr;
+                        }
+                        
+                        // Update the display
+                        const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                        if (displayContainer) {
+                            updateConditionsDisplay(displayContainer, updatedConditions);
+                        }
+                        
+                        // Update stored data
+                        cell._conditionsData = updatedConditions;
+                    });
+                });
+                
+                cell.addEventListener('contextmenu', function conditionsContextMenuHandler(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const currentConditions = parseConditions(data.conditions || '');
+                    
+                    showConditionManageModal(currentConditions, (action, conditionName) => {
+                        if (action === 'remove') {
+                            // Remove specific condition
+                            const newConditions = currentConditions.filter(c => c.name !== conditionName);
+                            
+                            // Update the data
+                            const conditionsStr = stringifyConditions(newConditions);
+                            data.conditions = conditionsStr;
+                            
+                            const rowIndex = window.encounterTableData.findIndex(item => {
+                                if (data.type === 'player') {
+                                    return item.name === data.name && item.type === 'player';
+                                } else {
+                                    return item.id === data.id;
+                                }
+                            });
+                            
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex].conditions = conditionsStr;
+                            }
+                            
+                            // Update display
+                            const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                            if (displayContainer) {
+                                updateConditionsDisplay(displayContainer, newConditions);
+                            }
+                            
+                            // Update stored data
+                            cell._conditionsData = newConditions;
+                            
+                        } else if (action === 'passTurn') {
+                            // Decrease all condition timers by 1
+                            const newConditions = currentConditions
+                                .map(condition => ({
+                                    ...condition,
+                                    turns: condition.turns - 1
+                                }))
+                                .filter(condition => condition.turns > 0);
+                            
+                            // Update the data
+                            const conditionsStr = stringifyConditions(newConditions);
+                            data.conditions = conditionsStr;
+                            
+                            const rowIndex = window.encounterTableData.findIndex(item => {
+                                if (data.type === 'player') {
+                                    return item.name === data.name && item.type === 'player';
+                                } else {
+                                    return item.id === data.id;
+                                }
+                            });
+                            
+                            if (rowIndex !== -1) {
+                                window.encounterTableData[rowIndex].conditions = conditionsStr;
+                            }
+                            
+                            // Update display
+                            const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                            if (displayContainer) {
+                                updateConditionsDisplay(displayContainer, newConditions);
+                            }
+                            
+                            // Update stored data
+                            cell._conditionsData = newConditions;
+                        }
+                    });
+                });
             }
             row.appendChild(cell);
         });
