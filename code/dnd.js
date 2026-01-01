@@ -2547,7 +2547,7 @@ function convertToEncounterTable() {
                     if (row) {
                         console.log('row...');
                         const hpCell = row.querySelector('td[data-key="hp"]');
-                        console.log(hpCell);
+                        console.log(hpCell._rowData);
                         if (hpCell && hpCell._rowData) {
                             hpCell._rowData.tempHp = tempHpAmount.toString();
                             updateCellWithHpBar(
