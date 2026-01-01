@@ -2296,10 +2296,9 @@ function showConditionManageModal(currentConditions, callback) {
             font-weight: bold;
             transition: opacity 0.2s;
         `;
-        // asdf
         optionButton.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;"><img width="30" height="30" src="${condition.icon}" /></span>
+                <span style="font-size: 18px;"><img width="20" height="20" src="${condition.icon}" /></span>
                 <span>${condition.name}</span>
             </div>
             <div>
@@ -2321,7 +2320,19 @@ function showConditionManageModal(currentConditions, callback) {
         optionButton.addEventListener('mouseleave', () => {
             optionButton.style.opacity = '1';
         });
-        
+
+        optionButton.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                callback('remove', condition.name);
+                document.body.removeChild(modal);
+                if (selectedCondition) {
+                    const turns = parseInt(turnsInput.value) || 1;
+                    callback(selectedCondition, turns);
+                    document.body.removeChild(modal);
+                }
+            }
+        });
+
         optionsContainer.appendChild(optionButton);
     });
     
