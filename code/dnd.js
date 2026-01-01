@@ -2262,8 +2262,8 @@ function showConditionManageModal(currentConditions, callback) {
         background: white;
         padding: 20px;
         border-radius: 8px;
-        min-width: 300px;
-        max-width: 400px;
+        min-width: 500px;
+        max-width: 600px;
     `;
     
     // Title
