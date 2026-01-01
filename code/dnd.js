@@ -2322,6 +2322,7 @@ function showConditionManageModal(currentConditions, callback) {
         });
 
         optionButton.addEventListener('keypress', (e) => {
+            console.log('keypress', e.key);
             if (e.key === 'Enter') {
                 callback('remove', condition.name);
                 document.body.removeChild(modal);
