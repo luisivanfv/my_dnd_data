@@ -2092,7 +2092,7 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.style.cssText = `
             padding: 10px;
             border: 2px solid ${condition.color};
-            background: ${condition.color};
+            background: white;
             color: white;
             border-radius: 6px;
             cursor: pointer;
@@ -2113,7 +2113,7 @@ function showConditionAddModal(currentConditions, callback) {
         conditionButton.addEventListener('click', () => {
             // Remove selection from all buttons
             conditionGrid.querySelectorAll('button').forEach(btn => {
-                btn.style.background = 'white';
+                btn.style.background = 'white'
                 btn.style.color = btn.style.borderColor;
                 btn.style.fontWeight = 'normal';
             });
