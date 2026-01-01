@@ -2219,6 +2219,10 @@ function showConditionAddModal(currentConditions, callback) {
         }
     });
 
+    modalContent.addEventListener('wheel', (e) => {
+        turnsInput.textContent = parseInt(turnsInput.value) + (e.deltaY < 0 ? 1 : -1);
+    });
+
     document.body.appendChild(modal);
     
     // Close modal when clicking outside
