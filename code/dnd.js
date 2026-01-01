@@ -2712,6 +2712,7 @@ function convertToEncounterTable() {
                         
                         // Parse current conditions
                         const currentConditions = parseConditions(data.conditions || '');
+                        console.log('Current conditions for editing:', currentConditions);
                         
                         // Create display container with a unique ID
                         const displayId = `conditions-display-${data.id || data.name.replace(/\s+/g, '-')}`;
@@ -2735,6 +2736,7 @@ function convertToEncounterTable() {
                         
                         // Add fresh event listeners
                         cell.addEventListener('click', function conditionsClickHandler(e) {
+                            console.log('Clicked on conditions cell');
                             e.preventDefault();
                             e.stopPropagation();
                             
