@@ -2543,24 +2543,11 @@ function convertToEncounterTable() {
                         renderTable();
                     });
                 } else if (option === 'Add Temp HP') {
-                    console.log('Adding Temp HP to row index:', rowIndex);
-                    showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
-                        window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
-                        // Update the HP display to show temp HP
-                        const row = editButton.closest('tr');
-                        if (row) {
-                            const hpCell = row.querySelector('td[data-key="hp"]');
-                            if (hpCell && hpCell._rowData) {
-                                hpCell._rowData.tempHp = tempHpAmount.toString();
-                                updateCellWithHpBar(
-                                    hpCell,
-                                    hpCell._rowData.hp,
-                                    hpCell._rowData.maxHp,
-                                    hpCell._rowData.tempHp || '0',
-                                    hpCell._textColor || 'white'
-                                );
-                            }
-                        }
+                    showTempHpModal(0, window.encounterTableData[rowIndex], (tempHpAmount) => {
+                        const updatedStats = applyTempHp(window.encounterTableData[rowIndex], tempHpAmount);
+                        window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
+                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        renderTable();
                     });
                 } else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${data.name}?`)) {
