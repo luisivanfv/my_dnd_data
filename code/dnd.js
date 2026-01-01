@@ -1980,10 +1980,16 @@ function showTempHpModal(currentValue, callback) {
 }
 const dndConditions = [
     { name: 'Asleep', icon: 'https://img.icons8.com/sf-black/64/fefefe/sleep.png', color: '#6366f1' },
+    { name: 'Blessed', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/pray.png', color: '#fbbf24' },
     { name: 'Blinded', icon: 'https://img.icons8.com/sf-black-filled/64/fefefe/invisible.png', color: '#4a5568' },
+    { name: 'Burning', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/fire-element.png', color: '#ea580c' },
     { name: 'Charmed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/novel--v1.png', color: '#db2777' },
+    { name: 'Concentrating', icon: 'https://img.icons8.com/ios-filled/50/fefefe/brain.png', color: '#8b5cf6' },
+    { name: 'Cursed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/evil.png', color: '#7c2d12' },
     { name: 'Deafened', icon: 'https://img.icons8.com/external-smashingstocks-glyph-smashing-stocks/50/fefefe/external-ear-medical-smashingstocks-glyph-smashing-stocks.png', color: '#7c3aed' },
+    { name: 'Exhaustion', icon: 'https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/32/fefefe/external-Tired-diabetes-jumpicon-(glyph)-jumpicon-glyph-ayub-irawan.png', color: '#57534e' },
     { name: 'Frightened', icon: 'https://img.icons8.com/ios-filled/50/fefefe/scream.png', color: '#dc2626' },
+    { name: 'Frozen', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/snowflake.png', color: '#0ea5e9' },
     { name: 'Grappled', icon: 'https://img.icons8.com/external-stick-figures-gan-khoon-lay/51/fefefe/external-choke-fighting-stick-figures-gan-khoon-lay.png', color: '#059669' },
     { name: 'Incapacitated', icon: 'https://img.icons8.com/ios-filled/50/fefefe/sleeping.png', color: '#0ea5e9' },
     { name: 'Invisible', icon: 'https://img.icons8.com/ios-filled/50/fefefe/ghost.png', color: '#6366f1' },
@@ -1993,13 +1999,7 @@ const dndConditions = [
     { name: 'Prone', icon: 'https://img.icons8.com/ios-filled/50/fefefe/down.png', color: '#f59e0b' },
     { name: 'Restrained', icon: 'https://img.icons8.com/external-febrian-hidayat-glyph-febrian-hidayat/50/fefefe/external-chain-ui-essential-febrian-hidayat-glyph-febrian-hidayat.png', color: '#f97316' },
     { name: 'Stunned', icon: 'https://img.icons8.com/ios-filled/50/fefefe/faint-full-body.png', color: '#eab308' },
-    { name: 'Unconscious', icon: 'https://img.icons8.com/external-regular-kawalan-studio/24/fefefe/external-unconscious-medical-regular-kawalan-studio.png', color: '#3b82f6' },
-    { name: 'Exhaustion', icon: 'https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/32/fefefe/external-Tired-diabetes-jumpicon-(glyph)-jumpicon-glyph-ayub-irawan.png', color: '#57534e' },
-    { name: 'Concentrating', icon: 'https://img.icons8.com/ios-filled/50/fefefe/brain.png', color: '#8b5cf6' },
-    { name: 'Blessed', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/pray.png', color: '#fbbf24' },
-    { name: 'Cursed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/evil.png', color: '#7c2d12' },
-    { name: 'Burning', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/fire-element.png', color: '#ea580c' },
-    { name: 'Frozen', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/snowflake.png', color: '#0ea5e9' }
+    { name: 'Unconscious', icon: 'https://img.icons8.com/external-regular-kawalan-studio/24/fefefe/external-unconscious-medical-regular-kawalan-studio.png', color: '#3b82f6' }
 ];
 function parseConditions(conditionsStr) {
     if (!conditionsStr || conditionsStr.trim() === '') return [];
