@@ -2537,12 +2537,24 @@ function convertToEncounterTable() {
                         renderTable();
                     });
                 } else if (option === 'Add Temp HP') {
-                    showTempHpModal(0, window.encounterTableData[rowIndex], (tempHpAmount) => {
-                        const updatedStats = applyTempHp(window.encounterTableData[rowIndex], tempHpAmount);
-                        window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
-                        window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
-                    });
+                    showTempHpModal(window.encounterTableData[rowIndex].tempHp || '0', (tempHpAmount) => {
+                    window.encounterTableData[rowIndex].tempHp = tempHpAmount.toString();
+                    
+                    const row = editButton.closest('tr');
+                    if (row) {
+                        const hpCell = row.querySelector('td[data-key="hp"]');
+                        if (hpCell && hpCell._rowData) {
+                            hpCell._rowData.tempHp = tempHpAmount.toString();
+                            updateCellWithHpBar(
+                                hpCell,
+                                hpCell._rowData.hp,
+                                hpCell._rowData.maxHp,
+                                tempHpAmount.toString(),
+                                hpCell._textColor || 'white'
+                            );
+                        }
+                    }
+                });
                 } else if (option === 'Destroy') {
                     if (confirm(`Are you sure you want to remove ${data.name}?`)) {
                         window.encounterTableData.splice(rowIndex, 1);
