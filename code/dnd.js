@@ -1673,7 +1673,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
     editButton.className = 'edit-button';
     editButton.innerHTML = '✎'; // Pencil icon
     editButton.title = 'Click for actions, right-click to edit notes';
-
+    editButton.style.color = '#364051';
     // Left click - show context menu
     editButton.addEventListener('click', (event) => {
         event.preventDefault();
@@ -1704,6 +1704,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
         showContextMenu(event.clientX, event.clientY, 
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'],
             (option) => {
+                console.log('Selected option:', option, 'for row index:', rowIndex);
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
