@@ -3983,8 +3983,8 @@ function showNotesModal(currentNotes, callback) {
         background: white;
         padding: 20px;
         border-radius: 8px;
-        min-width: 400px;
-        max-width: 600px;
+        min-width: 600px;
+        max-width: 700px;
     `;
     
     const textarea = document.createElement('textarea');
