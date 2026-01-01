@@ -3050,6 +3050,7 @@ function convertToEncounterTable() {
                     
                     showConditionManageModal(currentConditions, (action, conditionName) => {
                         if (action === 'remove') {
+                            console.log('Removing condition:', conditionName);
                             // Remove specific condition
                             const newConditions = currentConditions.filter(c => c.name !== conditionName);
                             
@@ -3070,7 +3071,7 @@ function convertToEncounterTable() {
                             }
                             
                             // Update display
-                            const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                            const displayContainer = cell;
                             if (displayContainer) {
                                 updateConditionsDisplay(displayContainer, newConditions);
                             }
@@ -3079,6 +3080,7 @@ function convertToEncounterTable() {
                             cell._conditionsData = newConditions;
                             
                         } else if (action === 'passTurn') {
+                            console.log('Passing turn for all conditions');
                             // Decrease all condition timers by 1
                             const newConditions = currentConditions
                                 .map(condition => ({
@@ -3104,7 +3106,7 @@ function convertToEncounterTable() {
                             }
                             
                             // Update display
-                            const displayContainer = cell.querySelector(`#${cell._displayId}`);
+                            const displayContainer = cell;
                             if (displayContainer) {
                                 updateConditionsDisplay(displayContainer, newConditions);
                             }
