@@ -1706,6 +1706,7 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             (option) => {
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
+                        console.log('111');
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         
                         if (updatedStats === null) {
@@ -3298,6 +3299,7 @@ function convertToEncounterTable() {
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
                 if (option === 'Damage') {
+                    console.log('222');
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         if (!updatedStats) {
