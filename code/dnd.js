@@ -3302,11 +3302,16 @@ function convertToEncounterTable() {
                     console.log('222');
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
+                        console.log('Updated Stats:', updatedStats);
                         if (!updatedStats) {
                             // Monster was removed
-                            window.encounterTableData.splice(rowIndex, 1);
-                            renderTable();
-                            return;
+                            if (data.type === 'creature' || data.type === 'monster') { 
+                                window.encounterTableData.splice(rowIndex, 1);
+                                renderTable();
+                                return;
+                            } else {
+                                console.log('Player damage resulted in null stats, but player not removed.');
+                            }
                         }
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
