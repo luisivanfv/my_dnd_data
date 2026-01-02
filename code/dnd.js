@@ -3341,7 +3341,7 @@ function convertToEncounterTable() {
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
                             if (data.type === 'creature' || data.type === 'monster') { 
-                                window.encounterTableData.splice(rowIndex, 1);
+                                //window.encounterTableData.splice(rowIndex, 1);
                                 renderTable();
                                 return;
                             } else {
