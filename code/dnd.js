@@ -1707,29 +1707,19 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
+                        
+                        if (updatedStats === null) {
+                            // Monster was removed
+                            window.encounterTableData.splice(rowIndex, 1);
+                            renderTable();
+                            return;
+                        }
+                        
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        
-                        const row = editButton.closest('tr');
-                        if (row) {
-                            const hpCell = row.querySelector('td[data-key="hp"]');
-                            if (hpCell && hpCell._rowData) {
-                                hpCell._rowData.tempHp = updatedStats.tempHp;
-                                hpCell._rowData.hp = updatedStats.hp;
-                                updateCellWithHpBar(
-                                    hpCell, 
-                                    updatedStats.hp, 
-                                    hpCell._rowData.maxHp,
-                                    updatedStats.tempHp,
-                                    hpCell._textColor || 'white'
-                                );
-                            }
-                        }
-                        
-                        // Show damage reminder if applicable
-                        if (window.encounterTableData[rowIndex].whenDamagedReminder) {
-                            // ... existing reminder code ...
-                        }
+                        window.encounterTableData[rowIndex].deathSaveSuccesses = updatedStats.deathSaveSuccesses;
+                        window.encounterTableData[rowIndex].deathSaveFailures = updatedStats.deathSaveFailures;
+                        renderTable();
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
@@ -2518,7 +2508,92 @@ function cleanupExistingModals() {
     const tempHpModal = document.querySelector('.temp-hp-modal');
     if (tempHpModal) document.body.removeChild(tempHpModal);
 }
-
+function createDeathSavingThrowsDisplay(successes = 0, failures = 0) {
+    const container = document.createElement('div');
+    container.className = 'death-saving-throws';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.alignItems = 'center';
+    container.style.gap = '2px';
+    container.style.marginLeft = '10px';
+    
+    // Success circles (top row)
+    const successRow = document.createElement('div');
+    successRow.style.display = 'flex';
+    successRow.style.gap = '4px';
+    
+    for (let i = 0; i < 3; i++) {
+        const circle = document.createElement('div');
+        circle.className = 'death-save-circle success-circle';
+        circle.dataset.type = 'success';
+        circle.dataset.index = i;
+        circle.style.width = '12px';
+        circle.style.height = '12px';
+        circle.style.borderRadius = '50%';
+        circle.style.backgroundColor = i < successes ? '#22c55e' : '#9ca3af'; // Green if active, grey if not
+        circle.style.border = '1px solid #4b5563';
+        circle.style.cursor = 'pointer';
+        circle.style.transition = 'background-color 0.2s';
+        
+        circle.addEventListener('click', function() {
+            const currentColor = this.style.backgroundColor;
+            if (currentColor === 'rgb(34, 197, 94)' || currentColor === '#22c55e') {
+                // Already green, toggle back to grey
+                this.style.backgroundColor = '#9ca3af';
+                container.dataset.successes = Math.max(0, parseInt(container.dataset.successes || 0) - 1);
+            } else {
+                // Turn green
+                this.style.backgroundColor = '#22c55e';
+                container.dataset.successes = Math.min(3, parseInt(container.dataset.successes || 0) + 1);
+            }
+        });
+        
+        successRow.appendChild(circle);
+    }
+    
+    // Failure circles (bottom row)
+    const failureRow = document.createElement('div');
+    failureRow.style.display = 'flex';
+    failureRow.style.gap = '4px';
+    
+    for (let i = 0; i < 3; i++) {
+        const circle = document.createElement('div');
+        circle.className = 'death-save-circle failure-circle';
+        circle.dataset.type = 'failure';
+        circle.dataset.index = i;
+        circle.style.width = '12px';
+        circle.style.height = '12px';
+        circle.style.borderRadius = '50%';
+        circle.style.backgroundColor = i < failures ? 'darkred' : '#9ca3af'; // Red if active, grey if not
+        circle.style.border = '1px solid #4b5563';
+        circle.style.cursor = 'pointer';
+        circle.style.transition = 'background-color 0.2s';
+        
+        circle.addEventListener('click', function() {
+            const currentColor = this.style.backgroundColor;
+            if (currentColor === 'darkred') {
+                // Already red, toggle back to grey
+                this.style.backgroundColor = '#9ca3af';
+                container.dataset.failures = Math.max(0, parseInt(container.dataset.failures || 0) - 1);
+            } else {
+                // Turn red
+                this.style.backgroundColor = 'darkred';
+                container.dataset.failures = Math.min(3, parseInt(container.dataset.failures || 0) + 1);
+            }
+        });
+        
+        failureRow.appendChild(circle);
+    }
+    
+    container.appendChild(successRow);
+    container.appendChild(failureRow);
+    
+    // Store initial counts
+    container.dataset.successes = successes;
+    container.dataset.failures = failures;
+    
+    return container;
+}
 function convertToEncounterTable() {
     // Get the element with ID "encounter_table" or class "to-encounter-table"
     const element = document.getElementById('encounter_table') || 
@@ -2711,6 +2786,7 @@ function convertToEncounterTable() {
         // === ADD THESE LINES ===
         // Add color classes based on type
         let backgroundColor = 'darkblue';
+        row.dataset.hp = data.hp; // Add this line
         let textColor = 'white';
         if (data.type === 'player') {
             backgroundColor = data.color || 'darkblue';
@@ -2899,7 +2975,7 @@ function convertToEncounterTable() {
                     idBadge.style.width = '24px';
                     idBadge.style.height = '24px';
                     idBadge.style.borderRadius = '50%';
-                    idBadge.style.backgroundColor = '#364051'; // Red circle
+                    idBadge.style.backgroundColor = '#364051';
                     idBadge.style.color = 'white';
                     idBadge.style.display = 'flex';
                     idBadge.style.alignItems = 'center';
@@ -2957,15 +3033,57 @@ function convertToEncounterTable() {
                     link.style.textDecoration = 'none';
                     link.style.fontSize = '15px';
                     link.style.cursor = 'pointer';
-                    //link.style.flexGrow = '1';
                     
                     nameContainer.appendChild(link);
                 } else {
                     const nameText = document.createElement('span');
                     nameText.textContent = data.name;
                     nameText.style.color = textColor;
-                    //nameText.style.flexGrow = '1';
                     nameContainer.appendChild(nameText);
+                }
+                
+                // ADD DEATH SAVING THROWS FOR PLAYERS AT 0 HP
+                if (data.type === 'player' && parseInt(data.hp) <= 0) {
+                    const deathSaves = createDeathSavingThrowsDisplay(
+                        data.deathSaveSuccesses || 0,
+                        data.deathSaveFailures || 0
+                    );
+                    
+                    // Store reference to the row data
+                    deathSaves._rowData = data;
+                    
+                    // Check if player should be dead or stabilized
+                    deathSaves.addEventListener('click', function() {
+                        setTimeout(() => {
+                            const successes = parseInt(this.dataset.successes) || 0;
+                            const failures = parseInt(this.dataset.failures) || 0;
+                            
+                            // Update data model
+                            data.deathSaveSuccesses = successes;
+                            data.deathSaveFailures = failures;
+                            
+                            // Check for death or stabilization
+                            if (failures >= 3) {
+                                // Player dies - remove row
+                                const rowIndex = window.encounterTableData.findIndex(item => 
+                                    item.id === data.id && item.name === data.name
+                                );
+                                if (rowIndex !== -1) {
+                                    if (confirm(`${data.name} has failed 3 death saving throws. Remove from combat?`)) {
+                                        window.encounterTableData.splice(rowIndex, 1);
+                                        renderTable();
+                                    }
+                                }
+                            } else if (successes >= 3) {
+                                // Player stabilized - remove death saves
+                                data.deathSaveSuccesses = 0;
+                                data.deathSaveFailures = 0;
+                                renderTable(); // Re-render to remove circles
+                            }
+                        }, 10);
+                    });
+                    
+                    nameContainer.appendChild(deathSaves);
                 }
                 
                 cell.textContent = '';
@@ -3755,6 +3873,7 @@ function showTooltip(x, y, text) {
 }
 
 // Apply damage to a creature/player (with temp HP support)
+// Update applyDamage function
 function applyDamage(rowData, damageAmount) {
     let remainingDamage = parseInt(damageAmount);
     let newTempHp = parseInt(rowData.tempHp) || 0;
@@ -3776,13 +3895,34 @@ function applyDamage(rowData, damageAmount) {
         newHp = Math.max(0, newHp - remainingDamage);
     }
     
+    // Check if creature died
+    if (rowData.type === 'monster' && newHp <= 0) {
+        // Remove monster from table
+        const rowIndex = window.encounterTableData.findIndex(item => 
+            item.id === rowData.id && item.name === rowData.name
+        );
+        if (rowIndex !== -1) {
+            window.encounterTableData.splice(rowIndex, 1);
+        }
+        return null; // Signal that row was removed
+    }
+    
+    // For players at 0 HP, reset death saving throws
+    if (rowData.type === 'player' && newHp <= 0) {
+        // Reset death saving throws when reaching 0 HP
+        rowData.deathSaveSuccesses = 0;
+        rowData.deathSaveFailures = 0;
+    }
+    
     return {
         tempHp: newTempHp.toString(),
-        hp: newHp.toString()
+        hp: newHp.toString(),
+        deathSaveSuccesses: rowData.deathSaveSuccesses || 0,
+        deathSaveFailures: rowData.deathSaveFailures || 0
     };
 }
 
-// Apply healing to a creature/player (temp HP not affected)
+// Update applyHealing function
 function applyHealing(rowData, healAmount) {
     let currentHp = parseInt(rowData.hp) || 0;
     let maxHp = parseInt(rowData.maxHp) || 0;
@@ -3791,8 +3931,16 @@ function applyHealing(rowData, healAmount) {
     // Heal but don't exceed max HP (temp HP doesn't count toward max)
     const newHp = Math.min(maxHp, currentHp + heal);
     
+    // For players, if healed above 0 HP, clear death saving throws
+    if (rowData.type === 'player' && currentHp <= 0 && newHp > 0) {
+        rowData.deathSaveSuccesses = 0;
+        rowData.deathSaveFailures = 0;
+    }
+    
     return {
-        hp: newHp.toString()
+        hp: newHp.toString(),
+        deathSaveSuccesses: rowData.deathSaveSuccesses || 0,
+        deathSaveFailures: rowData.deathSaveFailures || 0
     };
 }
 
@@ -3854,7 +4002,10 @@ function showDamageModal(currentValue, creatureInfo, callback) {
     confirmButton.addEventListener('click', () => {
         const value = parseInt(input.value);
         if (!isNaN(value) && value >= 0) {
-            callback(value);
+            const result = callback(value);
+            if (result === null && creatureInfo.type === 'monster') {
+                popup.show(`${creatureInfo.name} has been defeated!`, 3);
+            }
         }
         if(creatureInfo.whenDamagedReminder){
             if (creatureInfo.whenDamagedReminder.includes('['))
@@ -3869,7 +4020,10 @@ function showDamageModal(currentValue, creatureInfo, callback) {
         if (e.key === 'Enter') {
             const value = parseInt(input.value);
             if (!isNaN(value) && value >= 0) {
-                callback(value);
+                const result = callback(value);
+                if (result === null && creatureInfo.type === 'monster') {
+                    popup.show(`${creatureInfo.name} has been defeated!`, 3);
+                }
             }
             document.body.removeChild(modal);
         }
