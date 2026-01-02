@@ -8,5 +8,6 @@
         "Village > Night > Burned Village (Night)",
         "Forest > Day > Open Forest (Day)"
     ],
-    "enemies": ["2-Necrophage Ghoul"]
+    "enemies": ["2-Necrophage Ghoul"],
+    "xp": 200
 }

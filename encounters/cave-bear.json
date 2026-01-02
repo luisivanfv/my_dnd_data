@@ -1,0 +1,12 @@
+{
+    "name": "Cave Bear",
+    "description": "A cave bear attacks the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Medium",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Open Forest (Day)"
+    ],
+    "enemies": ["1-Cave Bear"],
+    "xp": 450
+}

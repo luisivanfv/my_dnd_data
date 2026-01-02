@@ -1,0 +1,63 @@
+{
+  "name": "Drowner",
+  "sounds": [],
+  "creatureType": "Medium Humanoid, Lawful Evil",
+  "armorClass": "12 (natural armor)",
+  "hitPoints": "22 (4d8 + 4)",
+  "speed": "30 ft., swim 40 ft.",
+  "str": "13",
+  "dex": "11",
+  "con": "12",
+  "int": "12",
+  "wis": "13",
+  "cha": "9",
+  "strSave": "+1",
+  "dexSave": "+0",
+  "conSave": "+1",
+  "intSave": "+1",
+  "wisSave": "+1",
+  "chaSave": "-1",
+  "savingThrows": "",
+  "skills": "Perception +5",
+  "damageVulnerabilities": "Cold, Lightning",
+  "damageResistances": "Fire",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Darkvision 120 ft., Passive Perception 15",
+  "languages": "--",
+  "challenge": "1/2 (100 XP)",
+  "proficiencyBonus": "+2",
+  "description": "",
+  "passives": [
+    {
+      "name": "Necrophage Hunger",
+      "description": "The drowner has advantage on melee attack rolls against any creature that doesn't have all its hit points.",
+      "sound": null
+    },
+    {
+      "name": "Limited Amphibiousness",
+      "description": "The drowner can breathe air and water, but it needs to be submerged at least once every 4 hours to avoid suffocating.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "The drowner makes two melee attacks: one with its bite and one with its claws.",
+      "sound": "claw_plus_bite"
+    },
+    {
+      "name": "Bite",
+      "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) piercing damage.",
+      "sound": "monster_bite"
+    },
+    {
+      "name": "Claws",
+      "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) slashing damage.",
+      "sound": "claws"
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}

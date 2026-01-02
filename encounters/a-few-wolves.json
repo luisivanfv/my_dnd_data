@@ -9,5 +9,6 @@
         "Forest > Day > River (Day)",
         "Forest > Night > River (Night)"
     ],
-    "enemies": ["2-Wolf", "1-Dire Wolf"]
+    "enemies": ["2-Wolf", "1-Dire Wolf"],
+    "xp": 300
 }

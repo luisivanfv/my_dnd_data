@@ -1978,6 +1978,7 @@ const dndConditions = [
     { name: 'Blessed', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/pray.png', color: '#fbbf24' },
     { name: 'Blinded', icon: 'https://img.icons8.com/sf-black-filled/64/fefefe/invisible.png', color: '#4a5568' },
     { name: 'Burning', icon: 'https://img.icons8.com/glyph-neue/64/fefefe/fire-element.png', color: '#ea580c' },
+    { name: 'Bleeding', icon: 'https://img.icons8.com/ios-filled/50/fefefe/diabetes.png', color: '#8c0d0dff' },
     { name: 'Charmed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/novel--v1.png', color: '#db2777' },
     { name: 'Concentrating', icon: 'https://img.icons8.com/ios-filled/50/fefefe/brain.png', color: '#8b5cf6' },
     { name: 'Cursed', icon: 'https://img.icons8.com/ios-filled/50/fefefe/evil.png', color: '#7c2d12' },

@@ -1,0 +1,12 @@
+{
+    "name": "Scoia'tael Small Patrol",
+    "description": "Three Scoia'tael skirmishers and a herbalist apprentice attack the party. The apprentice tries to hide in the woods and heal when possible",
+    "recommendedLevel": 2,
+    "difficulty": "Medium",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Open Forest (Day)"
+    ],
+    "enemies": ["3-Scoia'tael Skirmisher", "1-Scoia'tael Herbalist Apprentice"],
+    "xp": 3500
+}

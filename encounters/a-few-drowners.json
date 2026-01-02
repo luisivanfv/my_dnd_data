@@ -1,0 +1,13 @@
+{
+    "name": "A Few Drowners",
+    "description": "Three drowners attack the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Easy",
+    "location": "Swamp",
+    "maps": [
+        "Swamp > Day > Pond (Day)",
+        "City > Underground > Sewers"
+    ],
+    "enemies": ["3-Drowner"],
+    "xp": 300
+}
