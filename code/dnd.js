@@ -3969,10 +3969,10 @@ function applyDamage(rowData, damageAmount) {
     if (rowData.type === 'monster' && newHp <= 0) {
         // Remove monster from table
         const rowIndex = window.encounterTableData.findIndex(item => {
-            if (data.type === 'player') {
-                return item.name === data.name && item.type === 'player';
+            if (rowData.type === 'player') {
+                return item.name === rowData.name && item.type === 'player';
             } else {
-                return item.id === data.id;
+                return item.id === rowData.id;
             }
         });
         console.log('Removing monster at index:', rowIndex);
