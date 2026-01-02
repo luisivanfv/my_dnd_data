@@ -3924,6 +3924,7 @@ function applyDamage(rowData, damageAmount) {
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
+        console.log(`Monster ${rowData.name} has been removed from the encounter.`);
         return null; // Signal that row was removed
     }
     
@@ -3933,7 +3934,7 @@ function applyDamage(rowData, damageAmount) {
         rowData.deathSaveSuccesses = 0;
         rowData.deathSaveFailures = 0;
     }
-    
+    console.log(`Applied ${damageAmount} damage to ${rowData.name}. New HP: ${newHp}, Temp HP: ${newTempHp}`);
     return {
         tempHp: newTempHp.toString(),
         hp: newHp.toString(),
