@@ -3043,7 +3043,9 @@ function convertToEncounterTable() {
                 }
                 
                 // ADD DEATH SAVING THROWS FOR PLAYERS AT 0 HP
+                console.log('Checking death saves for:', data.name, 'Type:', data.type, 'HP:', data.hp);
                 if (data.type === 'player' && parseInt(data.hp) <= 0) {
+                    console.log('Adding death saves for:', data.name);
                     const deathSaves = createDeathSavingThrowsDisplay(
                         data.deathSaveSuccesses || 0,
                         data.deathSaveFailures || 0
@@ -3284,7 +3286,11 @@ function convertToEncounterTable() {
         event.stopPropagation();
         
         const rowIndex = window.encounterTableData.findIndex(item => {
-            return item.id === data.id;
+            if (data.type === 'player') {
+                return item.name === data.name && item.type === 'player';
+            } else {
+                return item.id === data.id;
+            }
         });
         if (rowIndex === -1) return;
         
