@@ -3311,6 +3311,7 @@ function convertToEncounterTable() {
                                 return;
                             } else {
                                 console.log('Player damage resulted in null stats, but player not removed.');
+                                renderTable();
                             }
                         }
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
