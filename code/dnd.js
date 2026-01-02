@@ -3296,7 +3296,27 @@ function convertToEncounterTable() {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         window.encounterTableData[rowIndex].tempHp = updatedStats.tempHp;
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
-                        renderTable();
+                        
+                        const row = editButton.closest('tr');
+                        if (row) {
+                            const hpCell = row.querySelector('td[data-key="hp"]');
+                            if (hpCell && hpCell._rowData) {
+                                hpCell._rowData.tempHp = updatedStats.tempHp;
+                                hpCell._rowData.hp = updatedStats.hp;
+                                updateCellWithHpBar(
+                                    hpCell, 
+                                    updatedStats.hp, 
+                                    hpCell._rowData.maxHp,
+                                    updatedStats.tempHp,
+                                    hpCell._textColor || 'white'
+                                );
+                            }
+                        }
+                        
+                        // Show damage reminder if applicable
+                        if (window.encounterTableData[rowIndex].whenDamagedReminder) {
+                            // ... existing reminder code ...
+                        }
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
