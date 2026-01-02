@@ -1,0 +1,13 @@
+{
+    "name": "A Few Wolves",
+    "description": "Three wolves attack the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Easy",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Open Forest (Day)",
+        "Forest > Day > River (Day)",
+        "Forest > Night > River (Night)"
+    ],
+    "enemies": ["2-Wolf", "1-Dire Wolf"]
+}

@@ -1,7 +1,12 @@
 {
     "name": "Two Necrophage Ghouls",
     "description": "Two necrophages ghouls attack the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Medium",
     "location": "Forest",
-    "map": "Dark Swamp",
+    "maps": [
+        "Village > Night > Burned Village (Night)",
+        "Forest > Day > Open Forest (Day)"
+    ],
     "enemies": ["2-Necrophage Ghoul"]
 }
