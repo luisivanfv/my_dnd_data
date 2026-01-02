@@ -3329,6 +3329,7 @@ function convertToEncounterTable() {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         console.log('Updated Stats:', updatedStats);
+                        console.log('After damaging, table data:', window.encounterTableData);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
