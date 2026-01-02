@@ -3327,9 +3327,10 @@ function convertToEncounterTable() {
                 if (option === 'Damage') {
                     console.log('222');
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
+                        console.log('Before damaging, table data:', window.encounterTableData);
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
-                        console.log('Updated Stats:', updatedStats);
                         console.log('After damaging, table data:', window.encounterTableData);
+                        console.log('Updated Stats:', updatedStats);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
@@ -3976,10 +3977,12 @@ function applyDamage(rowData, damageAmount) {
                 return item.id === rowData.id;
             }
         });
+        console.log('>> Table data before removal:', window.encounterTableData);
         console.log('Removing monster at index:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
+        console.log('>> Table data after removal:', window.encounterTableData);
         console.log(`Monster ${rowData.name} has been removed from the encounter.`);
         return null; // Signal that row was removed
     }
