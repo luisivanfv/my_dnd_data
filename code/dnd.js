@@ -1407,7 +1407,8 @@ function selectedInSearchBar(selectedValue) {
         sourceKey: selectedValue,
         whenDamagedReminder: data.whenDamagedReminder,
         color: '#dc2626',
-        textColor: 'white'
+        textColor: 'white',
+        stabilized: false
     };
     
     if (window.encounterTableData && window.encounterTableRender) {
@@ -1500,7 +1501,8 @@ function initializeTableData() {
                         type: 'player',
                         sourceKey: playerKey,
                         color: playerInfo.color || '#4a5568',
-                        textColor: playerInfo.textColor
+                        textColor: playerInfo.textColor,
+                        stabilized: true
                     });
                 }
             }
@@ -1720,12 +1722,14 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
                         window.encounterTableData[rowIndex].deathSaveSuccesses = updatedStats.deathSaveSuccesses;
                         window.encounterTableData[rowIndex].deathSaveFailures = updatedStats.deathSaveFailures;
+                        window.encounterTableData[rowIndex].stabilized = updatedStats.stabilized;
                         renderTable();
                     });
                 } else if (option === 'Heal') {
                     showHealingModal(0, (healAmount) => {
                         const updatedStats = applyHealing(window.encounterTableData[rowIndex], healAmount);
                         window.encounterTableData[rowIndex].hp = updatedStats.hp;
+                        window.encounterTableData[rowIndex].stabilized = updatedStats.stabilized;
                         
                         const row = editButton.closest('tr');
                         if (row) {
@@ -2787,7 +2791,8 @@ function convertToEncounterTable() {
         // === ADD THESE LINES ===
         // Add color classes based on type
         let backgroundColor = 'darkblue';
-        row.dataset.hp = data.hp; // Add this line
+        row.dataset.hp = data.hp;
+        row.dataset.stabilized = data.stabilized || false;
         let textColor = 'white';
         if (data.type === 'player') {
             backgroundColor = data.color || 'darkblue';
@@ -3044,8 +3049,10 @@ function convertToEncounterTable() {
                 }
                 
                 // ADD DEATH SAVING THROWS FOR PLAYERS AT 0 HP
+                const currentHp = parseInt(data.hp) || 0;
+                const isStabilized = data.stabilized || false;
                 console.log('Checking death saves for:', data.name, 'Type:', data.type, 'HP:', data.hp);
-                if (data.type === 'player' && parseInt(data.hp) <= 0) {
+                if (data.type === 'player' && currentHp <= 0 && !isStabilized && (data.deathSaveFailures || 0) < 3) {
                     console.log('Adding death saves for:', data.name);
                     const deathSaves = createDeathSavingThrowsDisplay(
                         data.deathSaveSuccesses || 0,
@@ -3079,6 +3086,8 @@ function convertToEncounterTable() {
                                 }
                             } else if (successes >= 3) {
                                 // Player stabilized - remove death saves
+                                console.log('Player stabilized:', data.name);
+                                data.stabilized = true;
                                 data.deathSaveSuccesses = 0;
                                 data.deathSaveFailures = 0;
                                 renderTable(); // Re-render to remove circles
@@ -3087,6 +3096,23 @@ function convertToEncounterTable() {
                     });
                     
                     nameContainer.appendChild(deathSaves);
+
+                    // Add "Dying" indicator
+                    const dyingIndicator = document.createElement('span');
+                    dyingIndicator.textContent = '🩸';
+                    dyingIndicator.title = 'Dying - making death saving throws';
+                    dyingIndicator.style.marginLeft = '5px';
+                    dyingIndicator.style.fontSize = '12px';
+                    nameContainer.appendChild(dyingIndicator);
+                } else if (data.type === 'player' && currentHp <= 0 && isStabilized) {
+                    // Player is stabilized at 0 HP - show stabilized indicator
+                    console.log('Player stabilized at 0 HP:', data.name);
+                    const stabilizedIndicator = document.createElement('span');
+                    stabilizedIndicator.textContent = '✅';
+                    stabilizedIndicator.title = 'Stabilized (0 HP)';
+                    stabilizedIndicator.style.marginLeft = '5px';
+                    stabilizedIndicator.style.fontSize = '12px';
+                    nameContainer.appendChild(stabilizedIndicator);
                 }
                 
                 cell.textContent = '';
@@ -3955,6 +3981,7 @@ function applyDamage(rowData, damageAmount) {
     // For players at 0 HP, reset death saving throws
     if (rowData.type === 'player' && newHp <= 0) {
         // Reset death saving throws when reaching 0 HP
+        rowData.stabilized = false;
         rowData.deathSaveSuccesses = 0;
         rowData.deathSaveFailures = 0;
     }
@@ -3963,7 +3990,8 @@ function applyDamage(rowData, damageAmount) {
         tempHp: newTempHp.toString(),
         hp: newHp.toString(),
         deathSaveSuccesses: rowData.deathSaveSuccesses || 0,
-        deathSaveFailures: rowData.deathSaveFailures || 0
+        deathSaveFailures: rowData.deathSaveFailures || 0,
+        stabilized: rowData.stabilized || false
     };
 }
 
@@ -3978,6 +4006,7 @@ function applyHealing(rowData, healAmount) {
     
     // For players, if healed above 0 HP, clear death saving throws
     if (rowData.type === 'player' && currentHp <= 0 && newHp > 0) {
+        rowData.stabilized = true;
         rowData.deathSaveSuccesses = 0;
         rowData.deathSaveFailures = 0;
     }
@@ -3985,7 +4014,8 @@ function applyHealing(rowData, healAmount) {
     return {
         hp: newHp.toString(),
         deathSaveSuccesses: rowData.deathSaveSuccesses || 0,
-        deathSaveFailures: rowData.deathSaveFailures || 0
+        deathSaveFailures: rowData.deathSaveFailures || 0,
+        stabilized: rowData.stabilized || false
     };
 }
 
