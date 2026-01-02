@@ -3327,11 +3327,15 @@ function convertToEncounterTable() {
                 if (option === 'Damage') {
                     console.log('222');
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
-                        let asdf1 = window.encounterTableData;
-                        console.log('Before damaging, table data:', asdf1);
+                        console.log('Before damaging, table data:');
+                        window.encounterTableData.forEach((item) => {
+                            console.log(item);
+                        });
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
-                        let asdf2 = window.encounterTableData;
-                        console.log('After damaging, table data:', asdf2);
+                        console.log('After damaging, table data:');
+                        window.encounterTableData.forEach((item) => {
+                            console.log(item);
+                        });
                         console.log('Updated Stats:', updatedStats);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
@@ -3979,14 +3983,18 @@ function applyDamage(rowData, damageAmount) {
                 return item.id === rowData.id;
             }
         });
-        let asdf1 = window.encounterTableData;
-        console.log('>> Table data before removal:', asdf1);
+        console.log('>> Table data before removal:');
+        window.encounterTableData.forEach((item) => {
+            console.log(item);
+        });
         console.log('Removing monster at index:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
-        let asdf2 = window.encounterTableData;
-        console.log('>> Table data after removal:', asdf2);
+        console.log('>> Table data after removal:');
+        window.encounterTableData.forEach((item) => {
+            console.log(item);
+        });
         console.log(`Monster ${rowData.name} has been removed from the encounter.`);
         return null; // Signal that row was removed
     }
