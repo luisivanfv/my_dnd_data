@@ -3968,9 +3968,14 @@ function applyDamage(rowData, damageAmount) {
     // Check if creature died
     if (rowData.type === 'monster' && newHp <= 0) {
         // Remove monster from table
-        const rowIndex = window.encounterTableData.findIndex(item => 
-            item.id === rowData.id && item.name === rowData.name
-        );
+        const rowIndex = window.encounterTableData.findIndex(item => {
+            if (data.type === 'player') {
+                return item.name === data.name && item.type === 'player';
+            } else {
+                return item.id === data.id;
+            }
+        });
+        console.log('Removing monster at index:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
