@@ -5315,7 +5315,6 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
         const currentRowData = cell._rowData || data;
         // Show damage type modal
         createDamageTypeModal(currentRowData , (damageType, damageAmount) => {
-            const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
             const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
             window.encounterTableRender();
             if (updatedStats === null && (currentRowData.type === 'monster' || currentRowData.type === 'creature')) {
