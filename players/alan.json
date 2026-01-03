@@ -5,5 +5,6 @@
     "class": "Blood Hunter, Warlock",
     "ac": "16",
     "initiativeMod": "+2",
-    "maxHp": "11"
+    "maxHp": "11",
+    "conditionImmunities": []
 }

@@ -5,5 +5,6 @@
     "class": "Sorcerer",
     "ac": "13",
     "initiativeMod": "+3",
-    "maxHp": "7"
+    "maxHp": "7",
+    "conditionImmunities": ["Asleep"]
 }

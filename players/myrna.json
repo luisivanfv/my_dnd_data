@@ -5,5 +5,6 @@
     "class": "Rogue",
     "ac": "14",
     "initiativeMod": "+3",
-    "maxHp": "10"
+    "maxHp": "10",
+    "conditionImmunities": ["Asleep"]
 }
