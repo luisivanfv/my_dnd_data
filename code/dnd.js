@@ -5031,18 +5031,18 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
                 updateCellWithHpBar(cell, updatedStats.hp, currentRowData.maxHp, updatedStats.tempHp, textColor, currentRowData);
                 
                 // Update the table data
-                const rowIndex = window.encounterTableData.findIndex(item => 
-                    item.id === currentRowData.id && item.name === currentRowData.name
-                );
+                const rowIndex = window.encounterTableData.findIndex(item => {
+                    if (currentRowData.type === 'player') {
+                        return item.name === currentRowData.name && item.type === 'player';
+                    } else {
+                        return item.id === currentRowData.id;
+                    }
+                });
                 
                 if (rowIndex !== -1) {
                     window.encounterTableData[rowIndex] = { ...currentRowData };
-                    
-                    // Trigger re-render if player reached 0 HP
-                    if (currentRowData.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
-                        window.encounterTableRender();
-                    }
                 }
+                window.encounterTableRender();
             }
         });
     });
