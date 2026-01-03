@@ -180,7 +180,6 @@ function createTurnRadioButton(rowData) {
 function handleTurnButtonClick(radioButton, rowData) {
     const creatureId = radioButton.dataset.creatureId;
     console.log('Creature ID clicked:', creatureId);
-    
     // Remove current-turn class from all rows
     document.querySelectorAll('.encounter-table tr').forEach(row => {
         row.classList.remove('current-turn');
@@ -188,7 +187,7 @@ function handleTurnButtonClick(radioButton, rowData) {
     
     // If clicking the already selected button, do nothing
     if (creatureId === currentTurnCreatureId) {
-        //return; // test
+        return;
     }
     
     // Handle end of previous turn
@@ -239,6 +238,8 @@ function handleTurnButtonClick(radioButton, rowData) {
     
     // Start new turn
     currentTurnCreatureId = creatureId;
+    console.log('After being set, currentTurnCreatureId:', currentTurnCreatureId);
+    console.log(window.currentTurnCreatureId);
     radioButton.style.backgroundColor = '#eab308';
     radioButton.classList.add('selected');
     radioButton.title = 'Current turn (click to end turn)';
@@ -4730,6 +4731,7 @@ function applyDamage(rowData, damageAmount) {
     }
     // Get creature ID before any modifications
     const creatureId = rowData.type === 'player' ? rowData.name : rowData.id;
+    console.log('>>> currentTurnCreatureId:', currentTurnCreatureId, 'creatureId:', creatureId);
     const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
