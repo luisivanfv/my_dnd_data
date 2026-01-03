@@ -258,6 +258,7 @@ function handleTurnButtonClick(radioButton, rowData) {
 }
 
 function handleCreatureDeathDuringTurn(diedCreatureId) {
+    console.log('Handling death of creature ID:', diedCreatureId, 'Current turn creature ID:', currentTurnCreatureId);
     if (currentTurnCreatureId === diedCreatureId) {
         // Remove current-turn class from all rows
         document.querySelectorAll('.encounter-table tr').forEach(row => {
