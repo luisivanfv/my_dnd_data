@@ -3538,6 +3538,24 @@ function convertToEncounterTable() {
                         data.deathSaveFailures || 0
                     );
                     
+                    // Check all monsters to see if one needs to be reminded that an ally died
+                    window.encounterTableData.forEach(creature => {
+                        if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenEnemyDiesReminder) {
+                            if (creature.whenEnemyDiesReminder.includes('['))
+                                popup.show(creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenEnemyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                            else
+                                popup.show(creature.whenEnemyDiesReminder);
+                        }
+                    });
+                    // Check all players to see if one needs to be reminded that an enemy died
+                    window.encounterTableData.forEach(creature => {
+                        if ((creature.type === 'player') && creature.whenAllyDiesReminder) {
+                            if (creature.whenAllyDiesReminder.includes('['))
+                                popup.show(creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenAllyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                            else
+                                popup.show(creature.whenAllyDiesReminder);
+                        }
+                    });
                     // Store reference to the row data
                     deathSaves._rowData = data;
                     
@@ -4456,10 +4474,19 @@ function applyDamage(rowData, damageAmount) {
         // Check all monsters to see if one needs to be reminded that an ally died
         window.encounterTableData.forEach(creature => {
             if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenAllyDiesReminder) {
-                if (creature.whenDamagedReminder.includes('['))
-                    popup.show(creature.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenDamagedReminder.split(']')[1].trim(), 'white'), 10);
+                if (creature.whenAllyDiesReminder.includes('['))
+                    popup.show(creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenAllyDiesReminder.split(']')[1].trim(), 'white'), 10);
                 else
-                    popup.show(creature.whenDamagedReminder);
+                    popup.show(creature.whenAllyDiesReminder);
+            }
+        });
+        // Check all players to see if one needs to be reminded that an enemy died
+        window.encounterTableData.forEach(creature => {
+            if ((creature.type === 'player') && creature.whenEnemyDiesReminder) {
+                if (creature.whenEnemyDiesReminder.includes('['))
+                    popup.show(creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenEnemyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                else
+                    popup.show(creature.whenEnemyDiesReminder);
             }
         });
         return null; // Signal that row was removed
