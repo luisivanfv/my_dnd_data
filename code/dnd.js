@@ -331,8 +331,11 @@ function handleCreatureTurnStart(creatureData) {
     console.log(`Turn started for: ${creatureData.name}`);
     // Add your custom logic here
     // Example: Highlight the creature, play sound, show notification, etc.
-    
-    popup.show([`#eab308=${creatureData.name}'s`, 'white= turn starts']);
+    if (creatureData.type === 'monster' || creatureData.type === 'creature') {
+        popup.show([`#8A95A8=${creatureData.name} ${creatureData.id}'s`, 'white= turn starts']);
+    } else {
+        popup.show([`${creatureData.color}=${creatureData.name}'s`, 'white= turn starts']);
+    }
 }
 
 function handleCreatureTurnEnd(creatureData) {
