@@ -269,7 +269,7 @@ function handleCreatureDeathDuringTurn(diedCreatureId) {
         const currentIndex = window.encounterTableData.findIndex(item => 
             (item.type === 'player' ? item.name : item.id) === diedCreatureId
         );
-        
+        console.log('Current index of died creature:', currentIndex);
         let nextCreature = null;
         
         if (currentIndex < window.encounterTableData.length - 1) {
@@ -277,11 +277,12 @@ function handleCreatureDeathDuringTurn(diedCreatureId) {
         } else if (window.encounterTableData.length > 0) {
             nextCreature = window.encounterTableData[0];
         }
-        
+        console.log('Next creature to take turn:', nextCreature);
         // Call turn end for the creature that died
         const diedCreature = window.encounterTableData.find(item => 
             (item.type === 'player' ? item.name : item.id) === diedCreatureId
         );
+        console.log('Creature that died:', diedCreature);
         if (diedCreature) {
             handleCreatureTurnEnd(diedCreature);
         }
