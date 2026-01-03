@@ -418,56 +418,7 @@ async function loadLookers() {
         </a>`;
     });
 }
-// Simple, working version
 function logColoredMessage(partsArray) {
-    const args = [];
-    
-    partsArray.forEach(part => {
-        if (typeof part !== 'string') {
-            // If it's not a string (like a number or object), just push it
-            args.push(part);
-            return;
-        }
-        
-        // Check if it follows the "color=text" format
-        if (part.includes('=')) {
-            const parts = part.split('=');
-            if (parts.length < 2) {
-                // Not a valid color-text pair
-                args.push(parts[0]);
-                return;
-            }
-            
-            const colorPart = parts[0].trim();
-            const text = parts.slice(1).join('='); // Handle text containing '='
-            
-            // Clean and validate the color
-            let color;
-            if (colorPart.startsWith('#')) {
-                color = colorPart;
-            } else if (/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(colorPart)) {
-                color = '#' + colorPart;
-            } else {
-                // Assume it's a CSS color name
-                color = colorPart;
-            }
-            
-            // Add the %c placeholder and the style
-            args.push(`%c${text}`);
-            args.push(`color: ${color};`);
-        } else {
-            // Plain text without color
-            args.push(part);
-        }
-    });
-    
-    // Debug: see what we're passing to console.log
-    console.log('Debug - args array:', args);
-    
-    // Pass all arguments using spread operator
-    console.log(...args);
-}
-function logColoredMessageSimple(partsArray) {
     let logString = '';
     const styles = [];
     
@@ -489,12 +440,6 @@ function logColoredMessageSimple(partsArray) {
             logString += part + ' ';
         }
     });
-    
-    // Debug output
-    console.log('String:', logString);
-    console.log('Styles:', styles);
-    
-    // This should work
     console.log(logString, ...styles);
 }
 class PopupManager {
@@ -508,7 +453,7 @@ class PopupManager {
     show(messageOrArray, seconds = secondsPopupShown) {
         if (this.autoLog) {
             if (Array.isArray(messageOrArray)) {
-                logColoredMessageSimple(messageOrArray);
+                logColoredMessage(messageOrArray);
             } else {
                 console.log(`%c${messageOrArray}`, `color: #${specialTextColor};`);
             }
@@ -1646,6 +1591,8 @@ function selectedInSearchBar(selectedValue) {
         type: 'creature',
         sourceKey: selectedValue,
         whenDamagedReminder: data.whenDamagedReminder,
+        whenAllyDiesReminder: data.whenAllyDiesReminder,
+        whenEnemyDiesReminder: data.whenEnemyDiesReminder,
         color: '#dc2626',
         textColor: 'white',
         stabilized: false,
@@ -2094,6 +2041,9 @@ function initializeTableData() {
                             type: 'monster',
                             sourceKey: monsterInfo.name,
                             whenDamagedReminder: monsterInfo.whenDamagedReminder || '',
+                            whenAllyDiesReminder: monsterInfo.whenAllyDiesReminder || '',
+                            whenEnemyDiesReminder: monsterInfo.whenEnemyDiesReminder || '',
+                            stabilized: false,
                             color: '#dc2626', // Red for monsters
                             damageVulnerabilities: monsterInfo.damageVulnerabilities || [],
                             damageResistances: monsterInfo.damageResistances || [],
@@ -2265,7 +2215,6 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
             (option) => {
                 if (option === 'Damage') {
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
-                        console.log('111');
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
                         
                         if (updatedStats === null) {
@@ -2880,18 +2829,15 @@ function showConditionManageModal(currentConditions, callback) {
         `;
         
         optionButton.addEventListener('click', () => {
-            console.log('click');
             callback('remove', condition.name);
             document.body.removeChild(modal);
         });
         
         optionButton.addEventListener('mouseenter', () => {
-            console.log('mouseenter');
             optionButton.style.opacity = '0.8';
         });
         
         optionButton.addEventListener('mouseleave', () => {
-            console.log('mouseleave');
             optionButton.style.opacity = '1';
         });
 
@@ -2970,14 +2916,6 @@ function showConditionManageModal(currentConditions, callback) {
     modal.appendChild(modalContent);
     
     document.body.appendChild(modal);
-    
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-        console.log('click outside');
-        if (e.target === modal) {
-            //document.body.removeChild(modal);
-        }
-    });
     
     const closeModal = () => {
         if (document.body.contains(modal)) {
@@ -3594,9 +3532,7 @@ function convertToEncounterTable() {
                 // ADD DEATH SAVING THROWS FOR PLAYERS AT 0 HP
                 const currentHp = parseInt(data.hp) || 0;
                 const isStabilized = data.stabilized || false;
-                console.log('Checking death saves for:', data.name, 'Type:', data.type, 'HP:', data.hp);
                 if (data.type === 'player' && currentHp <= 0 && !isStabilized && (data.deathSaveFailures || 0) < 3) {
-                    console.log('Adding death saves for:', data.name);
                     const deathSaves = createDeathSavingThrowsDisplay(
                         data.deathSaveSuccesses || 0,
                         data.deathSaveFailures || 0
@@ -3628,8 +3564,6 @@ function convertToEncounterTable() {
                                     }
                                 }
                             } else if (successes >= 3) {
-                                // Player stabilized - remove death saves
-                                console.log('Player stabilized:', data.name);
                                 data.stabilized = true;
                                 data.deathSaveSuccesses = 0;
                                 data.deathSaveFailures = 0;
@@ -3648,8 +3582,6 @@ function convertToEncounterTable() {
                     dyingIndicator.style.fontSize = '12px';
                     nameContainer.appendChild(dyingIndicator);
                 } else if (data.type === 'player' && currentHp <= 0 && isStabilized) {
-                    // Player is stabilized at 0 HP - show stabilized indicator
-                    console.log('Player stabilized at 0 HP:', data.name);
                     const stabilizedIndicator = document.createElement('span');
                     stabilizedIndicator.textContent = '✅';
                     stabilizedIndicator.title = 'Stabilized (0 HP)';
@@ -3868,18 +3800,9 @@ function convertToEncounterTable() {
             ['Damage', 'Heal', 'Add Temp HP', '---', 'Destroy'], 
             (option) => {
                 if (option === 'Damage') {
-                    console.log('222');
+                    // This is the one that's working
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
-                        console.log('Before damaging, table data:');
-                        window.encounterTableData.forEach((item) => {
-                            console.log(item);
-                        });
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
-                        console.log('After damaging, table data:');
-                        window.encounterTableData.forEach((item) => {
-                            console.log(item);
-                        });
-                        console.log('Updated Stats:', updatedStats);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
@@ -3888,7 +3811,6 @@ function convertToEncounterTable() {
                                 renderTable();
                                 return;
                             } else {
-                                console.log('Player damage resulted in null stats, but player not removed.');
                                 shouldRenderTable = true;
                             }
                         }
@@ -4517,9 +4439,10 @@ function applyDamage(rowData, damageAmount) {
     if (remainingDamage > 0) {
         newHp = Math.max(0, newHp - remainingDamage);
     }
-    
+    console.log('Damage applied');
     // Check if creature died
-    if (rowData.type === 'monster' && newHp <= 0) {
+    if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
+        console.log('Remove monster');
         // Remove monster from table
         const rowIndex = window.encounterTableData.findIndex(item => {
             if (rowData.type === 'player') {
@@ -4528,19 +4451,18 @@ function applyDamage(rowData, damageAmount) {
                 return item.id === rowData.id;
             }
         });
-        console.log('>> Table data before removal:');
-        window.encounterTableData.forEach((item) => {
-            console.log(item);
-        });
-        console.log('Removing monster at index:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
-        console.log('>> Table data after removal:');
-        window.encounterTableData.forEach((item) => {
-            console.log(item);
+        // Check all monsters to see if one needs to be reminded that an ally died
+        window.encounterTableData.forEach(creature => {
+            if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenAllyDiesReminder) {
+                if (creature.whenDamagedReminder.includes('['))
+                    popup.show(creature.whenDamagedReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenDamagedReminder.split(']')[1].trim(), 'white'), 10);
+                else
+                    popup.show(creature.whenDamagedReminder);
+            }
         });
-        console.log(`Monster ${rowData.name} has been removed from the encounter.`);
         return null; // Signal that row was removed
     }
     
@@ -4551,7 +4473,6 @@ function applyDamage(rowData, damageAmount) {
         rowData.deathSaveSuccesses = 0;
         rowData.deathSaveFailures = 0;
     }
-    console.log(`Applied ${damageAmount} damage to ${rowData.name}. New HP: ${newHp}, Temp HP: ${newTempHp}`);
     return {
         tempHp: newTempHp.toString(),
         hp: newHp.toString(),
@@ -5064,7 +4985,6 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
     cell.addEventListener('click', () => {
-        console.log(`HP clicked`);
         // Show damage type modal
         createDamageTypeModal(data, (damageType, damageAmount) => {
             const updatedStats = applyDamageWithType(data, damageType, damageAmount);

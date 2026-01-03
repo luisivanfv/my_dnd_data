@@ -1,0 +1,60 @@
+{
+  "name": "Peasant Bandit",
+  "sounds": [],
+  "creatureType": "Medium Humanoid (Human), Any Alignment",
+  "armorClass": "12 (leather armor or padded clothes)",
+  "hitPoints": "13 (2d10 + 2)",
+  "speed": "30 ft.",
+  "str": "12",
+  "dex": "10",
+  "con": "11",
+  "int": "8",
+  "wis": "11",
+  "cha": "8",
+  "strSave": "+1",
+  "dexSave": "+0",
+  "conSave": "+0",
+  "intSave": "-1",
+  "wisSave": "+0",
+  "chaSave": "-1",
+  "savingThrows": "",
+  "skills": "Perception +2",
+  "damageVulnerabilities": "",
+  "damageResistances": "",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Passive Perception 12",
+  "languages": "Any one language (usually Common)",
+  "challenge": "1/8 (25 XP)",
+  "proficiencyBonus": "+2",
+  "description": "",
+  "whenAllyDiesReminder": "[Necrophage Stench:] All creatures within 5 feet must make a DC 8 Constitution saving throw or become poisoned.",
+  "whenEnemyDiesReminder": "[Mob Mentality:] The bandit gains a +1 bonus to attack rolls and damage rolls for each remaining ally alive. If it was frightened, the condition is removed.",
+  "passives": [
+    {
+      "name": "Weak Willed",
+      "description": "&nbsp; When an ally dies in&nbsp;the bandit's&nbsp;presence, it must succeed on a Wisdom DC 5 saving throw or become frightened for 1 minute. It may use an action to roll the saving throw again each turn, freeing itself of the condition on a success. Each successive saving throw's DC is higher by 1, and the bandit doesn't become immune to this condition after it's been freed from it.",
+      "sound": null
+    },
+    {
+      "name": "Mob Mentality",
+      "description": "&nbsp; When an&nbsp;enemy dies in&nbsp;the bandit's&nbsp;presence, the bandit's attack rolls and damage rolls have a +1 for each remaining ally alive. Also, if it was frightened, the condition is removed.<br><br>&nbsp;",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Pitchfork",
+      "description": "Melee&nbsp; Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
+      "sound": "sword"
+    },
+    {
+      "name": "Club",
+      "description": "&nbsp;Melee&nbsp;Weapon Attack: &nbsp; +3 to hit, reach 5 ft., one target.&nbsp; Hit: &nbsp;4 (1d6 + 1) bludgeoning damage, or 5 (1d8 + 1) bludgeoning damage if used with two hands to make a melee attack.",
+      "sound": "slam"
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}
