@@ -4076,6 +4076,12 @@ function convertToEncounterTable() {
                                 console.warn('Should be removed???');
                                 //window.encounterTableData.splice(rowIndex, 1);
                                 renderTable();
+                                // If this creature was the current turn, handle the transition
+                                if (creatureWasCurrentTurn) {
+                                    setTimeout(() => {
+                                        handleCreatureDeathDuringTurn(creatureId);
+                                    }, 10);
+                                }
                                 return;
                             } else {
                                 shouldRenderTable = true;
@@ -4721,8 +4727,12 @@ function applyDamage(rowData, damageAmount) {
     if (remainingDamage > 0) {
         newHp = Math.max(0, newHp - remainingDamage);
     }
+    // Get creature ID before any modifications
+    const creatureId = rowData.type === 'player' ? rowData.name : rowData.id;
+    const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
+        console.warn(`Creature ${rowData.name} (ID: ${creatureId}) died. Was it current turn? ${creatureWasCurrentTurn}`);
         const diedCreatureId = rowData.type === 'player' ? rowData.name : rowData.id;
         // Remove monster from table
         const rowIndex = window.encounterTableData.findIndex(item => {
@@ -4769,6 +4779,14 @@ function applyDamage(rowData, damageAmount) {
         // Handle turn transition if this creature was currently taking its turn
         if (currentTurnCreatureId === diedCreatureId) {
             handleCreatureDeathDuringTurn(diedCreatureId);
+        }
+        if (creatureWasCurrentTurn) {
+            console.log(`Creature ${rowData.name} died during its turn. Handling turn transition...`);
+            // We need to handle this AFTER the table is re-rendered
+            // Use setTimeout to ensure the table is updated first
+            setTimeout(() => {
+                handleCreatureDeathDuringTurn(creatureId);
+            }, 10);
         }
         return null; // Signal that row was removed
     }
@@ -5297,6 +5315,7 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
         const currentRowData = cell._rowData || data;
         // Show damage type modal
         createDamageTypeModal(currentRowData , (damageType, damageAmount) => {
+            const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
             const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
             window.encounterTableRender();
             if (updatedStats === null && (currentRowData.type === 'monster' || currentRowData.type === 'creature')) {
