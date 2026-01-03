@@ -4821,9 +4821,6 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
     cell.appendChild(hpDisplay);
     cell.addEventListener('click', () => {
         console.log(`HP clicked`);
-        e.preventDefault();
-        e.stopPropagation();
-        
         // Show damage type modal
         createDamageTypeModal(data, (damageType, damageAmount) => {
             const updatedStats = applyDamageWithType(data, damageType, damageAmount);
