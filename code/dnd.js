@@ -3811,6 +3811,7 @@ function convertToEncounterTable() {
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
                             if (data.type === 'creature' || data.type === 'monster') { 
+                                console.warn('Should be removed???');
                                 //window.encounterTableData.splice(rowIndex, 1);
                                 renderTable();
                                 return;
@@ -4989,15 +4990,18 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
     cell.innerHTML = ''; // Clear
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
-    cell.addEventListener('click', () => {
+    cell.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentRowData = cell._rowData || data;
         // Show damage type modal
-        createDamageTypeModal(data, (damageType, damageAmount) => {
-            const updatedStats = applyDamageWithType(data, damageType, damageAmount);
-            
-            if (updatedStats === null && (data.type === 'monster' || data.type === 'creature')) {
+        createDamageTypeModal(currentRowData , (damageType, damageAmount) => {
+            const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
+            console.log('lmao');
+            if (updatedStats === null && (currentRowData .type === 'monster' || currentRowData.type === 'creature')) {
                 // Creature was removed
                 const rowIndex = window.encounterTableData.findIndex(item => 
-                    item.id === data.id && item.name === data.name
+                    item.id === currentRowData.id && item.name === currentRowData.name
                 );
                 if (rowIndex !== -1) {
                     window.encounterTableData.splice(rowIndex, 1);
@@ -5008,25 +5012,25 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
             
             // Update the row data
             if (updatedStats) {
-                data.tempHp = updatedStats.tempHp;
-                data.hp = updatedStats.hp;
-                data.deathSaveSuccesses = updatedStats.deathSaveSuccesses || 0;
-                data.deathSaveFailures = updatedStats.deathSaveFailures || 0;
-                data.stabilized = updatedStats.stabilized || false;
+                currentRowData.tempHp = updatedStats.tempHp;
+                currentRowData.hp = updatedStats.hp;
+                currentRowData.deathSaveSuccesses = updatedStats.deathSaveSuccesses || 0;
+                currentRowData.deathSaveFailures = updatedStats.deathSaveFailures || 0;
+                currentRowData.stabilized = updatedStats.stabilized || false;
                 
                 // Update the display
-                updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor, data);
+                updateCellWithHpBar(cell, updatedStats.hp, currentRowData.maxHp, updatedStats.tempHp, textColor, currentRowData);
                 
                 // Update the table data
                 const rowIndex = window.encounterTableData.findIndex(item => 
-                    item.id === data.id && item.name === data.name
+                    item.id === currentRowData.id && item.name === currentRowData.name
                 );
                 
                 if (rowIndex !== -1) {
-                    window.encounterTableData[rowIndex] = { ...data };
+                    window.encounterTableData[rowIndex] = { ...currentRowData };
                     
                     // Trigger re-render if player reached 0 HP
-                    if (data.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
+                    if (currentRowData.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
                         window.encounterTableRender();
                     }
                 }
