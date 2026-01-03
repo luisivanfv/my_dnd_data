@@ -3802,7 +3802,11 @@ function convertToEncounterTable() {
                 if (option === 'Damage') {
                     // This is the one that's working
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
+                        let asdf1 = window.encounterTableData[rowIndex];
+                        console.log('Stats before damage:', asdf1);
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
+                        asdf1 = window.encounterTableData[rowIndex];
+                        console.log('Updated Stats after damage:', updatedStats);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
