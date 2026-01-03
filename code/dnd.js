@@ -4732,7 +4732,7 @@ function applyDamage(rowData, damageAmount) {
     // Get creature ID before any modifications
     const creatureId = rowData.type === 'player' ? rowData.name : rowData.id;
     console.log('>>> currentTurnCreatureId:', currentTurnCreatureId, 'creatureId:', creatureId);
-    const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
+    const creatureWasCurrentTurn = parseInt(currentTurnCreatureId) === creatureId;
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
         console.warn(`Creature ${rowData.name} (ID: ${creatureId}) died. Was it current turn? ${creatureWasCurrentTurn}`);
