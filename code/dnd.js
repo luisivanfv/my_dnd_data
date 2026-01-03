@@ -418,14 +418,72 @@ async function loadLookers() {
         </a>`;
     });
 }
+// Create a utility function that converts your color array format to console.log arguments
+function logColoredMessage(partsArray) {
+    const args = [];
+    
+    partsArray.forEach(part => {
+        if (typeof part !== 'string') return;
+        
+        // Split by first '=' to separate color from text
+        const parts = part.split('=');
+        if (parts.length < 2) {
+            // If no color specified, just add plain text
+            args.push(parts[0]);
+            return;
+        }
+        
+        const colorCode = parts[0].trim();
+        const text = parts.slice(1).join('='); // In case text contains '='
+        
+        // Validate and format color
+        let validColor;
+        if (colorCode.startsWith('#') && (colorCode.length === 4 || colorCode.length === 7)) {
+            validColor = colorCode;
+        } else if (colorCode.match(/^[0-9A-Fa-f]{6}$/)) {
+            validColor = '#' + colorCode;
+        } else if (colorCode.match(/^[0-9A-Fa-f]{3}$/)) {
+            validColor = '#' + colorCode;
+        } else {
+            // Try CSS color names
+            const tempDiv = document.createElement('div');
+            tempDiv.style.color = colorCode;
+            document.body.appendChild(tempDiv);
+            const computedColor = getComputedStyle(tempDiv).color;
+            document.body.removeChild(tempDiv);
+            
+            if (computedColor !== 'rgb(0, 0, 0)' || colorCode.toLowerCase() === 'black') {
+                validColor = colorCode;
+            } else {
+                // Fallback to default console color
+                validColor = 'inherit';
+            }
+        }
+        
+        // Add the %c directive and the style
+        args.push(`%c${text}`);
+        args.push(`color: ${validColor};`);
+    });
+    
+    // Use spread operator to pass all arguments to console.log
+    console.log(...args);
+}
 class PopupManager {
     constructor() {
         this.popups = []; // Store multiple popups
         this.nextZIndex = 10000; // Start with high z-index
         this.defaultDuration = secondsPopupShown * 1000;
+        this.autoLog = true; // Add this flag
     }
     
     show(messageOrArray, seconds = secondsPopupShown) {
+        if (this.autoLog) {
+            if (Array.isArray(messageOrArray)) {
+                logColoredMessage(messageOrArray);
+            } else {
+                console.log(`%c${messageOrArray}`, `color: #${specialTextColor};`);
+            }
+        }
         const popup = this.createPopup(messageOrArray, seconds);
         this.popups.push(popup);
         document.body.appendChild(popup.element);
@@ -535,7 +593,7 @@ class PopupManager {
             
             html += `<span style="color: ${validColor}">${this.escapeHtml(text)}</span>`;
         }
-        
+        console.log('%cPart 1', 'color: red;', '%cPart 2', 'color: blue;');
         return html;
     }
     
