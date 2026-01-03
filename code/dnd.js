@@ -1408,7 +1408,11 @@ function selectedInSearchBar(selectedValue) {
         whenDamagedReminder: data.whenDamagedReminder,
         color: '#dc2626',
         textColor: 'white',
-        stabilized: false
+        stabilized: false,
+        damageVulnerabilities: data.damageVulnerabilities || [],
+        damageResistances: data.damageResistances || [],
+        damageImmunities: data.damageImmunities || [],
+        conditionImmunities: data.conditionImmunities || []
     };
     
     if (window.encounterTableData && window.encounterTableRender) {
@@ -1469,8 +1473,313 @@ function addSearchBarStyles() {
 window.convertToSearchBar = convertToSearchBar;
 window.selectedInSearchBar = selectedInSearchBar;
 window.encounterTables = new Map(); // Store table data by element ID
+// Enhanced applyDamage function to handle damage types
+function applyDamageWithType(rowData, damageType, damageAmount) {
+    const vulnerabilities = rowData.damageVulnerabilities || [];
+    const resistances = rowData.damageResistances || [];
+    const immunities = rowData.damageImmunities || [];
+    
+    let finalDamage = parseInt(damageAmount);
+    
+    // Apply damage type modifiers
+    if (immunities.includes(damageType)) {
+        finalDamage = 0;
+        popup.show(`${rowData.name} is immune to ${damageType} damage!`, 3);
+    } else if (resistances.includes(damageType)) {
+        finalDamage = Math.floor(finalDamage / 2);
+        if (finalDamage > 0) {
+            popup.show(`${rowData.name} is resistant to ${damageType} damage. Damage halved: ${damageAmount} → ${finalDamage}`, 3);
+        }
+    } else if (vulnerabilities.includes(damageType)) {
+        finalDamage = finalDamage * 2;
+        popup.show(`${rowData.name} is vulnerable to ${damageType} damage. Damage doubled: ${damageAmount} → ${finalDamage}`, 3);
+    }
+    
+    // Apply the damage using existing applyDamage function
+    return applyDamage(rowData, finalDamage);
+}
+// Function to create the damage type modal
+function createDamageTypeModal(rowData, callback) {
+    // Check if modal already exists
+    const existingModal = document.querySelector('.damage-type-modal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'damage-type-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 500px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+    `;
+    
+    // Title
+    const title = document.createElement('h3');
+    title.textContent = `Apply Damage to ${rowData.name}`;
+    title.style.marginTop = '0';
+    title.style.marginBottom = '15px';
+    title.style.textAlign = 'center';
+    
+    // Damage types grid
+    const damageGrid = document.createElement('div');
+    damageGrid.style.display = 'grid';
+    damageGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    damageGrid.style.gap = '10px';
+    damageGrid.style.marginBottom = '20px';
+    
+    // Get resistance/immunity/vulnerability info
+    const vulnerabilities = rowData.damageVulnerabilities || [];
+    const resistances = rowData.damageResistances || [];
+    const immunities = rowData.damageImmunities || [];
+    
+    // Damage amount input
+    const inputContainer = document.createElement('div');
+    inputContainer.style.marginTop = '20px';
+    
+    const inputLabel = document.createElement('div');
+    inputLabel.textContent = 'Damage Amount:';
+    inputLabel.style.marginBottom = '5px';
+    inputLabel.style.fontWeight = 'bold';
+    
+    const damageInput = document.createElement('input');
+    damageInput.type = 'number';
+    damageInput.min = '0';
+    damageInput.value = '0';
+    damageInput.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    // Status display
+    const statusDisplay = document.createElement('div');
+    statusDisplay.className = 'damage-status-display';
+    statusDisplay.style.cssText = `
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        display: none;
+    `;
+    
+    let selectedDamageType = null;
+    
+    // Load damage type icons from your existing icons map
+    fetchMapIfNotSet('icons').then(() => {
+        damageTypes.forEach(damageType => {
+            const damageButton = document.createElement('button');
+            damageButton.className = 'damage-type-button';
+            
+            // Determine button style based on creature's properties
+            let backgroundColor = '#4a5568'; // Default
+            let borderColor = '#4a5568';
+            let titleText = damageType;
+            
+            if (immunities.includes(damageType)) {
+                backgroundColor = '#dc2626'; // Red for immune
+                borderColor = '#dc2626';
+                titleText += ' (Immune)';
+            } else if (resistances.includes(damageType)) {
+                backgroundColor = '#d97706'; // Orange for resistant
+                borderColor = '#d97706';
+                titleText += ' (Resistant)';
+            } else if (vulnerabilities.includes(damageType)) {
+                backgroundColor = '#059669'; // Green for vulnerable
+                borderColor = '#059669';
+                titleText += ' (Vulnerable)';
+            }
+            
+            damageButton.style.cssText = `
+                padding: 10px;
+                border: 2px solid ${borderColor};
+                background: ${backgroundColor};
+                color: white;
+                border-radius: 6px;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                transition: all 0.2s;
+                min-height: 70px;
+            `;
+            
+            // Get icon from your existing icons map
+            let iconData = window.icons.get(damageType.toLowerCase());
+            let iconUrl = '';
+            let iconAlt = '';
+            
+            if (iconData) {
+                iconUrl = iconData.split('||')[0].replace('customColor', iconColor);
+                iconAlt = iconData.includes('||') ? iconData.split('||')[1] : '';
+            }
+            
+            damageButton.innerHTML = `
+                <div style="font-size: 24px; margin-bottom: 5px;">
+                    <img width="24" height="24" src="${iconUrl}" alt="${iconAlt}"/>
+                </div>
+                <div>${damageType}</div>
+            `;
+            
+            damageButton.title = titleText;
+            
+            damageButton.addEventListener('click', () => {
+                // Remove selection from all buttons
+                damageGrid.querySelectorAll('.damage-type-button').forEach(btn => {
+                    const originalColor = btn.style.borderColor;
+                    btn.style.background = originalColor;
+                    btn.style.boxShadow = 'none';
+                });
+                
+                // Select this button
+                damageButton.style.boxShadow = '0 0 0 2px white, 0 0 0 4px ' + borderColor;
+                selectedDamageType = damageType;
+                
+                // Show status info
+                updateStatusDisplay(damageType);
+                
+                // Focus the input
+                damageInput.focus();
+                damageInput.select();
+            });
+            
+            damageGrid.appendChild(damageButton);
+        });
+    });
+    
+    function updateStatusDisplay(damageType) {
+        let statusText = `Selected: ${damageType}`;
+        let backgroundColor = '#f8f9fa';
+        
+        if (immunities.includes(damageType)) {
+            statusText += ' - IMMUNE (no damage)';
+            backgroundColor = '#fee2e2';
+        } else if (resistances.includes(damageType)) {
+            statusText += ' - RESISTANT (half damage, rounded down)';
+            backgroundColor = '#ffedd5';
+        } else if (vulnerabilities.includes(damageType)) {
+            statusText += ' - VULNERABLE (double damage)';
+            backgroundColor = '#d1fae5';
+        }
+        
+        statusDisplay.textContent = statusText;
+        statusDisplay.style.backgroundColor = backgroundColor;
+        statusDisplay.style.display = 'block';
+    }
+    
+    // Button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    `;
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.addEventListener('click', () => {
+        if (document.body.contains(modal)) {
+            document.body.removeChild(modal);
+        }
+    });
+    
+    const applyButton = document.createElement('button');
+    applyButton.textContent = 'Apply Damage';
+    applyButton.style.backgroundColor = '#dc2626';
+    applyButton.style.color = 'white';
+    applyButton.disabled = true;
+    
+    applyButton.addEventListener('click', () => {
+        if (selectedDamageType && damageInput.value) {
+            const damageAmount = parseInt(damageInput.value) || 0;
+            if (damageAmount > 0) {
+                callback(selectedDamageType, damageAmount);
+                if (document.body.contains(modal)) {
+                    document.body.removeChild(modal);
+                }
+            }
+        }
+    });
+    
+    // Enable apply button when damage type is selected and input has value
+    damageGrid.addEventListener('click', () => {
+        if (selectedDamageType && damageInput.value && parseInt(damageInput.value) > 0) {
+            applyButton.disabled = false;
+        }
+    });
+    
+    damageInput.addEventListener('input', () => {
+        if (selectedDamageType && damageInput.value && parseInt(damageInput.value) > 0) {
+            applyButton.disabled = false;
+        } else {
+            applyButton.disabled = true;
+        }
+    });
+    
+    // Allow Enter key to apply damage
+    damageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && selectedDamageType && damageInput.value && parseInt(damageInput.value) > 0) {
+            const damageAmount = parseInt(damageInput.value) || 0;
+            if (damageAmount > 0) {
+                callback(selectedDamageType, damageAmount);
+                if (document.body.contains(modal)) {
+                    document.body.removeChild(modal);
+                }
+            }
+        }
+    });
+    
+    buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(applyButton);
+    
+    inputContainer.appendChild(inputLabel);
+    inputContainer.appendChild(damageInput);
+    
+    modalContent.appendChild(title);
+    modalContent.appendChild(damageGrid);
+    modalContent.appendChild(statusDisplay);
+    modalContent.appendChild(inputContainer);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            if (document.body.contains(modal)) {
+                document.body.removeChild(modal);
+            }
+        }
+    });
+    
+    return modal;
+}
 // ENCOUNTER TABLE
-
 // Function to initialize data from localStorage players and monsters
 function initializeTableData() {
     const tableForData = [];
@@ -1502,7 +1811,11 @@ function initializeTableData() {
                         sourceKey: playerKey,
                         color: playerInfo.color || '#4a5568',
                         textColor: playerInfo.textColor,
-                        stabilized: true
+                        stabilized: true,
+                        damageVulnerabilities: playerInfo.damageVulnerabilities || [],
+                        damageResistances: playerInfo.damageResistances || [],
+                        damageImmunities: playerInfo.damageImmunities || [],
+                        conditionImmunities: playerInfo.conditionImmunities || []
                     });
                 }
             }
@@ -1541,7 +1854,11 @@ function initializeTableData() {
                             type: 'monster',
                             sourceKey: monsterInfo.name,
                             whenDamagedReminder: monsterInfo.whenDamagedReminder || '',
-                            color: '#dc2626' // Red for monsters
+                            color: '#dc2626', // Red for monsters
+                            damageVulnerabilities: monsterInfo.damageVulnerabilities || [],
+                            damageResistances: monsterInfo.damageResistances || [],
+                            damageImmunities: monsterInfo.damageImmunities || [],
+                            conditionImmunities: monsterInfo.conditionImmunities || []
                         });
                     }
                 });
@@ -2600,6 +2917,10 @@ function createDeathSavingThrowsDisplay(successes = 0, failures = 0) {
     
     return container;
 }
+
+window.createDamageTypeModal = createDamageTypeModal;
+window.applyDamageWithType = applyDamageWithType;
+
 function convertToEncounterTable() {
     // Get the element with ID "encounter_table" or class "to-encounter-table"
     const element = document.getElementById('encounter_table') || 
@@ -2844,11 +3165,61 @@ function convertToEncounterTable() {
                         cell.style.cursor = 'pointer';
                         cell.classList.add('editable-cell');
                         cell.addEventListener('click', () => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Show damage type modal
+                            createDamageTypeModal(data, (damageType, damageAmount) => {
+                                const updatedStats = applyDamageWithType(data, damageType, damageAmount);
+                                
+                                if (updatedStats === null && (data.type === 'monster' || data.type === 'creature')) {
+                                    // Creature was removed
+                                    const rowIndex = window.encounterTableData.findIndex(item => 
+                                        item.id === data.id && item.name === data.name
+                                    );
+                                    if (rowIndex !== -1) {
+                                        window.encounterTableData.splice(rowIndex, 1);
+                                        window.encounterTableRender();
+                                    }
+                                    return;
+                                }
+                                
+                                // Update the row data
+                                if (updatedStats) {
+                                    data.tempHp = updatedStats.tempHp;
+                                    data.hp = updatedStats.hp;
+                                    data.deathSaveSuccesses = updatedStats.deathSaveSuccesses || 0;
+                                    data.deathSaveFailures = updatedStats.deathSaveFailures || 0;
+                                    data.stabilized = updatedStats.stabilized || false;
+                                    
+                                    // Update the display
+                                    updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor);
+                                    
+                                    // Update the table data
+                                    const rowIndex = window.encounterTableData.findIndex(item => 
+                                        item.id === data.id && item.name === data.name
+                                    );
+                                    
+                                    if (rowIndex !== -1) {
+                                        window.encounterTableData[rowIndex] = { ...data };
+                                        
+                                        // Trigger re-render if player reached 0 HP
+                                        if (data.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
+                                            window.encounterTableRender();
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                        // Keep the old right-click functionality for direct HP editing
+                        cell.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
                             const currentValue = data.hp;
                             window.showNumberPrompt(currentValue, (newValue) => {
                                 data.hp = newValue;
                                 
-                                // Find and update the row
                                 const rowIndex = window.encounterTableData.findIndex(item => {
                                     if (data.type === 'player') {
                                         return item.name === data.name && item.type === 'player';
@@ -2859,7 +3230,6 @@ function convertToEncounterTable() {
                                 
                                 if (rowIndex !== -1) {
                                     window.encounterTableData[rowIndex].hp = newValue;
-                                    data.hp = newValue;
                                     updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor);
                                 }
                             });
