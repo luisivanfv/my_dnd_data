@@ -420,82 +420,236 @@ async function loadLookers() {
 }
 class PopupManager {
     constructor() {
-        this.element = null;
-        this.timeout = null;
+        this.popups = []; // Store multiple popups
+        this.nextZIndex = 10000; // Start with high z-index
         this.defaultDuration = secondsPopupShown * 1000;
     }
     
-    show(message, seconds = secondsPopupShown) {
-        // Clear existing timeout
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-            this.timeout = null;
-        }
+    show(messageOrArray, seconds = secondsPopupShown) {
+        const popup = this.createPopup(messageOrArray, seconds);
+        this.popups.push(popup);
+        document.body.appendChild(popup.element);
         
-        // Create or update popup
-        if (!this.element) {
-            this.element = this.createPopup();
-            document.body.appendChild(this.element);
-            
-            // Fade in
-            setTimeout(() => {
-                this.element.style.opacity = '1';
-            }, 10);
-        }
+        // Position popups in a column from top-right
+        this.positionPopups();
         
-        // Update content
-        this.element.innerHTML = message;
+        // Set timeout for auto-removal
+        popup.timeout = setTimeout(() => {
+            this.removePopup(popup.id);
+        }, seconds * 1000);
         
-        // Set new timeout
-        this.timeout = setTimeout(() => this.hide(), seconds * 1000);
+        // Return popup ID for potential manual removal
+        return popup.id;
     }
     
-    createPopup() {
+    createPopup(messageOrArray, seconds) {
+        const id = 'popup-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         const element = document.createElement('div');
+        
+        // Determine if message is an array or string
+        let content;
+        if (Array.isArray(messageOrArray)) {
+            content = this.parseColoredArray(messageOrArray);
+        } else {
+            // Plain string - apply default special text color
+            content = `<span style="color: #${specialTextColor}">${this.escapeHtml(messageOrArray)}</span>`;
+        }
+        
+        element.innerHTML = content;
+        
         Object.assign(element.style, {
             position: 'fixed',
             top: '20px',
             right: '20px',
             backgroundColor: '#333',
-            color: '#' + specialTextColor,
+            color: 'white', // Default text color (for any plain text)
             padding: '12px 20px',
             borderRadius: '6px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            zIndex: '9999',
+            zIndex: this.nextZIndex++,
             fontSize: '18px',
             fontWeight: '500',
             maxWidth: '300px',
             pointerEvents: 'none',
             cursor: 'default',
             opacity: '0',
-            transition: 'opacity 0.3s ease'
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
+            transform: 'translateY(-10px)',
+            marginBottom: '10px' // Space between popups
         });
-        return element;
+        
+        // Fade in and slide down
+        setTimeout(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 10);
+        
+        return {
+            id: id,
+            element: element,
+            timeout: null,
+            created: Date.now()
+        };
     }
     
-    hide() {
-        if (!this.element) return;
+    parseColoredArray(colorArray) {
+        let html = '';
         
-        this.element.style.opacity = '0';
-        
-        setTimeout(() => {
-            if (this.element && document.body.contains(this.element)) {
-                document.body.removeChild(this.element);
-                this.element = null;
+        for (const item of colorArray) {
+            if (typeof item !== 'string') continue;
+            
+            // Split by first '=' to separate color from text
+            const parts = item.split('=');
+            if (parts.length < 2) {
+                // If no color specified, use default special text color
+                html += `<span style="color: #${specialTextColor}">${this.escapeHtml(item)}</span>`;
+                continue;
             }
+            
+            const colorCode = parts[0].trim();
+            const text = parts.slice(1).join('='); // In case text contains '='
+            
+            // Validate color code
+            let validColor;
+            if (colorCode.startsWith('#') && (colorCode.length === 4 || colorCode.length === 7)) {
+                validColor = colorCode; // Already hex
+            } else if (colorCode.match(/^[0-9A-Fa-f]{6}$/)) {
+                validColor = '#' + colorCode; // Hex without #
+            } else if (colorCode.match(/^[0-9A-Fa-f]{3}$/)) {
+                validColor = '#' + colorCode; // Short hex
+            } else {
+                // Try CSS color names
+                const tempDiv = document.createElement('div');
+                tempDiv.style.color = colorCode;
+                document.body.appendChild(tempDiv);
+                const computedColor = getComputedStyle(tempDiv).color;
+                document.body.removeChild(tempDiv);
+                
+                if (computedColor !== 'rgb(0, 0, 0)' || colorCode.toLowerCase() === 'black') {
+                    validColor = colorCode;
+                } else {
+                    // Fallback to special text color
+                    validColor = '#' + specialTextColor;
+                }
+            }
+            
+            html += `<span style="color: ${validColor}">${this.escapeHtml(text)}</span>`;
+        }
+        
+        return html;
+    }
+    
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    positionPopups() {
+        let topPosition = 20;
+        
+        // Sort popups by creation time (newest first for stacking)
+        this.popups.sort((a, b) => b.created - a.created);
+        
+        for (let i = this.popups.length - 1; i >= 0; i--) {
+            const popup = this.popups[i];
+            popup.element.style.top = topPosition + 'px';
+            topPosition += popup.element.offsetHeight + 10; // 10px gap
+            
+            // Bring newest to top (highest z-index)
+            popup.element.style.zIndex = this.nextZIndex - (this.popups.length - i);
+        }
+    }
+    
+    removePopup(popupId) {
+        const index = this.popups.findIndex(p => p.id === popupId);
+        if (index === -1) return;
+        
+        const popup = this.popups[index];
+        
+        // Clear timeout if still exists
+        if (popup.timeout) {
+            clearTimeout(popup.timeout);
+        }
+        
+        // Fade out
+        popup.element.style.opacity = '0';
+        popup.element.style.transform = 'translateY(-10px)';
+        
+        // Remove from DOM after animation
+        setTimeout(() => {
+            if (popup.element && document.body.contains(popup.element)) {
+                document.body.removeChild(popup.element);
+            }
+            
+            // Remove from array
+            this.popups.splice(index, 1);
+            
+            // Reposition remaining popups
+            this.positionPopups();
         }, 300);
     }
     
-    // Optional: Force immediate hide
-    hideNow() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-            this.timeout = null;
+    hideNow(popupId = null) {
+        if (popupId) {
+            // Remove specific popup
+            this.removePopup(popupId);
+        } else {
+            // Remove all popups
+            this.popups.forEach(popup => {
+                if (popup.timeout) {
+                    clearTimeout(popup.timeout);
+                }
+                if (popup.element && document.body.contains(popup.element)) {
+                    document.body.removeChild(popup.element);
+                }
+            });
+            this.popups = [];
         }
-        this.hide();
+    }
+    
+    // Get current number of visible popups
+    getPopupCount() {
+        return this.popups.length;
+    }
+    
+    // Update an existing popup (if needed)
+    updatePopup(popupId, newMessageOrArray) {
+        const popup = this.popups.find(p => p.id === popupId);
+        if (!popup) return;
+        
+        // Clear existing timeout
+        if (popup.timeout) {
+            clearTimeout(popup.timeout);
+        }
+        
+        // Update content
+        let content;
+        if (Array.isArray(newMessageOrArray)) {
+            content = this.parseColoredArray(newMessageOrArray);
+        } else {
+            content = `<span style="color: #${specialTextColor}">${this.escapeHtml(newMessageOrArray)}</span>`;
+        }
+        
+        popup.element.innerHTML = content;
+        
+        // Reset timeout
+        popup.timeout = setTimeout(() => {
+            this.removePopup(popupId);
+        }, this.defaultDuration);
+        
+        // Bring to front
+        popup.element.style.zIndex = this.nextZIndex++;
+        
+        // Reposition
+        this.positionPopups();
     }
 }
 const popup = new PopupManager();
+// Add helper function for colored messages
+window.showColoredPopup = function(partsArray, seconds = secondsPopupShown) {
+    return popup.show(partsArray, seconds);
+};
 function is_numeric(str){
     return /^\d+$/.test(str);
 }
