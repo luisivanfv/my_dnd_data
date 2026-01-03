@@ -4437,7 +4437,18 @@ function showTooltip(x, y, text) {
     
     return tooltip;
 }
+function containsArray(arrOfArrs, target) {
+    if (!Array.isArray(arrOfArrs) || !Array.isArray(target)) {
+        throw new TypeError("Both arguments must be arrays.");
+    }
 
+    return arrOfArrs.some(
+        subArr =>
+            Array.isArray(subArr) &&
+            subArr.length === target.length &&
+            subArr.every((val, index) => val === target[index])
+    );
+}
 // Apply damage to a creature/player (with temp HP support)
 // Update applyDamage function
 function applyDamage(rowData, damageAmount) {
@@ -4484,8 +4495,8 @@ function applyDamage(rowData, damageAmount) {
                     reminder = creature.whenAllyDiesReminder;
                 if (reminder) {
                     console.log('Reminder:', reminder);
-                    if (!reminders.includes(reminder)) {
-                        console.log('Not included in reminders:', reminders);
+                    if (!containsArray(reminders, reminder)) {
+                        console.log('Not included in reminders:', reminder);
                         reminders.push(reminder);
                     }
                 }
@@ -4500,7 +4511,7 @@ function applyDamage(rowData, damageAmount) {
                 else
                     reminder = creature.whenEnemyDiesReminder;
                 if (reminder)
-                    if (!reminders.includes(reminder))
+                    if (!containsArray(reminders, reminder))
                         reminders.push(reminder);
             }
         });
