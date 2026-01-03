@@ -2253,7 +2253,7 @@ function initializeTableData() {
                         const hp = monsterInfo.hitPoints.split('(')[0].trim();
                         const ac = monsterInfo.armorClass.split('(')[0].trim();
                         tableForData.push({
-                            id: idCounter++,
+                            id: (idCounter++).toString(),
                             initiative: initiative,
                             name: monsterInfo.name,
                             ac: ac || 10,
@@ -4736,7 +4736,7 @@ function applyDamage(rowData, damageAmount) {
     // Get creature ID before any modifications
     const creatureId = rowData.type === 'player' ? rowData.name : rowData.id;
     console.log('>>> currentTurnCreatureId:', currentTurnCreatureId, 'creatureId:', creatureId);
-    const creatureWasCurrentTurn = parseInt(currentTurnCreatureId) === creatureId;
+    const creatureWasCurrentTurn = currentTurnCreatureId === creatureId;
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
         console.warn(`Creature ${rowData.name} (ID: ${creatureId}) died. Was it current turn? ${creatureWasCurrentTurn}`);
