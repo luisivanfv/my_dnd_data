@@ -12,6 +12,8 @@ const actionTitleTxtSize = '14px';
 const soundIconSize = '30';
 const secondsPopupShown = 5;
 const damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
+let currentTurnCreatureId = null;
+let isInitialLoad = true;
 window.githubRoot = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${window.latestCommitHash}/`;
 
 
@@ -120,6 +122,222 @@ window.showNumberPrompt = function(currentValue, callback) {
     
     return modal;
 };
+// Add these functions to your script
+function createTurnRadioButton(rowData) {
+    const radioButton = document.createElement('div');
+    radioButton.className = 'turn-radio-button';
+    radioButton.dataset.creatureId = rowData.type === 'player' ? rowData.name : rowData.id;
+    radioButton.dataset.rowType = rowData.type;
+    
+    // Set initial state - first row after sorting should be selected
+    const isSelected = isInitialLoad && window.encounterTableData[0] === rowData;
+    if (isSelected) {
+        currentTurnCreatureId = radioButton.dataset.creatureId;
+    }
+    
+    radioButton.style.cssText = `
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: ${isSelected ? '#eab308' : '#364051'};
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        transition: background-color 0.3s, transform 0.2s;
+        flex-shrink: 0;
+        margin-right: 10px;
+    `;
+    
+    radioButton.title = isSelected ? 'Current turn (click to end turn)' : 'Click to start this creature\'s turn';
+    
+    radioButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleTurnButtonClick(radioButton, rowData);
+    });
+    
+    radioButton.addEventListener('mouseenter', () => {
+        if (!radioButton.classList.contains('selected')) {
+            radioButton.style.transform = 'scale(1.1)';
+            radioButton.style.boxShadow = '0 0 8px rgba(234, 179, 8, 0.5)';
+        }
+    });
+    
+    radioButton.addEventListener('mouseleave', () => {
+        if (!radioButton.classList.contains('selected')) {
+            radioButton.style.transform = 'scale(1)';
+            radioButton.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+        }
+    });
+    
+    if (isSelected) {
+        radioButton.classList.add('selected');
+        handleCreatureTurnStart(rowData);
+    }
+    
+    return radioButton;
+}
+
+function handleTurnButtonClick(radioButton, rowData) {
+    const creatureId = radioButton.dataset.creatureId;
+    
+    // Remove current-turn class from all rows
+    document.querySelectorAll('.encounter-table tr').forEach(row => {
+        row.classList.remove('current-turn');
+    });
+    
+    // If clicking the already selected button, do nothing
+    if (creatureId === currentTurnCreatureId) {
+        return;
+    }
+    
+    // Handle end of previous turn
+    if (currentTurnCreatureId) {
+        const previousRadioButton = document.querySelector(`.turn-radio-button[data-creature-id="${currentTurnCreatureId}"]`);
+        if (previousRadioButton) {
+            previousRadioButton.style.backgroundColor = '#364051';
+            previousRadioButton.classList.remove('selected');
+            previousRadioButton.title = 'Click to start this creature\'s turn';
+            
+            // Remove current-turn class from previous row
+            const previousRow = previousRadioButton.closest('tr');
+            if (previousRow) {
+                previousRow.classList.remove('current-turn');
+                
+                // Decrease conditions by 1 for the creature whose turn just ended
+                const conditionsCell = previousRow.querySelector('td[data-key="conditions"]');
+                if (conditionsCell && conditionsCell._conditionsData && conditionsCell._conditionsData.length > 0) {
+                    const newConditions = conditionsCell._conditionsData
+                        .map(condition => ({
+                            ...condition,
+                            turns: condition.turns - 1
+                        }))
+                        .filter(condition => condition.turns > 0);
+                    
+                    // Update the data model
+                    const rowIndex = window.encounterTableData.findIndex(item => 
+                        (item.type === 'player' ? item.name : item.id) === currentTurnCreatureId
+                    );
+                    
+                    if (rowIndex !== -1) {
+                        window.encounterTableData[rowIndex].conditions = stringifyConditions(newConditions);
+                        conditionsCell._conditionsData = newConditions;
+                        updateConditionsDisplay(conditionsCell, newConditions);
+                    }
+                }
+            }
+            
+            // Call turn end handler
+            const previousRowData = window.encounterTableData.find(item => 
+                (item.type === 'player' ? item.name : item.id) === currentTurnCreatureId
+            );
+            if (previousRowData) {
+                handleCreatureTurnEnd(previousRowData);
+            }
+        }
+    }
+    
+    // Start new turn
+    currentTurnCreatureId = creatureId;
+    radioButton.style.backgroundColor = '#eab308';
+    radioButton.classList.add('selected');
+    radioButton.title = 'Current turn (click to end turn)';
+    radioButton.style.transform = 'scale(1)';
+    radioButton.style.boxShadow = '0 0 10px rgba(234, 179, 8, 0.8)';
+    
+    // Add current-turn class to the new row
+    const row = radioButton.closest('tr');
+    if (row) {
+        row.classList.add('current-turn');
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Call turn start handler
+    handleCreatureTurnStart(rowData);
+}
+
+function handleCreatureDeathDuringTurn(diedCreatureId) {
+    if (currentTurnCreatureId === diedCreatureId) {
+        // Remove current-turn class from all rows
+        document.querySelectorAll('.encounter-table tr').forEach(row => {
+            row.classList.remove('current-turn');
+        });
+        
+        // Find the next creature in initiative order
+        const currentIndex = window.encounterTableData.findIndex(item => 
+            (item.type === 'player' ? item.name : item.id) === diedCreatureId
+        );
+        
+        let nextCreature = null;
+        
+        if (currentIndex < window.encounterTableData.length - 1) {
+            nextCreature = window.encounterTableData[currentIndex + 1];
+        } else if (window.encounterTableData.length > 0) {
+            nextCreature = window.encounterTableData[0];
+        }
+        
+        // Call turn end for the creature that died
+        const diedCreature = window.encounterTableData.find(item => 
+            (item.type === 'player' ? item.name : item.id) === diedCreatureId
+        );
+        if (diedCreature) {
+            handleCreatureTurnEnd(diedCreature);
+        }
+        
+        // Select the next creature's turn
+        if (nextCreature) {
+            const nextRadioButton = document.querySelector(`.turn-radio-button[data-creature-id="${nextCreature.type === 'player' ? nextCreature.name : nextCreature.id}"]`);
+            if (nextRadioButton) {
+                currentTurnCreatureId = nextCreature.type === 'player' ? nextCreature.name : nextCreature.id;
+                
+                // Update all radio buttons
+                document.querySelectorAll('.turn-radio-button').forEach(btn => {
+                    btn.style.backgroundColor = '#364051';
+                    btn.classList.remove('selected');
+                    btn.title = 'Click to start this creature\'s turn';
+                    btn.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+                });
+                
+                // Select the next creature
+                nextRadioButton.style.backgroundColor = '#eab308';
+                nextRadioButton.classList.add('selected');
+                nextRadioButton.title = 'Current turn (click to end turn)';
+                nextRadioButton.style.boxShadow = '0 0 10px rgba(234, 179, 8, 0.8)';
+                
+                // Add current-turn class to the new row
+                const nextRow = nextRadioButton.closest('tr');
+                if (nextRow) {
+                    nextRow.classList.add('current-turn');
+                }
+                
+                // Call turn start handler for the new creature
+                handleCreatureTurnStart(nextCreature);
+            }
+        } else {
+            currentTurnCreatureId = null;
+            document.querySelectorAll('.turn-radio-button').forEach(btn => {
+                btn.style.backgroundColor = '#364051';
+                btn.classList.remove('selected');
+                btn.title = 'Click to start this creature\'s turn';
+                btn.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+            });
+        }
+    }
+}
+
+// Placeholder functions for future use
+function handleCreatureTurnStart(creatureData) {
+    console.log(`Turn started for: ${creatureData.name}`);
+    // Add your custom logic here
+    // Example: Highlight the creature, play sound, show notification, etc.
+    
+    popup.show([`#eab308=${creatureData.name}'s`, 'white= turn starts']);
+}
+
+function handleCreatureTurnEnd(creatureData) {
+    console.log(`Turn ended for: ${creatureData.name}`);
+    // Add your custom logic here
+    // Example: Remove highlights, update resources, etc.
+}
 // Add this global function for text prompts
 window.showTextPrompt = function(currentValue, callback, title = 'Enter text:') {
     const modal = document.createElement('div');
@@ -3123,12 +3341,18 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['#', 'Name', 'AC', 'HP', 'Conditions', 'Notes'];
+    const headers = ['', '#', 'Name', 'AC', 'HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.style.textAlign = 'center';
         headerRow.appendChild(th);
-        if(headerText === 'AC') {
+        if (index === 0) {
+            // Turn button column - add a clock icon
+            const turnIcon = document.createElement('span');
+            turnIcon.innerHTML = '<img width="20" height="20" src="https://img.icons8.com/ios-filled/50/FFFFFF/clock--v1.png" alt="turn"/>';
+            turnIcon.title = 'Turn tracker - click to start creature\'s turn';
+            th.appendChild(turnIcon);
+        } else if(headerText === 'AC') {
             const armorClassIcon = document.createElement('span');
             th.appendChild(armorClassIcon);
             armorClassIcon.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/FAFAFA/shield.png" alt="shield"/>';
@@ -3290,6 +3514,17 @@ function convertToEncounterTable() {
     // Function to add a new row to the DOM
     function addRowToDOM(data) {
         const row = document.createElement('tr');
+        const turnCell = document.createElement('td');
+        turnCell.style.cssText = `
+            width: 40px;
+            padding: 0 5px;
+            text-align: center;
+            vertical-align: middle;
+        `;
+        
+        const radioButton = createTurnRadioButton(data);
+        turnCell.appendChild(radioButton);
+        row.appendChild(turnCell);
         // === ADD THESE LINES ===
         // Add color classes based on type
         let backgroundColor = 'darkblue';
@@ -3538,25 +3773,36 @@ function convertToEncounterTable() {
                         data.deathSaveFailures || 0
                     );
                     
-                    // Check all monsters to see if one needs to be reminded that an enemy died
-                    window.encounterTableData.forEach(creature => {
-                        if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenEnemyDiesReminder) {
-                            //console.log('3, reminders: ', creature);
-                            if (creature.whenEnemyDiesReminder.includes('['))
-                                popup.show([`${specialTextColor}=${creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenEnemyDiesReminder.split(']')[1].trim()}`], 10);
-                            else
-                                popup.show(creature.whenEnemyDiesReminder);
-                        }
-                    });
-                    // Check all players to see if one needs to be reminded that an ally died
+                    // Check all monsters to see if one needs to be reminded that an ally died
+                    let reminders = [];
                     window.encounterTableData.forEach(creature => {
                         if ((creature.type === 'player') && creature.whenAllyDiesReminder) {
-                            //console.log('4, reminders: ', creature);
+                            let reminder = null;
                             if (creature.whenAllyDiesReminder.includes('['))
-                                popup.show([`${specialTextColor}=${creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenAllyDiesReminder.split(']')[1].trim()}`], 10);
+                                reminder = [`${specialTextColor}=${creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenAllyDiesReminder.split(']')[1].trim()}`];
                             else
-                                popup.show(creature.whenAllyDiesReminder);
+                                reminder = creature.whenAllyDiesReminder;
+                            if (reminder) {
+                                if (!containsArray(reminders, reminder))
+                                    reminders.push(reminder);
+                            }
                         }
+                    });
+                    // Check all players to see if one needs to be reminded that an enemy died
+                    window.encounterTableData.forEach(creature => {
+                        if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenEnemyDiesReminder) {
+                            let reminder = null;
+                            if (creature.whenEnemyDiesReminder.includes('['))
+                                reminder = [`${specialTextColor}=${creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenEnemyDiesReminder.split(']')[1].trim()}`];
+                            else
+                                reminder = creature.whenEnemyDiesReminder;
+                            if (reminder)
+                                if (!containsArray(reminders, reminder))
+                                    reminders.push(reminder);
+                        }
+                    });
+                    reminders.forEach(reminder => {
+                        popup.show(reminder, 10);
                     });
                     // Store reference to the row data
                     deathSaves._rowData = data;
@@ -3964,6 +4210,10 @@ function convertToEncounterTable() {
         window.encounterTableData.forEach((rowData) => {
             addRowToDOM(rowData);
         });
+        // After first render, reset the flag
+        if (isInitialLoad) {
+            isInitialLoad = false;
+        }
     }
     
     // Store renderTable globally
@@ -4439,7 +4689,7 @@ function showTooltip(x, y, text) {
 }
 function containsArray(arrOfArrs, target) {
     if (!Array.isArray(arrOfArrs) || !Array.isArray(target)) {
-        throw new TypeError("Both arguments must be arrays.");
+        return arrOfArrs.includes(target);
     }
 
     return arrOfArrs.some(
@@ -4473,6 +4723,7 @@ function applyDamage(rowData, damageAmount) {
     }
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
+        const diedCreatureId = rowData.type === 'player' ? rowData.name : rowData.id;
         // Remove monster from table
         const rowIndex = window.encounterTableData.findIndex(item => {
             if (rowData.type === 'player') {
@@ -4494,11 +4745,8 @@ function applyDamage(rowData, damageAmount) {
                 else
                     reminder = creature.whenAllyDiesReminder;
                 if (reminder) {
-                    console.log('Reminder:', reminder);
-                    if (!containsArray(reminders, reminder)) {
-                        console.log('Not included in reminders:', reminder);
+                    if (!containsArray(reminders, reminder))
                         reminders.push(reminder);
-                    }
                 }
             }
         });
@@ -4515,10 +4763,13 @@ function applyDamage(rowData, damageAmount) {
                         reminders.push(reminder);
             }
         });
-        console.log('Reminders on death:', reminders);
         reminders.forEach(reminder => {
             popup.show(reminder, 10);
         });
+        // Handle turn transition if this creature was currently taking its turn
+        if (currentTurnCreatureId === diedCreatureId) {
+            handleCreatureDeathDuringTurn(diedCreatureId);
+        }
         return null; // Signal that row was removed
     }
     
@@ -5139,3 +5390,7 @@ function createHpEditHandler(data, cell, textColor) {
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
 window.addRowToDOM = addRowToDOM; // Make it available globally
+window.handleCreatureTurnStart = handleCreatureTurnStart;
+window.handleCreatureTurnEnd = handleCreatureTurnEnd;
+window.handleCreatureDeathDuringTurn = handleCreatureDeathDuringTurn;
+window.currentTurnCreatureId = currentTurnCreatureId;
