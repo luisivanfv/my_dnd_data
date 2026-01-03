@@ -4482,9 +4482,13 @@ function applyDamage(rowData, damageAmount) {
                     reminder = [`${specialTextColor}=${creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenAllyDiesReminder.split(']')[1].trim()}`];
                 else
                     reminder = creature.whenAllyDiesReminder;
-                if (reminder)
-                    if (!reminders.includes(reminder))
+                if (reminder) {
+                    console.log('Reminder:', reminder);
+                    if (!reminders.includes(reminder)) {
+                        console.log('Not included in reminders:', reminders);
                         reminders.push(reminder);
+                    }
+                }
             }
         });
         // Check all players to see if one needs to be reminded that an enemy died
