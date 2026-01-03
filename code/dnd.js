@@ -4999,7 +4999,8 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
             const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
             console.log('lmao');
             console.log(updatedStats);
-            if (updatedStats === null && (currentRowData .type === 'monster' || currentRowData.type === 'creature')) {
+            if (updatedStats === null && (currentRowData.type === 'monster' || currentRowData.type === 'creature')) {
+                console.log('Creature is to be removed');
                 // Creature was removed
                 const rowIndex = window.encounterTableData.findIndex(item => 
                     item.id === currentRowData.id && item.name === currentRowData.name
