@@ -3164,76 +3164,6 @@ function convertToEncounterTable() {
                         // Make cell editable
                         cell.style.cursor = 'pointer';
                         cell.classList.add('editable-cell');
-                        cell.addEventListener('click', () => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            // Show damage type modal
-                            createDamageTypeModal(data, (damageType, damageAmount) => {
-                                const updatedStats = applyDamageWithType(data, damageType, damageAmount);
-                                
-                                if (updatedStats === null && (data.type === 'monster' || data.type === 'creature')) {
-                                    // Creature was removed
-                                    const rowIndex = window.encounterTableData.findIndex(item => 
-                                        item.id === data.id && item.name === data.name
-                                    );
-                                    if (rowIndex !== -1) {
-                                        window.encounterTableData.splice(rowIndex, 1);
-                                        window.encounterTableRender();
-                                    }
-                                    return;
-                                }
-                                
-                                // Update the row data
-                                if (updatedStats) {
-                                    data.tempHp = updatedStats.tempHp;
-                                    data.hp = updatedStats.hp;
-                                    data.deathSaveSuccesses = updatedStats.deathSaveSuccesses || 0;
-                                    data.deathSaveFailures = updatedStats.deathSaveFailures || 0;
-                                    data.stabilized = updatedStats.stabilized || false;
-                                    
-                                    // Update the display
-                                    updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor);
-                                    
-                                    // Update the table data
-                                    const rowIndex = window.encounterTableData.findIndex(item => 
-                                        item.id === data.id && item.name === data.name
-                                    );
-                                    
-                                    if (rowIndex !== -1) {
-                                        window.encounterTableData[rowIndex] = { ...data };
-                                        
-                                        // Trigger re-render if player reached 0 HP
-                                        if (data.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
-                                            window.encounterTableRender();
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                        // Keep the old right-click functionality for direct HP editing
-                        cell.addEventListener('contextmenu', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            const currentValue = data.hp;
-                            window.showNumberPrompt(currentValue, (newValue) => {
-                                data.hp = newValue;
-                                
-                                const rowIndex = window.encounterTableData.findIndex(item => {
-                                    if (data.type === 'player') {
-                                        return item.name === data.name && item.type === 'player';
-                                    } else {
-                                        return item.id === data.id;
-                                    }
-                                });
-                                
-                                if (rowIndex !== -1) {
-                                    window.encounterTableData[rowIndex].hp = newValue;
-                                    updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor);
-                                }
-                            });
-                        });
                     } else if (column.type === 'number') {
                         // Use number prompt for numeric fields
                         window.showNumberPrompt(currentValue, (newValue) => {
@@ -4889,6 +4819,77 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
     cell.innerHTML = ''; // Clear
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
+    cell.addEventListener('click', () => {
+        console.log(`HP clicked`);
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Show damage type modal
+        createDamageTypeModal(data, (damageType, damageAmount) => {
+            const updatedStats = applyDamageWithType(data, damageType, damageAmount);
+            
+            if (updatedStats === null && (data.type === 'monster' || data.type === 'creature')) {
+                // Creature was removed
+                const rowIndex = window.encounterTableData.findIndex(item => 
+                    item.id === data.id && item.name === data.name
+                );
+                if (rowIndex !== -1) {
+                    window.encounterTableData.splice(rowIndex, 1);
+                    window.encounterTableRender();
+                }
+                return;
+            }
+            
+            // Update the row data
+            if (updatedStats) {
+                data.tempHp = updatedStats.tempHp;
+                data.hp = updatedStats.hp;
+                data.deathSaveSuccesses = updatedStats.deathSaveSuccesses || 0;
+                data.deathSaveFailures = updatedStats.deathSaveFailures || 0;
+                data.stabilized = updatedStats.stabilized || false;
+                
+                // Update the display
+                updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor);
+                
+                // Update the table data
+                const rowIndex = window.encounterTableData.findIndex(item => 
+                    item.id === data.id && item.name === data.name
+                );
+                
+                if (rowIndex !== -1) {
+                    window.encounterTableData[rowIndex] = { ...data };
+                    
+                    // Trigger re-render if player reached 0 HP
+                    if (data.type === 'player' && parseInt(updatedStats.hp) <= 0 && !updatedStats.stabilized) {
+                        window.encounterTableRender();
+                    }
+                }
+            }
+        });
+    });
+    // Keep the old right-click functionality for direct HP editing
+    cell.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const currentValue = data.hp;
+        window.showNumberPrompt(currentValue, (newValue) => {
+            data.hp = newValue;
+            
+            const rowIndex = window.encounterTableData.findIndex(item => {
+                if (data.type === 'player') {
+                    return item.name === data.name && item.type === 'player';
+                } else {
+                    return item.id === data.id;
+                }
+            });
+            
+            if (rowIndex !== -1) {
+                window.encounterTableData[rowIndex].hp = newValue;
+                updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor);
+            }
+        });
+    });
 }
 // HP edit handler factory
 function createHpEditHandler(data, cell, textColor) {
