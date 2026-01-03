@@ -418,54 +418,53 @@ async function loadLookers() {
         </a>`;
     });
 }
-// Create a utility function that converts your color array format to console.log arguments
+// Simple, working version
 function logColoredMessage(partsArray) {
     const args = [];
     
     partsArray.forEach(part => {
-        if (typeof part !== 'string') return;
-        
-        // Split by first '=' to separate color from text
-        const parts = part.split('=');
-        if (parts.length < 2) {
-            // If no color specified, just add plain text
-            args.push(parts[0]);
+        if (typeof part !== 'string') {
+            // If it's not a string (like a number or object), just push it
+            args.push(part);
             return;
         }
         
-        const colorCode = parts[0].trim();
-        const text = parts.slice(1).join('='); // In case text contains '='
-        
-        // Validate and format color
-        let validColor;
-        if (colorCode.startsWith('#') && (colorCode.length === 4 || colorCode.length === 7)) {
-            validColor = colorCode;
-        } else if (colorCode.match(/^[0-9A-Fa-f]{6}$/)) {
-            validColor = '#' + colorCode;
-        } else if (colorCode.match(/^[0-9A-Fa-f]{3}$/)) {
-            validColor = '#' + colorCode;
-        } else {
-            // Try CSS color names
-            const tempDiv = document.createElement('div');
-            tempDiv.style.color = colorCode;
-            document.body.appendChild(tempDiv);
-            const computedColor = getComputedStyle(tempDiv).color;
-            document.body.removeChild(tempDiv);
-            
-            if (computedColor !== 'rgb(0, 0, 0)' || colorCode.toLowerCase() === 'black') {
-                validColor = colorCode;
-            } else {
-                // Fallback to default console color
-                validColor = 'inherit';
+        // Check if it follows the "color=text" format
+        if (part.includes('=')) {
+            const parts = part.split('=');
+            if (parts.length < 2) {
+                // Not a valid color-text pair
+                args.push(parts[0]);
+                return;
             }
+            
+            const colorPart = parts[0].trim();
+            const text = parts.slice(1).join('='); // Handle text containing '='
+            
+            // Clean and validate the color
+            let color;
+            if (colorPart.startsWith('#')) {
+                color = colorPart;
+            } else if (/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(colorPart)) {
+                color = '#' + colorPart;
+            } else {
+                // Assume it's a CSS color name
+                color = colorPart;
+            }
+            
+            // Add the %c placeholder and the style
+            args.push(`%c${text}`);
+            args.push(`color: ${color};`);
+        } else {
+            // Plain text without color
+            args.push(part);
         }
-        
-        // Add the %c directive and the style
-        args.push(`%c${text}`);
-        args.push(`color: ${validColor};`);
     });
     
-    // Use spread operator to pass all arguments to console.log
+    // Debug: see what we're passing to console.log
+    console.log('Debug - args array:', args);
+    
+    // Pass all arguments using spread operator
     console.log(...args);
 }
 class PopupManager {
@@ -593,7 +592,6 @@ class PopupManager {
             
             html += `<span style="color: ${validColor}">${this.escapeHtml(text)}</span>`;
         }
-        console.log('%cPart 1', 'color: red;', '%cPart 2', 'color: blue;');
         return html;
     }
     
