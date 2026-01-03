@@ -266,6 +266,9 @@ function handleCreatureDeathDuringTurn(diedCreatureId) {
         });
         
         // Find the next creature in initiative order
+        window.encounterTableData.forEach(item => {
+            console.log('item:', item);
+        });
         const currentIndex = window.encounterTableData.findIndex(item => 
             (item.type === 'player' ? item.name : item.id) === diedCreatureId
         );
