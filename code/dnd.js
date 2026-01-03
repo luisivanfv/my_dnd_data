@@ -179,6 +179,7 @@ function createTurnRadioButton(rowData) {
 
 function handleTurnButtonClick(radioButton, rowData) {
     const creatureId = radioButton.dataset.creatureId;
+    console.log('Creature ID clicked:', creatureId);
     
     // Remove current-turn class from all rows
     document.querySelectorAll('.encounter-table tr').forEach(row => {
@@ -187,7 +188,7 @@ function handleTurnButtonClick(radioButton, rowData) {
     
     // If clicking the already selected button, do nothing
     if (creatureId === currentTurnCreatureId) {
-        return;
+        //return; // test
     }
     
     // Handle end of previous turn
