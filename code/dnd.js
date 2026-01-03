@@ -788,7 +788,7 @@ function updateModalText(formula) {
             dieSize = parseInt(formula.split('d')[1].trim());
         let result = 0;
         for(let i=0;i<numberOfDie;i++) result += rollDie(dieSize);
-        popup.show(`${colorText(`${formula} = `, 'white')}${Math.max((result + extra), 1).toString()}`);
+        popup.show([`white=${formula}`, `${specialTextColor}=${Math.max((result + extra), 1).toString()}`]);
     } else if(formula.includes('to hit')) {
         let newFormula = formula;
         let numberStr = newFormula.replace('to hit', '').trim();
