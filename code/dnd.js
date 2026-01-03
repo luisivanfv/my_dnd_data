@@ -4451,6 +4451,7 @@ function applyDamage(rowData, damageAmount) {
                 return item.id === rowData.id;
             }
         });
+        console.log('rowIndex to remove:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
