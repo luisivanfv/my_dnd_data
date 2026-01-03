@@ -467,6 +467,36 @@ function logColoredMessage(partsArray) {
     // Pass all arguments using spread operator
     console.log(...args);
 }
+function logColoredMessageSimple(partsArray) {
+    let logString = '';
+    const styles = [];
+    
+    partsArray.forEach(part => {
+        if (typeof part !== 'string') {
+            logString += String(part) + ' ';
+            return;
+        }
+        
+        if (part.includes('=')) {
+            const [color, ...textParts] = part.split('=');
+            const text = textParts.join('=');
+            const cssColor = color.startsWith('#') ? color : 
+                            /^[0-9A-Fa-f]{3,6}$/.test(color) ? '#' + color : color;
+            
+            logString += `%c${text} `;
+            styles.push(`color: ${cssColor};`);
+        } else {
+            logString += part + ' ';
+        }
+    });
+    
+    // Debug output
+    console.log('String:', logString);
+    console.log('Styles:', styles);
+    
+    // This should work
+    console.log(logString, ...styles);
+}
 class PopupManager {
     constructor() {
         this.popups = []; // Store multiple popups
@@ -478,7 +508,7 @@ class PopupManager {
     show(messageOrArray, seconds = secondsPopupShown) {
         if (this.autoLog) {
             if (Array.isArray(messageOrArray)) {
-                logColoredMessage(messageOrArray);
+                logColoredMessageSimple(messageOrArray);
             } else {
                 console.log(`%c${messageOrArray}`, `color: #${specialTextColor};`);
             }
