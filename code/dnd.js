@@ -796,9 +796,9 @@ function updateModalText(formula) {
             numberStr = numberStr.replace('+', '').trim();
             let number = parseInt(numberStr);
             let roll = rollDie(20);
-            if(roll == 1) popup.show(colorText('Nat 1', 'red'));
-            else if(roll == 20) popup.show('Nat 20!');
-            else popup.show(`${colorText(`${roll.toString()} + ${number.toString()} = `, 'white')}${(roll + number).toString()}`);
+            if(roll == 1) popup.show([`red=Nat 1`]);
+            else if(roll == 20) popup.show([`green=Nat 20!`]);
+            else popup.show([`white=${roll.toString()} + ${number.toString()} = `, `${specialTextColor}=${(roll + number).toString()}`]);
         }
     }
 }
