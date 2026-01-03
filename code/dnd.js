@@ -3802,11 +3802,7 @@ function convertToEncounterTable() {
                 if (option === 'Damage') {
                     // This is the one that's working
                     showDamageModal(0, window.encounterTableData[rowIndex], (damageAmount) => {
-                        let asdf1 = window.encounterTableData[rowIndex];
-                        console.log('Stats before damage:', asdf1);
                         const updatedStats = applyDamage(window.encounterTableData[rowIndex], damageAmount);
-                        asdf1 = window.encounterTableData[rowIndex];
-                        console.log('Updated Stats after damage:', updatedStats);
                         let shouldRenderTable = false;
                         if (!updatedStats || parseInt(updatedStats.hp) === 0) {
                             // Monster was removed
@@ -4444,10 +4440,8 @@ function applyDamage(rowData, damageAmount) {
     if (remainingDamage > 0) {
         newHp = Math.max(0, newHp - remainingDamage);
     }
-    console.log('Damage applied');
     // Check if creature died
     if ((rowData.type === 'monster' || rowData.type === 'creature') && newHp <= 0) {
-        console.log('Remove monster');
         // Remove monster from table
         const rowIndex = window.encounterTableData.findIndex(item => {
             if (rowData.type === 'player') {
@@ -4456,7 +4450,6 @@ function applyDamage(rowData, damageAmount) {
                 return item.id === rowData.id;
             }
         });
-        console.log('rowIndex to remove:', rowIndex);
         if (rowIndex !== -1) {
             window.encounterTableData.splice(rowIndex, 1);
         }
@@ -4998,20 +4991,15 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
         createDamageTypeModal(currentRowData , (damageType, damageAmount) => {
             const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
             window.encounterTableRender();
-            console.log('lmao');
-            console.log(updatedStats);
             if (updatedStats === null && (currentRowData.type === 'monster' || currentRowData.type === 'creature')) {
                 // Creature was removed
                 const rowIndex = window.encounterTableData.findIndex(item => {
-                    console.log('item:', item);
                     if (currentRowData.type === 'player') {
                         return item.name === currentRowData.name && item.type === 'player';
                     } else {
                         return item.id === currentRowData.id;
                     }
                 });
-                console.log('currentRowData:', currentRowData);
-                console.log('Creature is to be removed:', rowIndex);
                 if (rowIndex !== -1) {
                     window.encounterTableData.splice(rowIndex, 1);
                     window.encounterTableRender();

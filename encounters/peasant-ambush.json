@@ -1,0 +1,12 @@
+{
+    "name": "Peasant Ambush",
+    "description": "Five peasant bandits attack the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Easy",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Forest Road (Day)"
+    ],
+    "enemies": ["5-Peasant Bandit"],
+    "xp": 125
+}
