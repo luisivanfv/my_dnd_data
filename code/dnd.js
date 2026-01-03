@@ -3543,7 +3543,7 @@ function convertToEncounterTable() {
                         if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenEnemyDiesReminder) {
                             console.log('3, reminders: ', creature);
                             if (creature.whenEnemyDiesReminder.includes('['))
-                                popup.show(creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenEnemyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                                popup.show([`${specialTextColor}=${creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenEnemyDiesReminder.split(']')[1].trim()}`], 10);
                             else
                                 popup.show(creature.whenEnemyDiesReminder);
                         }
@@ -3553,7 +3553,7 @@ function convertToEncounterTable() {
                         if ((creature.type === 'player') && creature.whenAllyDiesReminder) {
                             console.log('4, reminders: ', creature);
                             if (creature.whenAllyDiesReminder.includes('['))
-                                popup.show(creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenAllyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                                popup.show([`${specialTextColor}=${creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenAllyDiesReminder.split(']')[1].trim()}`], 10);
                             else
                                 popup.show(creature.whenAllyDiesReminder);
                         }
@@ -4478,7 +4478,7 @@ function applyDamage(rowData, damageAmount) {
             if ((creature.type === 'monster' || creature.type === 'creature') && creature.whenAllyDiesReminder) {
                 console.log('1, reminders: ', creature);
                 if (creature.whenAllyDiesReminder.includes('['))
-                    popup.show(creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenAllyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                    popup.show([`${specialTextColor}=${creature.whenAllyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenAllyDiesReminder.split(']')[1].trim()}`], 10);
                 else
                     popup.show(creature.whenAllyDiesReminder);
             }
@@ -4488,7 +4488,7 @@ function applyDamage(rowData, damageAmount) {
             if ((creature.type === 'player') && creature.whenEnemyDiesReminder) {
                 console.log('2, reminders: ', creature);
                 if (creature.whenEnemyDiesReminder.includes('['))
-                    popup.show(creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim() + ' ' + colorText(creature.whenEnemyDiesReminder.split(']')[1].trim(), 'white'), 10);
+                    popup.show([`${specialTextColor}=${creature.whenEnemyDiesReminder.split(']')[0].split('[')[1].trim()} `, `white=${creature.whenEnemyDiesReminder.split(']')[1].trim()}`], 10);
                 else
                     popup.show(creature.whenEnemyDiesReminder);
             }

@@ -28,12 +28,12 @@
   "challenge": "1/8 (25 XP)",
   "proficiencyBonus": "+2",
   "description": "",
-  "whenAllyDiesReminder": "[Necrophage Stench:] All creatures within 5 feet must make a DC 8 Constitution saving throw or become poisoned.",
+  "whenAllyDiesReminder": "[Weak Willed:] When an ally dies in the bandit's presence, it must succeed on a Wisdom DC 5 saving throw or become frightened for 1 minute. It may use an action to roll the saving throw again each turn, freeing itself of the condition on a success. Each successive saving throw's DC is higher by 1, and the bandit doesn't become immune to this condition after it's been freed from it.",
   "whenEnemyDiesReminder": "[Mob Mentality:] The bandit gains a +1 bonus to attack rolls and damage rolls for each remaining ally alive. If it was frightened, the condition is removed.",
   "passives": [
     {
       "name": "Weak Willed",
-      "description": "&nbsp; When an ally dies in&nbsp;the bandit's&nbsp;presence, it must succeed on a Wisdom DC 5 saving throw or become frightened for 1 minute. It may use an action to roll the saving throw again each turn, freeing itself of the condition on a success. Each successive saving throw's DC is higher by 1, and the bandit doesn't become immune to this condition after it's been freed from it.",
+      "description": "When an ally dies in the bandit's presence, it must succeed on a Wisdom DC 5 saving throw or become frightened for 1 minute. It may use an action to roll the saving throw again each turn, freeing itself of the condition on a success. Each successive saving throw's DC is higher by 1, and the bandit doesn't become immune to this condition after it's been freed from it.",
       "sound": null
     },
     {
