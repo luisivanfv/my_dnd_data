@@ -2058,7 +2058,8 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                                     updatedStats.hp,
                                     hpCell._rowData.maxHp,
                                     hpCell._rowData.tempHp || '0',
-                                    hpCell._textColor || 'white'
+                                    hpCell._textColor || 'white',
+                                    data
                                 );
                             }
                         }
@@ -2077,7 +2078,8 @@ function addRowToDOM(data, tableData, tbody, showNumberPromptFunc, renderTableFu
                                     hpCell._rowData.hp,
                                     hpCell._rowData.maxHp,
                                     hpCell._rowData.tempHp || '0',
-                                    hpCell._textColor || 'white'
+                                    hpCell._textColor || 'white',
+                                    data
                                 );
                             }
                         }
@@ -3156,7 +3158,7 @@ function convertToEncounterTable() {
                         cell.style.textAlign = 'center';
                         
                         // Always create progress bar with temp HP support
-                        updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp || '0', textColor);
+                        updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp || '0', textColor, data);
                         // Store reference to data for editing
                         cell._rowData = data;
                         cell._textColor = textColor;
@@ -3467,7 +3469,7 @@ function convertToEncounterTable() {
                 cell.textContent = '';
                 cell.appendChild(nameContainer);
             } else if (column.key === 'hp') {
-                updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp, 'black');
+                updateCellWithHpBar(cell, data.hp, data.maxHp, data.tempHp, 'black', data);
             } else if (column.key === 'conditions') {
                 // Add fresh event listeners
                 cell.addEventListener('click', function conditionsClickHandler(e) {
@@ -3664,7 +3666,8 @@ function convertToEncounterTable() {
                                     updatedStats.hp, 
                                     hpCell._rowData.maxHp,
                                     updatedStats.tempHp,
-                                    hpCell._textColor || 'white'
+                                    hpCell._textColor || 'white',
+                                    hpCell._rowData
                                 );
                                 if (shouldRenderTable) {
                                     renderTable();
@@ -3698,7 +3701,8 @@ function convertToEncounterTable() {
                                 hpCell._rowData.maxHp,
                                 hpCell._rowData.tempHp,
                                 tempHpAmount.toString(),
-                                hpCell._textColor || 'white'
+                                hpCell._textColor || 'white',
+                                hpCell._rowData
                             );
                         }
                     }
@@ -4815,7 +4819,7 @@ function getHpStatusDescription(percentage) {
     return 'Intacto';
 }
 // Helper function to update cell with HP bar
-function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
+function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
     cell.innerHTML = ''; // Clear
     const hpDisplay = createHpProgressBar(hp, maxHp, tempHp, textColor);
     cell.appendChild(hpDisplay);
@@ -4846,7 +4850,7 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
                 data.stabilized = updatedStats.stabilized || false;
                 
                 // Update the display
-                updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor);
+                updateCellWithHpBar(cell, updatedStats.hp, data.maxHp, updatedStats.tempHp, textColor, data);
                 
                 // Update the table data
                 const rowIndex = window.encounterTableData.findIndex(item => 
@@ -4883,7 +4887,7 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor) {
             
             if (rowIndex !== -1) {
                 window.encounterTableData[rowIndex].hp = newValue;
-                updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor);
+                updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp || '0', textColor, data);
             }
         });
     });
@@ -4904,7 +4908,7 @@ function createHpEditHandler(data, cell, textColor) {
             if (rowIndex !== -1) {
                 window.encounterTableData[rowIndex].hp = newValue;
                 data.hp = newValue;
-                updateCellWithHpBar(cell, newValue, data.maxHp, textColor);
+                updateCellWithHpBar(cell, newValue, data.maxHp, data.tempHp, textColor, data);
             }
         });
     };
