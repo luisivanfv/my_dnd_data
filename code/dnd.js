@@ -5002,12 +5002,14 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
             if (updatedStats === null && (currentRowData.type === 'monster' || currentRowData.type === 'creature')) {
                 // Creature was removed
                 const rowIndex = window.encounterTableData.findIndex(item => {
+                    console.log('item:', item);
                     if (currentRowData.type === 'player') {
                         return item.name === currentRowData.name && item.type === 'player';
                     } else {
                         return item.id === currentRowData.id;
                     }
                 });
+                console.log('currentRowData:', currentRowData);
                 console.log('Creature is to be removed:', rowIndex);
                 if (rowIndex !== -1) {
                     window.encounterTableData.splice(rowIndex, 1);
