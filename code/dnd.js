@@ -4998,6 +4998,7 @@ function updateCellWithHpBar(cell, hp, maxHp, tempHp, textColor, data={}) {
         createDamageTypeModal(currentRowData , (damageType, damageAmount) => {
             const updatedStats = applyDamageWithType(currentRowData , damageType, damageAmount);
             console.log('lmao');
+            console.log(updatedStats);
             if (updatedStats === null && (currentRowData .type === 'monster' || currentRowData.type === 'creature')) {
                 // Creature was removed
                 const rowIndex = window.encounterTableData.findIndex(item => 
