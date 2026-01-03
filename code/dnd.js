@@ -684,9 +684,9 @@ function makeSavingThrow(title, mod) {
     let roll = rollDie(20);
     if(mod != 0) {
         let symbol = mod > 0 ? '+' : '-';
-        popup.show(`${colorText(`${title} check = ${roll.toString()} ${symbol} ${Math.abs(mod).toString()} = `, 'white')}${Math.max((roll + mod), 1).toString()}`);
+        popup.show([`white=${title} check = ${roll.toString()} ${symbol} ${Math.abs(mod).toString()} = `, `${specialTextColor}=${Math.max((roll + mod), 1).toString()}`]);
     } else
-        popup.show(`${colorText(`${title} check = `, 'white')}${roll.toString()}`);
+        popup.show([`white=${title} check = `, `${specialTextColor}=${roll.toString()}`]);
 }
 async function buildAllReplacements(addWikiUrls, addSpellUrls, addCreatureUrls, addLocationUrls, addCharacterUrls, fontColor, fontSize) {
     const allEntries = [];
