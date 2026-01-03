@@ -4500,6 +4500,7 @@ function applyDamage(rowData, damageAmount) {
                         reminders.push(reminder);
             }
         });
+        console.log('Reminders on death:', reminders);
         reminders.forEach(reminder => {
             popup.show(reminder, 10);
         });
