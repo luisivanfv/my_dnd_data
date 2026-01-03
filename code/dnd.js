@@ -3341,12 +3341,12 @@ function convertToEncounterTable() {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     
-    const headers = ['', '#', 'Name', 'AC', 'HP', 'Conditions', 'Notes'];
+    const headers = ['Turn', '#', 'Name', 'AC', 'HP', 'Conditions', 'Notes'];
     headers.forEach(headerText => {
         const th = document.createElement('th');
         th.style.textAlign = 'center';
         headerRow.appendChild(th);
-        if (index === 0) {
+        if (headerText === 'Turn') {
             // Turn button column - add a clock icon
             const turnIcon = document.createElement('span');
             turnIcon.innerHTML = '<img width="20" height="20" src="https://img.icons8.com/ios-filled/50/FFFFFF/clock--v1.png" alt="turn"/>';
