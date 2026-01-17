@@ -33,6 +33,7 @@ window.initializeExternalScript = async function() {
         //await loadSearchBoxes();
         await loadWikiLists();
         await loadLookers();
+        await loadSoundBoard();
         await renameWikisWithNames();
         addSearchBarStyles();
         convertToSearchBar();
