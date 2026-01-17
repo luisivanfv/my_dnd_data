@@ -1475,7 +1475,7 @@ async function loadSoundBoard() {
         // Create buttons for each sound in this category
         categories[category].forEach(sound => {
             // Create sound URL
-            const soundUrl = `${repositoryUrl}/sounds/${sound.sound}.mp3`;
+            const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
             
             // Create audio element
             const audio = new Audio(soundUrl);
