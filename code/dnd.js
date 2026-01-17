@@ -1904,9 +1904,9 @@ async function loadSoundBoard() {
             audio.loop = sound.loopable;
             
             // Set volume from saved setting and apply main volume
-            const control = volumeControls[sound.sound];
-            if (control) {
-                const effectiveVolume = control.volume * mainVolume;
+            const control2 = volumeControls[sound.sound];
+            if (control2) {
+                const effectiveVolume = control2.volume * mainVolume;
                 audio.volume = effectiveVolume;
             }
             
@@ -2114,9 +2114,9 @@ async function loadSoundBoard() {
             let tooltipText = `${sound.sound}`;
             
             // Add volume info
-            const control = volumeControls[sound.sound];
-            if (control) {
-                tooltipText += `\nVolume: ${Math.round(control.volume * 100)}%`;
+            const control3 = volumeControls[sound.sound];
+            if (control3) {
+                tooltipText += `\nVolume: ${Math.round(control3.volume * 100)}%`;
             }
             
             // Add property info
