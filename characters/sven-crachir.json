@@ -1,0 +1,9 @@
+{
+    "name": "Sven Crachir",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Sven es un viejo marinero, originario de Skellige, que pasa sus días apostando y bebiendo  con el dinero que ganó de vender su viejo barco<br><br><h2 style='color:red;'>Quests</h2>Sven puede ofrecer navegar por dinero, siempre y cuando alguien le consiga un navío"
+}

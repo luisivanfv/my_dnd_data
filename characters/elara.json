@@ -1,0 +1,9 @@
+{
+    "name": "Elara",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "elf",
+    "description": "Elara es una scout de los Scoia'tael, trabajando de infiltrada en Cintra, fingiendo ser humana. Su belleza palidece junto a su profunda furia, que es lo único que uno recuerda después de verla.<br><br>Racista contra los humanos, '¿te gustan estos muros?, nuestros huesos los construyueron', 'Calanthe proteje a su pueblo como un granjero a su ganado'<br><br><h2 style='color:red;'>Quests</h2>Elara puede actuar como contacto con el Scoia'tael, o puede revelarse, ya que tampoco está de acuerdo con la alianza con Nilfgaard."
+}

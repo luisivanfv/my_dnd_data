@@ -1,0 +1,9 @@
+{
+    "name": "Novic Waleki",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "El capitán Waleki, de la guardia real de Cintra, es un veterano, confiado por la reina Calanthe misma. Está desesperado, dada la situación en la ciudad, que se encuentra desbordada, y ofrece contratos de caza de monstruos y de reconocimiento<br><br><h2 style='color:red;'>Quests</h2><ul><li>5 florines por cabeza de nekker</li><li>15 florines por oreja de ghoul</li><li>12 florines por oreja de ahogado</li><li>30 florines por insignia nilfgaardiana</li><li>220 florines por contactar al teniente Wutek o por traer su insignia y reportar</li><li>También paga por información sobre movimientos Scoia'tael o nilfgaardianos</li></ul>"
+}

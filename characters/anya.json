@@ -1,0 +1,9 @@
+{
+    "name": "Anya Malovik",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Anya es una sacerdotisa del Fuego Eterno, y predica desde su casa/templo en el pueblo de Molino de la Viuda.<br><br>Tiene unos 60 años, con ropas sencillas pero mirada profunda. Ve con recelo a los no-humanos y a la magia.<br><br><h2 style='color:red;'>Quests</h2>Anya puede bendecir al grupo por una donación. Puede resucitar a un miembro del grupo, sólo funciona una vez, y ese miembro está herido (mitad de HP) hasta que un mejor curador ayude."
+}

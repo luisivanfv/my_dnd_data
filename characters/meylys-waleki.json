@@ -1,0 +1,9 @@
+{
+    "name": "Meylys Waleki",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Meylys es la hija del capitán Waleki, y esposa del teniente Petyr Wutek. Si Wutek regresa con vida, les entrega un Collar de fortuna (1 inspiración gratis al empezar el día). Si no, les puede pedir una misión.<br><br>Además, si Wutek regresa con vida, Petyr y Meylys son potenciales aliados.<br><br><h2 style='color:red;'>Quests</h2>Meylys les ofrece un Anillo de evasión (Shield, 1 vez al día)"
+}

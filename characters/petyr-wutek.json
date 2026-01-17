@@ -1,0 +1,9 @@
+{
+    "name": "Petyr Wutek",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "El teniente Wutek, de la guardia real de Cintra, es el yerno del capitán Waleki (casado con su hija Meylys). Fue enviado al fuerte del Monte Avachall a investigar el avance nilfgaardiano<br><br><h2 style='color:red;'>Quests</h2>El grupo del teniente fue acechado por nilfgaardianos (había un espía entre ellos). Dependiendo de la prisa que hayan tenido al llegar aquí, el resultado es diferente al encontrarlo:<ul><li>Prisa: está a salvo, con un soldado más, y puede ser rescatado</li><li>Paso moderado: está al borde de la muerte, con una pierna rota</li><li>Tardío: está muerto, y aún tiene su insignia</li></ul>"
+}

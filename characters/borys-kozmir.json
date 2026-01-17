@@ -1,0 +1,9 @@
+{
+    "name": "Borys Kozmir",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "El Capitpán Kozmir está a cargo de la compañía mercenaria 'Los Halcones Escarlata', contratados por el rey Radovid para actuar como espías y músculo contratado, para vigilar el avance nilfgaardiano y Scoia'tael<br><br><h2 style='color:red;'>Quests</h2>El capitán puede dar misiones o ser contratado para hacer trabajos.<ul><li>Por 110 florines, se puede rentar un alabardero, escudero o ballestero (¡precios de mayoreo!)</li><li>Se puede comprar información</li><li>40 florines para rentar una habitación en el cuartel por una noche</li><li>De 50 a 1000 florines para contratar un asesino</li><li>Se ofrecen 500 florines por recuperar un cargamento (cerrado) que se perdió cerca de Brokilon</li></ul>"
+}

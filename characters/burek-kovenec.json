@@ -1,0 +1,9 @@
+{
+    "name": "Burek Kovenec",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Burek es el dueño y cocinero de la taberna 'El oso asado', junto con su esposa Wiga, en el pueblo de Cruce de Oxenford.<br><br>Simple y vicioso, le deja las decisiones a Wiga siempre y cuando pueda caer en sus vicios en paz<br><br><h2 style='color:red;'>Quests</h2>"
+}

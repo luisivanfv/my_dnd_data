@@ -1,0 +1,9 @@
+{
+    "name": "Jarek Nowak",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Jarek es un guardia en Cintra, pero es originario de Kroppen. Es cercano con su hermana Makhia.<br><br><h2 style='color:red;'>Quests</h2>Si el grupo menciona que salvaron a Makhia, y que 'la tía Nyerssa tenía razón' (la tía dijo que su papá mataría a su mamá a golpes), Jarek accede a dejarlos dormir sobre los establos, pasar a la ciudad, y les menciona que si necesitan dinero, el capitán Waleki está ofreciendo contratos mercenarios"
+}

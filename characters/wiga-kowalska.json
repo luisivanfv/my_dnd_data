@@ -1,0 +1,9 @@
+{
+    "name": "Wiga Kovalska",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Wiga es la dueña de la taberna 'El oso asado', junto con su esposo Burek, en el pueblo de Cruce de Oxenford.<br><br>Pragmática y utilitaria<br><br><h2 style='color:red;'>Quests</h2>Puede ofrecer trabajo de ayudante, vigilante, o proveedor."
+}

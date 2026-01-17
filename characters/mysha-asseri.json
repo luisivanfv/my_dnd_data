@@ -1,0 +1,9 @@
+{
+    "name": "Mysha Asseri",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "human",
+    "description": "Mysha es una boticaria de una tierra muy remota. Tiene una tienda improvisada en el mercado azul de Cintra.<br><br><h2 style='color:red;'>Quests</h2>Ofrece trabajos.<ul><li>Quiere que le ayuden a recuperar un libro de recetas y un saco con ingredientes que dejó en su casa en Valimest. El grupo se puede quedar con lo demás que encuentre</li><li>Ofrece dinero por partes de monstruo</li></ul>"
+}

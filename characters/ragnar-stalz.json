@@ -1,0 +1,9 @@
+{
+    "name": "Ragnar Stalz",
+    "pc": false,
+    "npc": true,
+    "merchant": true,
+    "merchantItems": [],
+    "race": "dwarf",
+    "description": "Ragnar es un enano, que trabaja para el gremio herrero de Mahakam, desde su tienda en el mercado azul de Cintra.<br><br>Pragmático y utilitario, no tiene problema con nadie siempre que haya dinero.<br><br><h2 style='color:red;'>Quests</h2>"
+}
