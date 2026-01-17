@@ -175,6 +175,22 @@
                     "initialVomune": 100,
                     "exclusiveInCategory": true,
                     "exclusiveWith": []
+                }, {
+                    "sound": "music_SteelForHumans",
+                    "icon": "https://img.icons8.com/external-smashingstocks-glyph-smashing-stocks/customSize/customColor/external-cross-swords-sports-and-games-smashingstocks-glyph-smashing-stocks.png??external-cross-swords-sports-and-games-smashingstocks-glyph-smashing-stocks",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_ForgedInFire",
+                    "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/crossed-axes.png??crossed-axes",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -183,6 +199,14 @@
                 {
                     "sound": "music_SilverForMonsters",
                     "icon": "https://img.icons8.com/ink/customSize/customColor/lion.png??lion",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_EyesOfTheWolf",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/werewolf.png??lion",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
@@ -204,6 +228,14 @@
                 }, {
                     "sound": "music_WakeUpCiri",
                     "icon": "https://img.icons8.com/pastel-glyph/64/1A1A1A/sunrise--v1.png??sunrise--v1",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_FateCalls",
+                    "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/magical-scroll.png??magical-scroll",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
@@ -233,6 +265,30 @@
                 }, {
                     "sound": "music_KingBransFinalVoyage",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/sea.png??sea",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_TheVagabond",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/path.png??path",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_CloakAndDagger",
+                    "icon": "https://img.icons8.com/external-edtim-solid-edtim/customSize/customColor/external-Galloping-horse-fire-horses-edtim-solid-edtim.png??external-Galloping-horse-fire-horses-edtim-solid-edtim",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_AfterTheStorm",
+                    "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/dove.png??dove",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
@@ -272,6 +328,14 @@
                     "initialVomune": 100,
                     "exclusiveInCategory": true,
                     "exclusiveWith": []
+                }, {
+                    "sound": "music_WitchHunters",
+                    "icon": "https://img.icons8.com/glyph-neue/64/1A1A1A/law.png??law",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -280,6 +344,22 @@
                 {
                     "sound": "music_CityOfIntrigues",
                     "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/horn--v2.png??horn--v2",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_WelcomeImlerith",
+                    "icon": "https://img.icons8.com/external-kmg-design-glyph-kmg-design/customSize/customColor/external-flag-running-kmg-design-glyph-kmg-design.png??external-flag-running-kmg-design-glyph-kmg-design",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_BloodOnTheCobblestones",
+                    "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/knight.png??knight",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
@@ -309,6 +389,27 @@
                 }, {
                     "sound": "music_AnotherRoundForEveryone",
                     "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/dancing.png??dancing",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }
+            ]
+        }, {
+            "name": "Music - Love",
+            "sounds": [
+                {
+                    "sound": "music_YesIDo",
+                    "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/ring-front-view.png??ring-front-view",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_AfterTheStorm",
+                    "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/dove.png??dove",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
