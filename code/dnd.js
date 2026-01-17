@@ -1810,7 +1810,7 @@ function selectedInSearchBar(selectedValue) {
         id: nextId, // Use unique ID
         initiative: initiative,
         name: selectedValue,
-        ac: data.armorClass || 10,
+        ac: data.armorClass.split('(')[0] || 10,
         hp: hp,
         maxHp: hp,
         tempHp: '0',
@@ -2249,8 +2249,6 @@ function initializeTableData() {
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split('-')[0].trim()
                     const typeOfEnemy = enemy.split('-')[1].trim().toLowerCase().replaceAll(' ', '-').replaceAll("'", '');
-                    console.log('typeOfEnemy');
-                    console.log(typeOfEnemy);
                     const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
                     for(let n=0;n<parseInt(numberOfEnemies);n++) {
                         const dexMod = Math.floor((parseInt(monsterInfo.dex) - 10) / 2);
