@@ -1425,25 +1425,22 @@ async function loadSoundBoard() {
     if (!soundboardContainer)
         return null;
     const jsonData = JSON.parse(localStorage.getItem('soundboard'));
+    
     // Create a container div
     const container = document.createElement('div');
     container.className = 'soundboard-container';
-    
-    // Group sounds by category
-    const categories = {};
-    
-    jsonData.sounds.forEach(sound => {
-        if (!categories[sound.category]) {
-            categories[sound.category] = [];
-        }
-        categories[sound.category].push(sound);
-    });
     
     // Object to track currently playing sounds
     const playingSounds = {};
     
     // Object to store volume controls
     const volumeControls = {};
+    
+    // Object to track category sequences
+    const categorySequences = {};
+    
+    // Object to track category playback state
+    const categoryPlayback = {};
     
     // Function to save volume to localStorage
     const saveVolume = (soundId, volume) => {
@@ -1456,6 +1453,85 @@ async function loadSoundBoard() {
     const getVolume = (soundId) => {
         const volumes = JSON.parse(localStorage.getItem('soundVolumes') || '{}');
         return volumes[soundId] !== undefined ? volumes[soundId] : 1.0; // Default to 100%
+    };
+    
+    // Function to get all loopable sounds in a category
+    const getLoopWithinCategorySounds = (category) => {
+        const categoryData = jsonData.categories.find(c => c.name === category);
+        if (!categoryData) return [];
+        
+        return categoryData.sounds.filter(sound => 
+            sound.loopWithinCategory === true
+        );
+    };
+    
+    // Function to get next sound in category sequence
+    const getNextSoundInCategorySequence = (category, currentSoundId) => {
+        const sequence = categorySequences[category];
+        if (!sequence || sequence.length === 0) return null;
+        
+        const currentIndex = sequence.findIndex(sound => sound.sound === currentSoundId);
+        if (currentIndex === -1) return sequence[0];
+        
+        const nextIndex = (currentIndex + 1) % sequence.length;
+        return sequence[nextIndex];
+    };
+    
+    // Function to stop category playback
+    const stopCategoryPlayback = (category) => {
+        if (categoryPlayback[category]) {
+            const currentSoundId = categoryPlayback[category].currentSoundId;
+            if (currentSoundId && playingSounds[currentSoundId]) {
+                const audio = playingSounds[currentSoundId];
+                audio.pause();
+                audio.currentTime = 0;
+                
+                const button = document.querySelector(`[data-sound-id="${currentSoundId}"]`);
+                if (button) button.classList.remove('playing');
+                
+                delete playingSounds[currentSoundId];
+            }
+            
+            clearInterval(categoryPlayback[category].intervalId);
+            delete categoryPlayback[category];
+        }
+    };
+    
+    // Function to start category sequence playback
+    const startCategorySequence = (category, startSound = null) => {
+        // Stop any existing category playback
+        stopCategoryPlayback(category);
+        
+        const sequence = categorySequences[category];
+        if (!sequence || sequence.length === 0) return;
+        
+        // Find starting sound
+        let startIndex = 0;
+        if (startSound) {
+            const foundIndex = sequence.findIndex(s => s.sound === startSound.sound);
+            if (foundIndex !== -1) startIndex = foundIndex;
+        }
+        
+        // Play the first sound
+        const firstSound = sequence[startIndex];
+        const firstButton = document.querySelector(`[data-sound-id="${firstSound.sound}"]`);
+        
+        if (firstButton) {
+            // Set up category playback tracking
+            categoryPlayback[category] = {
+                currentSoundId: firstSound.sound,
+                intervalId: null,
+                sequence: sequence
+            };
+            
+            // Simulate click on the first sound
+            const clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            firstButton.dispatchEvent(clickEvent);
+        }
     };
     
     // Function to create volume indicator
@@ -1575,6 +1651,12 @@ async function loadSoundBoard() {
     
     // Function to stop all playing sounds
     const stopAllSounds = () => {
+        // Stop all category playback
+        Object.keys(categoryPlayback).forEach(category => {
+            stopCategoryPlayback(category);
+        });
+        
+        // Stop all individual sounds
         Object.keys(playingSounds).forEach(soundId => {
             const audio = playingSounds[soundId];
             audio.pause();
@@ -1588,23 +1670,73 @@ async function loadSoundBoard() {
         Object.keys(playingSounds).forEach(key => delete playingSounds[key]);
     };
     
+    // First pass: Build category sequences and volume controls
+    jsonData.categories.forEach(category => {
+        // Build sequences for categories with loopWithinCategory sounds
+        const loopWithinCategorySounds = getLoopWithinCategorySounds(category.name);
+        if (loopWithinCategorySounds.length > 1) {
+            categorySequences[category.name] = loopWithinCategorySounds;
+        }
+        
+        // Initialize volume controls for each sound
+        category.sounds.forEach(sound => {
+            const savedVolume = getVolume(sound.sound);
+            volumeControls[sound.sound] = {
+                volume: savedVolume,
+                isInSequence: sound.loopWithinCategory || false,
+                category: category.name
+            };
+        });
+    });
+    
     // Create category sections
-    Object.keys(categories).forEach(category => {
+    jsonData.categories.forEach(category => {
         // Create category container
         const categoryDiv = document.createElement('div');
         categoryDiv.className = 'category-container';
+        categoryDiv.dataset.categoryName = category.name;
         
-        // Add category title
+        // Create category header
+        const categoryHeader = document.createElement('div');
+        categoryHeader.className = 'category-header';
+        
+        // Add category title with click handler for sequences
         const categoryTitle = document.createElement('h3');
-        categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-        categoryDiv.appendChild(categoryTitle);
+        categoryTitle.textContent = category.name;
+        
+        // Add sequence indicator if category has loop sequence
+        if (categorySequences[category.name]) {
+            const sequenceIndicator = document.createElement('span');
+            sequenceIndicator.className = 'sequence-indicator';
+            sequenceIndicator.textContent = ' 🔄';
+            sequenceIndicator.title = `Click to play all ${categorySequences[category.name].length} sounds in sequence`;
+            categoryTitle.appendChild(sequenceIndicator);
+            
+            // Make the entire category title clickable for sequence playback
+            categoryTitle.classList.add('clickable-category');
+            categoryTitle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (categoryPlayback[category.name]) {
+                    // If category is currently playing, stop it
+                    stopCategoryPlayback(category.name);
+                    this.classList.remove('playing');
+                } else {
+                    // Start the category sequence
+                    startCategorySequence(category.name);
+                    this.classList.add('playing');
+                }
+            });
+        }
+        
+        categoryHeader.appendChild(categoryTitle);
+        categoryDiv.appendChild(categoryHeader);
         
         // Create button container for this category
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
         
         // Create buttons for each sound in this category
-        categories[category].forEach(sound => {
+        category.sounds.forEach(sound => {
             // Create sound URL
             const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
             
@@ -1612,28 +1744,52 @@ async function loadSoundBoard() {
             const audio = new Audio(soundUrl);
             audio.loop = sound.loopable;
             
-            // Get saved volume or use default
-            const savedVolume = getVolume(sound.sound);
-            audio.volume = savedVolume;
-            
-            // Store audio reference
-            volumeControls[sound.sound] = {
-                audio: audio,
-                volume: savedVolume
-            };
+            // Set volume from saved setting
+            const control = volumeControls[sound.sound];
+            if (control) {
+                audio.volume = control.volume;
+            }
             
             // Create button
             const button = document.createElement('button');
             button.className = 'sound-button';
             button.dataset.soundId = sound.sound;
+            button.dataset.category = category.name;
+            
+            // Add sequence indicator to button if applicable
+            if (sound.loopWithinCategory) {
+                button.dataset.inSequence = 'true';
+            }
+            
+            // Process icon URL
+            let iconUrl = sound.icon;
+            
+            // Extract custom size if present
+            let iconSize = 50;
+            const sizeMatch = sound.icon.match(/customSize\/(\d+)/);
+            if (sizeMatch && sizeMatch[1]) {
+                iconSize = parseInt(sizeMatch[1]);
+            }
+            
+            // Extract custom color if present
+            let iconColor = '1A1A1A';
+            const colorMatch = sound.icon.match(/customColor\/([A-Fa-f0-9]{6})/);
+            if (colorMatch && colorMatch[1]) {
+                iconColor = colorMatch[1];
+            }
+            
+            // Create the final icon URL
+            iconUrl = sound.icon.replace('customSize', iconSize.toString())
+                               .replace('customColor', iconColor);
+            // Remove query parameters
+            iconUrl = iconUrl.split('??')[0];
             
             // Create icon
             const icon = document.createElement('img');
-            icon.width = 50;
-            icon.height = 50;
-            const iconTxt = sound.icon.replace('customSize', '50').replace('customColor', '#b69b32ff');
-            icon.src = iconTxt.split('??')[0];
-            icon.alt = iconTxt.split('??')[1];
+            icon.width = iconSize;
+            icon.height = iconSize;
+            icon.src = iconUrl;
+            icon.alt = sound.sound;
             
             // Add icon to button
             button.appendChild(icon);
@@ -1662,10 +1818,14 @@ async function loadSoundBoard() {
                 
                 // Update volume
                 control.volume = newVolume;
-                control.audio.volume = newVolume;
                 
                 // Save to localStorage
                 saveVolume(soundId, newVolume);
+                
+                // Update audio volume if it exists
+                if (playingSounds[soundId]) {
+                    playingSounds[soundId].volume = newVolume;
+                }
                 
                 // Update or create volume indicator
                 const existingIndicator = this.querySelector('.volume-indicator');
@@ -1673,11 +1833,6 @@ async function loadSoundBoard() {
                     updateVolumeIndicator(this, newVolume);
                 } else {
                     createVolumeIndicator(this, newVolume);
-                }
-                
-                // If audio is currently playing, update volume immediately
-                if (playingSounds[soundId]) {
-                    playingSounds[soundId].volume = newVolume;
                 }
             });
             
@@ -1702,12 +1857,14 @@ async function loadSoundBoard() {
                 }
             });
             
-            // Left click to play/pause
+            // Left click to play/pause individual sound
             button.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 
                 const soundId = this.dataset.soundId;
                 const currentAudio = playingSounds[soundId];
+                const control = volumeControls[soundId];
                 
                 if (currentAudio && !currentAudio.paused) {
                     // Pause if already playing
@@ -1715,47 +1872,104 @@ async function loadSoundBoard() {
                     currentAudio.currentTime = 0;
                     this.classList.remove('playing');
                     delete playingSounds[soundId];
+                    
+                    // If this sound was part of category playback, stop the category sequence
+                    if (control?.isInSequence && categoryPlayback[category.name]) {
+                        stopCategoryPlayback(category.name);
+                        const categoryTitle = this.closest('.category-container').querySelector('h3');
+                        if (categoryTitle) categoryTitle.classList.remove('playing');
+                    }
                 } else {
                     // Get volume from controls
-                    const control = volumeControls[soundId];
                     if (control) {
                         audio.volume = control.volume;
                     }
                     
-                    // Play this sound (don't stop others)
+                    // If category has active sequence and this sound is not in it, stop category playback
+                    if (categoryPlayback[category.name] && !control?.isInSequence) {
+                        stopCategoryPlayback(category.name);
+                        const categoryTitle = this.closest('.category-container').querySelector('h3');
+                        if (categoryTitle) categoryTitle.classList.remove('playing');
+                    }
+                    
+                    // Play this sound
                     audio.play();
                     playingSounds[soundId] = audio;
                     this.classList.add('playing');
                     
-                    // Handle when sound ends (for non-loopable sounds)
-                    if (!sound.loopable) {
-                        const onEnded = () => {
-                            this.classList.remove('playing');
-                            delete playingSounds[soundId];
-                            audio.removeEventListener('ended', onEnded);
-                        };
-                        audio.addEventListener('ended', onEnded, { once: true });
-                    }
+                    // Handle sound ending
+                    const onEnded = () => {
+                        this.classList.remove('playing');
+                        delete playingSounds[soundId];
+                        
+                        // If this sound is part of a category sequence and category playback is active
+                        if (control?.isInSequence && categoryPlayback[category.name]) {
+                            // Get next sound in sequence
+                            const nextSound = getNextSoundInCategorySequence(category.name, soundId);
+                            if (nextSound) {
+                                // Update category playback tracking
+                                categoryPlayback[category.name].currentSoundId = nextSound.sound;
+                                
+                                // Play next sound after a short delay
+                                setTimeout(() => {
+                                    const nextButton = document.querySelector(`[data-sound-id="${nextSound.sound}"]`);
+                                    if (nextButton) {
+                                        const clickEvent = new MouseEvent('click', {
+                                            view: window,
+                                            bubbles: true,
+                                            cancelable: true
+                                        });
+                                        nextButton.dispatchEvent(clickEvent);
+                                    }
+                                }, 500); // 500ms delay between sounds
+                            }
+                        }
+                    };
+                    
+                    audio.addEventListener('ended', onEnded, { once: true });
                 }
             });
             
-            // Right click to stop
+            // Right click to stop individual sound
             button.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 
                 const soundId = this.dataset.soundId;
                 const currentAudio = playingSounds[soundId];
+                const control = volumeControls[soundId];
                 
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
                     this.classList.remove('playing');
                     delete playingSounds[soundId];
+                    
+                    // If this sound was part of category playback, stop the category sequence
+                    if (control?.isInSequence && categoryPlayback[category.name]) {
+                        stopCategoryPlayback(category.name);
+                        const categoryTitle = this.closest('.category-container').querySelector('h3');
+                        if (categoryTitle) categoryTitle.classList.remove('playing');
+                    }
                 }
             });
             
-            // Add tooltip
-            button.title = `${sound.sound} (${sound.loopable ? 'Loopable' : 'Single play'})\nLeft click: Play/Pause\nRight click: Stop\nScroll wheel: Adjust volume`;
+            // Build tooltip
+            let tooltipText = `${sound.sound}`;
+            
+            if (sound.loopWithinCategory) {
+                tooltipText += ' (Part of category sequence)';
+            } else if (sound.loopable) {
+                tooltipText += ' (Loopable)';
+            } else {
+                tooltipText += ' (Single play)';
+            }
+            
+            tooltipText += '\nLeft click: Play/Pause';
+            tooltipText += '\nRight click: Stop';
+            tooltipText += '\nScroll wheel: Adjust volume';
+            
+            button.title = tooltipText;
             
             buttonContainer.appendChild(button);
         });
@@ -1774,7 +1988,7 @@ async function loadSoundBoard() {
     
     soundboardContainer.appendChild(container);
     
-    // Add CSS for volume indicator
+    // Add CSS styles
     const style = document.createElement('style');
     style.textContent = `
         .soundboard-container {
@@ -1787,7 +2001,7 @@ async function loadSoundBoard() {
             display: block;
             margin: 0 auto 20px auto;
             padding: 10px 20px;
-            background-color: #601414ff;
+            background-color: #ff4444;
             color: white;
             border: none;
             border-radius: 5px;
@@ -1798,22 +2012,48 @@ async function loadSoundBoard() {
         }
         
         .stop-all-button:hover {
-            background-color: #701313ff;
+            background-color: #cc0000;
         }
         
         .category-container {
             margin-bottom: 30px;
             padding: 15px;
-            background-color: #3b3b3bff;
+            background-color: #f5f5f5;
             border-radius: 8px;
         }
         
-        .category-container h3 {
-            margin-top: 0;
+        .category-header {
             margin-bottom: 15px;
+        }
+        
+        .category-header h3 {
+            margin-top: 0;
+            margin-bottom: 0;
             color: #333;
-            border-bottom: 2px solid #333333ff;
+            border-bottom: 2px solid #ddd;
             padding-bottom: 5px;
+        }
+        
+        .clickable-category {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        
+        .clickable-category:hover {
+            color: #2196F3;
+        }
+        
+        .clickable-category.playing {
+            color: #2196F3;
+            font-weight: bold;
+        }
+        
+        .sequence-indicator {
+            font-size: 14px;
+            cursor: pointer;
         }
         
         .button-container {
@@ -1824,7 +2064,7 @@ async function loadSoundBoard() {
         
         .sound-button {
             background: white;
-            border: 2px solid #1d1d1dff;
+            border: 2px solid #ddd;
             border-radius: 8px;
             padding: 10px;
             cursor: pointer;
@@ -1832,17 +2072,28 @@ async function loadSoundBoard() {
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
         
         .sound-button:hover {
-            border-color: #272727ff;
+            border-color: #1A1A1A;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .sound-button.playing {
-            border-color: #3b7e3eff;
-            background-color: #464f46ff;
+            border-color: #4CAF50;
+            background-color: #f0fff0;
+        }
+        
+        .sound-button[data-in-sequence="true"] {
+            border-style: dashed;
+            border-color: #2196F3;
+        }
+        
+        .sound-button[data-in-sequence="true"].playing {
+            border-color: #2196F3;
+            background-color: #E3F2FD;
         }
         
         .sound-button img {
@@ -1893,6 +2144,17 @@ async function loadSoundBoard() {
             min-width: 30px;
             text-align: center;
             font-family: monospace;
+        }
+        
+        /* Sequence animation for category sequence sounds */
+        @keyframes sequencePulse {
+            0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4); }
+            70% { box-shadow: 0 0 0 5px rgba(33, 150, 243, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+        }
+        
+        .sound-button[data-in-sequence="true"].playing {
+            animation: sequencePulse 2s infinite;
         }
     `;
     document.head.appendChild(style);
