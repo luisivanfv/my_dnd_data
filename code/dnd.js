@@ -1631,8 +1631,9 @@ async function loadSoundBoard() {
             const icon = document.createElement('img');
             icon.width = 50;
             icon.height = 50;
-            icon.src = sound.icon.split('?')[0]; // Remove query parameters if present
-            icon.alt = sound.sound;
+            const iconTxt = sound.icon.replace('customSize', '50').replace('customColor', '#b69b32ff');
+            icon.src = iconTxt.split('??')[0];
+            icon.alt = iconTxt.split('??')[1];
             
             // Add icon to button
             button.appendChild(icon);

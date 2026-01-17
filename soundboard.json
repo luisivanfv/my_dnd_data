@@ -3,47 +3,47 @@
         {
             "category": "ambience",
             "sound": "campfire",
-            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/campfire.png??campfire",
+            "icon": "https://img.icons8.com/ios-filled/customSize/customColor/campfire.png??campfire",
             "loopable": true
         }, {
             "category": "river",
             "sound": "river",
-            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/sea-waves.png??sea-waves",
+            "icon": "https://img.icons8.com/ios-filled/customSize/customColor/sea-waves.png??sea-waves",
             "loopable": true
         }, {
             "category": "weather",
             "sound": "rain_mild",
-            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/rain--v1.png??rain--v1",
+            "icon": "https://img.icons8.com/ios-filled/customSize/customColor/rain--v1.png??rain--v1",
             "loopable": true
         }, {
             "category": "weather",
             "sound": "rain_heavy",
-            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/torrential-rain--v1.png??torrential-rain--v1",
+            "icon": "https://img.icons8.com/ios-filled/customSize/customColor/torrential-rain--v1.png??torrential-rain--v1",
             "loopable": true
         }, {
             "category": "weather",
             "sound": "wind_strong",
-            "icon": "https://img.icons8.com/sf-black-filled/64/1A1A1A/wind.png??wind",
+            "icon": "https://img.icons8.com/sf-black-filled/customSize/customColor/wind.png??wind",
             "loopable": true
         }, {
             "category": "creature",
             "sound": "wolf_howl",
-            "icon": "https://img.icons8.com/glyph-neue/64/1A1A1A/wolf.png??wolf",
+            "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/wolf.png??wolf",
             "loopable": false
         }, {
             "category": "creature",
             "sound": "horse_neigh_intense",
-            "icon": "https://img.icons8.com/ios-glyphs/30/1A1A1A/horse.png??horse",
+            "icon": "https://img.icons8.com/ios-glyphs/customSize/customColor/horse.png??horse",
             "loopable": false
         }, {
             "category": "creature",
             "sound": "horse_galloping",
-            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/trotting-horse.png??trotting-horse",
+            "icon": "https://img.icons8.com/ios-filled/customSize/customColor/trotting-horse.png??trotting-horse",
             "loopable": true
         }, {
             "category": "effect",
             "sound": "water_splash",
-            "icon": "https://img.icons8.com/external-vitaliy-gorbachev-fill-vitaly-gorbachev/60/1A1A1A/external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev.png??external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev",
+            "icon": "https://img.icons8.com/external-vitaliy-gorbachev-fill-vitaly-gorbachev/customSize/customColor/external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev.png??external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev",
             "loopable": false
         }
     ]
