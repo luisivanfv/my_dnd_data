@@ -7,8 +7,13 @@
             "loopable": true
         }, {
             "category": "weather",
-            "sound": "rain",
+            "sound": "rain_mild",
             "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/rain--v1.png??rain--v1",
+            "loopable": false
+        }, {
+            "category": "weather",
+            "sound": "rain_strong",
+            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/torrential-rain--v1.png??torrential-rain--v1",
             "loopable": false
         }, {
             "category": "creature",
