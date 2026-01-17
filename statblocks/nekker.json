@@ -1,0 +1,61 @@
+{
+  "name": "Nekker",
+  "sounds": [],
+  "creatureType": "Small Humanoid, Neutral Evil",
+  "armorClass": "15 (natural agility)",
+  "hitPoints": "7 (2d6)",
+  "speed": "30 ft., burrow 10 ft.",
+  "str": "8",
+  "dex": "15",
+  "con": "10",
+  "int": "4",
+  "wis": "8",
+  "cha": "4",
+  "strSave": "-1",
+  "dexSave": "+2",
+  "conSave": "+0",
+  "intSave": "-3",
+  "wisSave": "-1",
+  "chaSave": "-3",
+  "savingThrows": "",
+  "skills": "Stealth +6",
+  "damageVulnerabilities": "",
+  "damageResistances": "",
+  "damageImmunities": "",
+  "conditionImmunities": "",
+  "senses": "Darkvision 60 ft., Passive Perception 9",
+  "languages": "Common",
+  "challenge": "1/4 (50 XP)",
+  "proficiencyBonus": "+2",
+  "description": "",
+  "passives": [
+    {
+      "name": "Nimble Escape",
+      "description": "The&nbsp;nekker can take the Disengage or Hide action as a bonus action on each of its turns.",
+      "sound": null
+    }, {
+      "name": "Pack Tactics",
+      "description": "The nekker has advantage on an attack roll against a creature if at least one of the nekker's allies is within 5 feet of the creature and the ally isn't incapacitated.",
+      "sound": null
+    }, {
+      "name": "Fear Of Fire",
+      "description": "If&nbsp;the&nbsp;nekker takes fire damage, it has disadvantage on attack rolls and saving throws until the end of its next turn. Additionally, it must succeed on a DC&nbsp;11&nbsp;Wisdom saving throw or be frightened until the end of its next turn.",
+      "sound": null
+    }
+  ],
+  "actions": [
+    {
+      "name": "Claws",
+      "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: &nbsp;3 (1d4 + 1) slashing damage.",
+      "sound": null
+    },
+    {
+      "name": "Rock Throw",
+      "description": "Ranged Weapon Attack: +3 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
+      "sound": null
+    }
+  ],
+  "reactions": [],
+  "bonusActions": [],
+  "legendaryActions": []
+}

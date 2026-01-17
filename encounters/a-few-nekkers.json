@@ -1,0 +1,14 @@
+{
+    "name": "A Few Nekkers",
+    "description": "Three nekkers attack the party.",
+    "recommendedLevel": 1,
+    "difficulty": "Easy",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Open Forest (Day)",
+        "Forest > Day > River (Day)",
+        "Forest > Night > River (Night)"
+    ],
+    "enemies": ["6-Nekker"],
+    "xp": 300
+}
