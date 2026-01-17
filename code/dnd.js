@@ -2248,7 +2248,7 @@ function initializeTableData() {
                 let idCounter = 1;
                 encounterData.enemies.forEach((enemy) => {
                     const numberOfEnemies = enemy.split('-')[0].trim()
-                    const typeOfEnemy = enemy.split('-')[1].trim().toLowerCase().replaceAll(' ', '-');
+                    const typeOfEnemy = enemy.split('-')[1].trim().toLowerCase().replaceAll(' ', '-').replaceAll("'", '');
                     console.log('typeOfEnemy');
                     console.log(typeOfEnemy);
                     const monsterInfo = JSON.parse(localStorage.getItem(`statblocks_${typeOfEnemy}.json`));
