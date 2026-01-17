@@ -1442,6 +1442,137 @@ async function loadSoundBoard() {
     // Object to track currently playing sounds
     const playingSounds = {};
     
+    // Object to store volume controls
+    const volumeControls = {};
+    
+    // Function to save volume to localStorage
+    const saveVolume = (soundId, volume) => {
+        const volumes = JSON.parse(localStorage.getItem('soundVolumes') || '{}');
+        volumes[soundId] = volume;
+        localStorage.setItem('soundVolumes', JSON.stringify(volumes));
+    };
+    
+    // Function to get volume from localStorage
+    const getVolume = (soundId) => {
+        const volumes = JSON.parse(localStorage.getItem('soundVolumes') || '{}');
+        return volumes[soundId] !== undefined ? volumes[soundId] : 1.0; // Default to 100%
+    };
+    
+    // Function to create volume indicator
+    const createVolumeIndicator = (button, currentVolume) => {
+        // Remove existing indicator if present
+        const existingIndicator = button.querySelector('.volume-indicator');
+        if (existingIndicator) {
+            existingIndicator.remove();
+        }
+        
+        // Create volume indicator container
+        const indicator = document.createElement('div');
+        indicator.className = 'volume-indicator';
+        indicator.style.cssText = `
+            position: absolute;
+            left: 100%;
+            top: 0;
+            margin-left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border-radius: 6px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+        `;
+        
+        // Create volume bar container
+        const volumeBarContainer = document.createElement('div');
+        volumeBarContainer.style.cssText = `
+            width: 80px;
+            height: 20px;
+            background: #555;
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        `;
+        
+        // Create volume fill
+        const volumeFill = document.createElement('div');
+        volumeFill.className = 'volume-fill';
+        volumeFill.style.cssText = `
+            height: 100%;
+            width: ${currentVolume * 100}%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.1s ease;
+        `;
+        
+        // Create volume percentage text
+        const volumeText = document.createElement('span');
+        volumeText.className = 'volume-text';
+        volumeText.style.cssText = `
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        `;
+        volumeText.textContent = `${Math.round(currentVolume * 100)}%`;
+        
+        // Assemble the indicator
+        volumeBarContainer.appendChild(volumeFill);
+        indicator.appendChild(volumeBarContainer);
+        indicator.appendChild(volumeText);
+        
+        // Add to button
+        button.style.position = 'relative';
+        button.appendChild(indicator);
+        
+        // Set timeout to remove indicator
+        const removeTimeout = setTimeout(() => {
+            if (indicator.parentElement) {
+                indicator.remove();
+            }
+        }, 1500); // Remove after 1.5 seconds
+        
+        // Store timeout reference
+        indicator.dataset.removeTimeout = removeTimeout;
+        
+        return {
+            indicator,
+            volumeFill,
+            volumeText
+        };
+    };
+    
+    // Function to update volume indicator
+    const updateVolumeIndicator = (button, volume) => {
+        const indicator = button.querySelector('.volume-indicator');
+        if (!indicator) return;
+        
+        // Reset removal timeout
+        if (indicator.dataset.removeTimeout) {
+            clearTimeout(parseInt(indicator.dataset.removeTimeout));
+        }
+        
+        const volumeFill = indicator.querySelector('.volume-fill');
+        const volumeText = indicator.querySelector('.volume-text');
+        
+        if (volumeFill) {
+            volumeFill.style.width = `${volume * 100}%`;
+        }
+        if (volumeText) {
+            volumeText.textContent = `${Math.round(volume * 100)}%`;
+        }
+        
+        // Set new timeout
+        const newTimeout = setTimeout(() => {
+            if (indicator.parentElement) {
+                indicator.remove();
+            }
+        }, 1500);
+        
+        indicator.dataset.removeTimeout = newTimeout;
+    };
+    
     // Function to stop all playing sounds
     const stopAllSounds = () => {
         Object.keys(playingSounds).forEach(soundId => {
@@ -1481,6 +1612,16 @@ async function loadSoundBoard() {
             const audio = new Audio(soundUrl);
             audio.loop = sound.loopable;
             
+            // Get saved volume or use default
+            const savedVolume = getVolume(sound.sound);
+            audio.volume = savedVolume;
+            
+            // Store audio reference
+            volumeControls[sound.sound] = {
+                audio: audio,
+                volume: savedVolume
+            };
+            
             // Create button
             const button = document.createElement('button');
             button.className = 'sound-button';
@@ -1499,6 +1640,67 @@ async function loadSoundBoard() {
             // Store audio reference on button
             button.dataset.audioId = sound.sound;
             
+            // Mouse wheel event for volume control
+            button.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const soundId = this.dataset.soundId;
+                const control = volumeControls[soundId];
+                if (!control) return;
+                
+                // Calculate new volume
+                let newVolume = control.volume;
+                if (e.deltaY < 0) {
+                    // Scrolling up - increase volume
+                    newVolume = Math.min(1.0, control.volume + 0.05);
+                } else {
+                    // Scrolling down - decrease volume
+                    newVolume = Math.max(0.0, control.volume - 0.05);
+                }
+                
+                // Update volume
+                control.volume = newVolume;
+                control.audio.volume = newVolume;
+                
+                // Save to localStorage
+                saveVolume(soundId, newVolume);
+                
+                // Update or create volume indicator
+                const existingIndicator = this.querySelector('.volume-indicator');
+                if (existingIndicator) {
+                    updateVolumeIndicator(this, newVolume);
+                } else {
+                    createVolumeIndicator(this, newVolume);
+                }
+                
+                // If audio is currently playing, update volume immediately
+                if (playingSounds[soundId]) {
+                    playingSounds[soundId].volume = newVolume;
+                }
+            });
+            
+            // Mouse enter/leave events for volume indicator
+            let indicatorTimeout;
+            button.addEventListener('mouseenter', function() {
+                // Clear any pending removal
+                if (indicatorTimeout) {
+                    clearTimeout(indicatorTimeout);
+                }
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                const indicator = this.querySelector('.volume-indicator');
+                if (indicator) {
+                    // Set removal timeout when mouse leaves
+                    indicatorTimeout = setTimeout(() => {
+                        if (indicator.parentElement) {
+                            indicator.remove();
+                        }
+                    }, 500);
+                }
+            });
+            
             // Left click to play/pause
             button.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1513,6 +1715,12 @@ async function loadSoundBoard() {
                     this.classList.remove('playing');
                     delete playingSounds[soundId];
                 } else {
+                    // Get volume from controls
+                    const control = volumeControls[soundId];
+                    if (control) {
+                        audio.volume = control.volume;
+                    }
+                    
                     // Play this sound (don't stop others)
                     audio.play();
                     playingSounds[soundId] = audio;
@@ -1546,7 +1754,7 @@ async function loadSoundBoard() {
             });
             
             // Add tooltip
-            button.title = `${sound.sound} (${sound.loopable ? 'Loopable' : 'Single play'})\nLeft click: Play/Pause\nRight click: Stop`;
+            button.title = `${sound.sound} (${sound.loopable ? 'Loopable' : 'Single play'})\nLeft click: Play/Pause\nRight click: Stop\nScroll wheel: Adjust volume`;
             
             buttonContainer.appendChild(button);
         });
@@ -1564,6 +1772,129 @@ async function loadSoundBoard() {
     container.insertBefore(stopAllButton, container.firstChild);
     
     soundboardContainer.appendChild(container);
+    
+    // Add CSS for volume indicator
+    const style = document.createElement('style');
+    style.textContent = `
+        .soundboard-container {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stop-all-button {
+            display: block;
+            margin: 0 auto 20px auto;
+            padding: 10px 20px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        
+        .stop-all-button:hover {
+            background-color: #cc0000;
+        }
+        
+        .category-container {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .category-container h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .sound-button {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sound-button:hover {
+            border-color: #1A1A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .sound-button.playing {
+            border-color: #4CAF50;
+            background-color: #f0fff0;
+        }
+        
+        .sound-button img {
+            display: block;
+        }
+        
+        /* Volume indicator styles */
+        .volume-indicator {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            margin-left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border-radius: 6px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .volume-indicator::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 6px solid rgba(0, 0, 0, 0.9);
+        }
+        
+        .volume-indicator .volume-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.1s ease;
+            border-radius: 2px;
+        }
+        
+        .volume-indicator .volume-text {
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+            font-family: monospace;
+        }
+    `;
+    document.head.appendChild(style);
 }
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
