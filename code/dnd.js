@@ -1579,7 +1579,7 @@ async function loadSoundBoard() {
         // Set volume from saved setting and apply main volume
         const control = volumeControls[sound.sound];
         if (control) {
-            const effectiveVolume = control.volume * mainVolume;
+            const effectiveVolume = Math.min(1.0, Math.max(0, control.volume * mainVolume));
             audio.volume = effectiveVolume;
         }
         
@@ -1906,7 +1906,7 @@ async function loadSoundBoard() {
             // Set volume from saved setting and apply main volume
             const control2 = volumeControls[sound.sound];
             if (control2) {
-                const effectiveVolume = control2.volume * mainVolume;
+                const effectiveVolume = Math.min(1.0, Math.max(0, control2.volume * mainVolume));
                 audio.volume = effectiveVolume;
             }
             
@@ -2064,7 +2064,7 @@ async function loadSoundBoard() {
                     
                     // Get volume from controls and apply main volume
                     if (control) {
-                        const effectiveVolume = control.volume * mainVolume;
+                        const effectiveVolume = Math.min(1.0, Math.max(0, control.volume * mainVolume));
                         newAudio.volume = effectiveVolume;
                     }
                     
