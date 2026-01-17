@@ -1,0 +1,12 @@
+{
+    "name": "Scoia'tael Stragglers",
+    "description": "Two Scoia'tael skirmishers apprentice attack the party",
+    "recommendedLevel": 1,
+    "difficulty": "Medium",
+    "location": "Forest",
+    "maps": [
+        "Forest > Day > Open Forest (Day)"
+    ],
+    "enemies": ["2-Scoia'tael Skirmisher"],
+    "xp": 3500
+}
