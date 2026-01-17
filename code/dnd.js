@@ -1442,6 +1442,18 @@ async function loadSoundBoard() {
     // Object to track category playback state
     const categoryPlayback = {};
     
+    // Main volume (global multiplier)
+    let mainVolume = 1.0;
+    const savedMainVolume = localStorage.getItem('mainVolume');
+    if (savedMainVolume !== null) {
+        mainVolume = parseFloat(savedMainVolume);
+    }
+    
+    // Function to save main volume to localStorage
+    const saveMainVolume = (volume) => {
+        localStorage.setItem('mainVolume', volume.toString());
+    };
+    
     // Function to save volume to localStorage
     const saveVolume = (soundId, volume) => {
         const volumes = JSON.parse(localStorage.getItem('soundVolumes') || '{}');
@@ -1452,7 +1464,7 @@ async function loadSoundBoard() {
     // Function to get volume from localStorage
     const getVolume = (soundId) => {
         const volumes = JSON.parse(localStorage.getItem('soundVolumes') || '{}');
-        return volumes[soundId] !== undefined ? volumes[soundId] : 1.0; // Default to 100%
+        return volumes[soundId] !== undefined ? volumes[soundId] : 1.0;
     };
     
     // Function to get all loopable sounds in a category
@@ -1490,6 +1502,26 @@ async function loadSoundBoard() {
         };
     };
     
+    // Function to stop sounds by their IDs
+    const stopSoundsByIds = (soundIds) => {
+        soundIds.forEach(soundId => {
+            if (playingSounds[soundId]) {
+                const audio = playingSounds[soundId];
+                audio.pause();
+                audio.currentTime = 0;
+                
+                const button = document.querySelector(`[data-sound-id="${soundId}"]`);
+                if (button) {
+                    button.classList.remove('playing');
+                    button.classList.remove('sequence-playing');
+                    button.dataset.hasSequenceListener = 'false';
+                }
+                
+                delete playingSounds[soundId];
+            }
+        });
+    };
+    
     // Function to stop category playback
     const stopCategoryPlayback = (category) => {
         if (categoryPlayback[category]) {
@@ -1502,7 +1534,7 @@ async function loadSoundBoard() {
                 const button = document.querySelector(`[data-sound-id="${currentSoundId}"]`);
                 if (button) {
                     button.classList.remove('playing');
-                    // Remove the sequence event listener
+                    button.classList.remove('sequence-playing');
                     button.dataset.hasSequenceListener = 'false';
                 }
                 
@@ -1514,6 +1546,27 @@ async function loadSoundBoard() {
         }
     };
     
+    // Function to stop all sounds in a category
+    const stopSoundsInCategory = (categoryName, excludeSoundId = null) => {
+        Object.keys(playingSounds).forEach(soundId => {
+            const control = volumeControls[soundId];
+            if (control && control.category === categoryName && soundId !== excludeSoundId) {
+                const audio = playingSounds[soundId];
+                audio.pause();
+                audio.currentTime = 0;
+                
+                const button = document.querySelector(`[data-sound-id="${soundId}"]`);
+                if (button) {
+                    button.classList.remove('playing');
+                    button.classList.remove('sequence-playing');
+                    button.dataset.hasSequenceListener = 'false';
+                }
+                
+                delete playingSounds[soundId];
+            }
+        });
+    };
+    
     // Function to play a specific sound in a category sequence
     const playSoundInCategorySequence = (category, sound, index) => {
         const button = document.querySelector(`[data-sound-id="${sound.sound}"]`);
@@ -1523,21 +1576,20 @@ async function loadSoundBoard() {
         const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
         const audio = new Audio(soundUrl);
         
-        // Set volume from saved setting
+        // Set volume from saved setting and apply main volume
         const control = volumeControls[sound.sound];
         if (control) {
-            audio.volume = control.volume;
+            const effectiveVolume = control.volume * mainVolume;
+            audio.volume = effectiveVolume;
         }
         
-        // IMPORTANT: Disable loop for sequence sounds
+        // Disable loop for sequence sounds
         audio.loop = false;
         
         // Remove any existing sequence listener from this button
         if (button.dataset.hasSequenceListener === 'true') {
-            // Clone and replace button to remove event listeners
             const newButton = button.cloneNode(true);
             button.parentNode.replaceChild(newButton, button);
-            // We'll set up the new listener below
         }
         
         // Play the sound
@@ -1612,7 +1664,7 @@ async function loadSoundBoard() {
     };
     
     // Function to create volume indicator
-    const createVolumeIndicator = (button, currentVolume) => {
+    const createVolumeIndicator = (button, currentVolume, isMainVolume = false) => {
         // Remove existing indicator if present
         const existingIndicator = button.querySelector('.volume-indicator');
         if (existingIndicator) {
@@ -1654,7 +1706,7 @@ async function loadSoundBoard() {
         volumeFill.style.cssText = `
             height: 100%;
             width: ${currentVolume * 100}%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            background: linear-gradient(90deg, ${isMainVolume ? '#FF9800, #FFB74D' : '#4CAF50, #8BC34A'});
             transition: width 0.1s ease;
         `;
         
@@ -1697,7 +1749,7 @@ async function loadSoundBoard() {
     };
     
     // Function to update volume indicator
-    const updateVolumeIndicator = (button, volume) => {
+    const updateVolumeIndicator = (button, volume, isMainVolume = false) => {
         const indicator = button.querySelector('.volume-indicator');
         if (!indicator) return;
         
@@ -1711,6 +1763,7 @@ async function loadSoundBoard() {
         
         if (volumeFill) {
             volumeFill.style.width = `${volume * 100}%`;
+            volumeFill.style.background = `linear-gradient(90deg, ${isMainVolume ? '#FF9800, #FFB74D' : '#4CAF50, #8BC34A'})`;
         }
         if (volumeText) {
             volumeText.textContent = `${Math.round(volume * 100)}%`;
@@ -1724,6 +1777,17 @@ async function loadSoundBoard() {
         }, 1500);
         
         indicator.dataset.removeTimeout = newTimeout;
+    };
+    
+    // Function to update all playing sounds' volumes with main volume
+    const updateAllPlayingVolumes = () => {
+        Object.keys(playingSounds).forEach(soundId => {
+            const audio = playingSounds[soundId];
+            const control = volumeControls[soundId];
+            if (audio && control) {
+                audio.volume = control.volume * mainVolume;
+            }
+        });
     };
     
     // Function to stop all playing sounds
@@ -1761,11 +1825,25 @@ async function loadSoundBoard() {
         
         // Initialize volume controls for each sound
         category.sounds.forEach(sound => {
+            // Get initial volume from sound property (0-100, convert to 0-1)
+            const initialVolume = sound.initialVolume !== undefined ? 
+                Math.min(100, Math.max(0, sound.initialVolume)) / 100 : 1.0;
+            
+            // Get saved volume or use initial volume
             const savedVolume = getVolume(sound.sound);
+            const finalVolume = savedVolume !== 1.0 ? savedVolume : initialVolume;
+            
+            // Save initial volume if it's different from default
+            if (initialVolume !== 1.0 && savedVolume === 1.0) {
+                saveVolume(sound.sound, initialVolume);
+            }
+            
             volumeControls[sound.sound] = {
-                volume: savedVolume,
+                volume: finalVolume,
                 isInSequence: sound.loopWithinCategory || false,
-                category: category.name
+                category: category.name,
+                exclusiveInCategory: sound.exclusiveInCategory || false,
+                exclusiveWith: sound.exclusiveWith || []
             };
         });
     });
@@ -1825,10 +1903,11 @@ async function loadSoundBoard() {
             const audio = new Audio(soundUrl);
             audio.loop = sound.loopable;
             
-            // Set volume from saved setting
+            // Set volume from saved setting and apply main volume
             const control = volumeControls[sound.sound];
             if (control) {
-                audio.volume = control.volume;
+                const effectiveVolume = control.volume * mainVolume;
+                audio.volume = effectiveVolume;
             }
             
             // Create button
@@ -1837,9 +1916,15 @@ async function loadSoundBoard() {
             button.dataset.soundId = sound.sound;
             button.dataset.category = category.name;
             
-            // Add sequence indicator to button if applicable
+            // Add indicators based on properties
             if (sound.loopWithinCategory) {
                 button.dataset.inSequence = 'true';
+            }
+            if (sound.exclusiveInCategory) {
+                button.dataset.exclusiveCategory = 'true';
+            }
+            if (sound.exclusiveWith && sound.exclusiveWith.length > 0) {
+                button.dataset.exclusiveWith = JSON.stringify(sound.exclusiveWith);
             }
             
             // Process icon URL
@@ -1903,9 +1988,9 @@ async function loadSoundBoard() {
                 // Save to localStorage
                 saveVolume(soundId, newVolume);
                 
-                // Update audio volume if it exists
+                // Update audio volume if it exists (with main volume)
                 if (playingSounds[soundId]) {
-                    playingSounds[soundId].volume = newVolume;
+                    playingSounds[soundId].volume = newVolume * mainVolume;
                 }
                 
                 // Update or create volume indicator
@@ -1962,13 +2047,25 @@ async function loadSoundBoard() {
                     this.classList.remove('sequence-playing');
                     delete playingSounds[soundId];
                 } else {
+                    // Handle exclusive behaviors BEFORE playing
+                    if (control?.exclusiveInCategory) {
+                        // Stop all other sounds in the same category
+                        stopSoundsInCategory(category.name, soundId);
+                    }
+                    
+                    // Handle exclusiveWith sounds
+                    if (control?.exclusiveWith && control.exclusiveWith.length > 0) {
+                        stopSoundsByIds(control.exclusiveWith);
+                    }
+                    
                     // Create a fresh audio element
                     const newAudio = new Audio(soundUrl);
                     newAudio.loop = sound.loopable;
                     
-                    // Get volume from controls
+                    // Get volume from controls and apply main volume
                     if (control) {
-                        newAudio.volume = control.volume;
+                        const effectiveVolume = control.volume * mainVolume;
+                        newAudio.volume = effectiveVolume;
                     }
                     
                     // Play this sound
@@ -2016,14 +2113,32 @@ async function loadSoundBoard() {
             // Build tooltip
             let tooltipText = `${sound.sound}`;
             
-            if (sound.loopWithinCategory) {
-                tooltipText += ' (Part of category sequence)';
-            } else if (sound.loopable) {
-                tooltipText += ' (Loopable)';
-            } else {
-                tooltipText += ' (Single play)';
+            // Add volume info
+            const control = volumeControls[sound.sound];
+            if (control) {
+                tooltipText += `\nVolume: ${Math.round(control.volume * 100)}%`;
             }
             
+            // Add property info
+            const properties = [];
+            if (sound.loopWithinCategory) {
+                properties.push('Part of category sequence');
+            }
+            if (sound.loopable) {
+                properties.push('Loopable');
+            }
+            if (sound.exclusiveInCategory) {
+                properties.push('Exclusive in category');
+            }
+            if (sound.exclusiveWith && sound.exclusiveWith.length > 0) {
+                properties.push(`Exclusive with: ${sound.exclusiveWith.join(', ')}`);
+            }
+            
+            if (properties.length > 0) {
+                tooltipText += '\n' + properties.join(' • ');
+            }
+            
+            // Add controls info
             tooltipText += '\nLeft click: Play/Pause';
             tooltipText += '\nRight click: Stop';
             tooltipText += '\nScroll wheel: Adjust volume';
@@ -2037,13 +2152,90 @@ async function loadSoundBoard() {
         container.appendChild(categoryDiv);
     });
     
-    // Add a "Stop All" button at the top
+    // Create main volume control section
+    const mainVolumeContainer = document.createElement('div');
+    mainVolumeContainer.className = 'main-volume-container';
+    mainVolumeContainer.style.cssText = `
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    `;
+    
+    const mainVolumeLabel = document.createElement('div');
+    mainVolumeLabel.textContent = `Main Volume: ${Math.round(mainVolume * 100)}%`;
+    mainVolumeLabel.style.cssText = `
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 14px;
+    `;
+    mainVolumeContainer.appendChild(mainVolumeLabel);
+    
     const stopAllButton = document.createElement('button');
     stopAllButton.textContent = '⏹️ Stop All Sounds';
     stopAllButton.className = 'stop-all-button';
+    stopAllButton.title = `Left click: Stop all sounds\nScroll wheel: Adjust main volume (currently ${Math.round(mainVolume * 100)}%)`;
+    
+    // Mouse wheel on stop button adjusts main volume
+    stopAllButton.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Calculate new main volume
+        let newMainVolume = mainVolume;
+        if (e.deltaY < 0) {
+            // Scrolling up - increase volume
+            newMainVolume = Math.min(2.0, mainVolume + 0.05); // Allow up to 200%
+        } else {
+            // Scrolling down - decrease volume
+            newMainVolume = Math.max(0.0, mainVolume - 0.05);
+        }
+        
+        // Update main volume
+        mainVolume = newMainVolume;
+        saveMainVolume(mainVolume);
+        
+        // Update all playing sounds
+        updateAllPlayingVolumes();
+        
+        // Update label
+        mainVolumeLabel.textContent = `Main Volume: ${Math.round(mainVolume * 100)}%`;
+        stopAllButton.title = `Left click: Stop all sounds\nScroll wheel: Adjust main volume (currently ${Math.round(mainVolume * 100)}%)`;
+        
+        // Update or create volume indicator
+        const existingIndicator = this.querySelector('.volume-indicator');
+        if (existingIndicator) {
+            updateVolumeIndicator(this, newMainVolume, true);
+        } else {
+            createVolumeIndicator(this, newMainVolume, true);
+        }
+    });
+    
+    // Left click still stops all sounds
     stopAllButton.addEventListener('click', stopAllSounds);
-    stopAllButton.title = 'Stop all currently playing sounds';
-    container.insertBefore(stopAllButton, container.firstChild);
+    
+    // Mouse enter/leave for main volume indicator
+    let mainVolumeIndicatorTimeout;
+    stopAllButton.addEventListener('mouseenter', function() {
+        if (mainVolumeIndicatorTimeout) {
+            clearTimeout(mainVolumeIndicatorTimeout);
+        }
+    });
+    
+    stopAllButton.addEventListener('mouseleave', function() {
+        const indicator = this.querySelector('.volume-indicator');
+        if (indicator) {
+            mainVolumeIndicatorTimeout = setTimeout(() => {
+                if (indicator.parentElement) {
+                    indicator.remove();
+                }
+            }, 500);
+        }
+    });
+    
+    mainVolumeContainer.appendChild(stopAllButton);
+    container.insertBefore(mainVolumeContainer, container.firstChild);
     
     soundboardContainer.appendChild(container);
     
@@ -2056,22 +2248,33 @@ async function loadSoundBoard() {
             margin: 0 auto;
         }
         
+        .main-volume-container {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        
         .stop-all-button {
             display: block;
-            margin: 0 auto 20px auto;
+            margin: 0 auto;
             padding: 10px 20px;
-            background-color: #ff4444;
+            background-color: #ff9800;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
             font-weight: bold;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
+            position: relative;
         }
         
         .stop-all-button:hover {
-            background-color: #cc0000;
+            background-color: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .category-container {
@@ -2162,6 +2365,14 @@ async function loadSoundBoard() {
             border-color: #9C27B0;
         }
         
+        .sound-button[data-exclusive-category="true"] {
+            border-left: 4px solid #FF5722;
+        }
+        
+        .sound-button[data-exclusive-with] {
+            border-right: 4px solid #FF5722;
+        }
+        
         .sound-button img {
             display: block;
         }
@@ -2192,13 +2403,12 @@ async function loadSoundBoard() {
             width: 0;
             height: 0;
             border-top: 6px solid transparent;
-            border-bottom: 6px transparent;
+            border-bottom: 6px solid transparent;
             border-right: 6px solid rgba(0, 0, 0, 0.9);
         }
         
         .volume-indicator .volume-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
             transition: width 0.1s ease;
             border-radius: 2px;
         }

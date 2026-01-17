@@ -7,12 +7,18 @@
                     "sound": "campfire",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/campfire.png??campfire",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }, {
                     "sound": "river",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/sea-waves.png??sea-waves",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -22,17 +28,26 @@
                     "sound": "rain_mild",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/rain--v1.png??rain--v1",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": ["rain_heavy"]
                 }, {
                     "sound": "rain_heavy",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/torrential-rain--v1.png??torrential-rain--v1",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": ["rain_mild"]
                 }, {
                     "sound": "wind_strong",
                     "icon": "https://img.icons8.com/sf-black-filled/customSize/customColor/wind.png??wind",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -42,17 +57,26 @@
                     "sound": "wolf_howl",
                     "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/wolf.png??wolf",
                     "loopable": false,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }, {
                     "sound": "horse_neigh_intense",
                     "icon": "https://img.icons8.com/ios-glyphs/customSize/customColor/horse.png??horse",
                     "loopable": false,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }, {
                     "sound": "horse_galloping",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/trotting-horse.png??trotting-horse",
                     "loopable": true,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -62,7 +86,10 @@
                     "sound": "water_splash",
                     "icon": "https://img.icons8.com/external-vitaliy-gorbachev-fill-vitaly-gorbachev/customSize/customColor/external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev.png??external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev",
                     "loopable": false,
-                    "loopWithinCategory": false
+                    "loopWithinCategory": false,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": false,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -72,12 +99,18 @@
                     "sound": "music_DrinkUpTheresMore",
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/dancing.png??dancing",
                     "loopable": true,
-                    "loopWithinCategory": true
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
                 }, {
                     "sound": "music_AnotherRoundForEveryone",
                     "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/dancing.png??dancing",
                     "loopable": true,
-                    "loopWithinCategory": true
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
                 }
             ]
         }
