@@ -1421,6 +1421,9 @@ function handleImagePreviewMouseEnter(event, previewId, url, txt) {
     }, 0);
 }
 async function loadSoundBoard() {
+    const soundboardContainer = document.getElementById('soundboard-container');
+    if (!soundboardContainer)
+        return null;
     const jsonData = JSON.parse(localStorage.getItem('soundboard'));
     // Create a container div
     const container = document.createElement('div');
@@ -1548,7 +1551,7 @@ async function loadSoundBoard() {
         container.appendChild(categoryDiv);
     });
     
-    document.getElementById('soundboard-container').appendChild(container);
+    soundboardContainer.appendChild(container);
 }
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
