@@ -3756,7 +3756,7 @@ function convertToEncounterTable() {
                 if (data.type === 'creature' || data.type === 'monster') {
                     const link = document.createElement('a');
                     link.className = 'lazy-preview-link';
-                    const creatureSlug = data.sourceKey.replaceAll(' ', '-').toLowerCase();
+                    const creatureSlug = data.sourceKey.replaceAll(' ', '-').replaceAll("'", '').toLowerCase();
                     link.href = `creature?name=${creatureSlug}`;
                     link.setAttribute('data-url', `creature?name=${creatureSlug}`);
                     link.setAttribute('data-text', toPrettyListName(creatureSlug));
