@@ -12,8 +12,8 @@
     }
   ],
   "creatureType": "Medium Humanoid (Elf), Any Alignment",
-  "armorClass": "10 (2d12)",
-  "hitPoints": "",
+  "armorClass": "13 (leather armor)",
+  "hitPoints": "13 (2d12)",
   "speed": "30 ft.",
   "str": "9",
   "dex": "12",
