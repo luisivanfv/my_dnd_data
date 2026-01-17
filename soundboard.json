@@ -1,0 +1,20 @@
+{
+    "sounds": [
+        {
+            "category": "ambience",
+            "sound": "campfire",
+            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/campfire.png??campfire",
+            "loopable": true
+        }, {
+            "category": "weather",
+            "sound": "rain",
+            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/rain--v1.png??rain--v1",
+            "loopable": false
+        }, {
+            "category": "creature",
+            "sound": "wolf_howl",
+            "icon": "https://img.icons8.com/glyph-neue/64/1A1A1A/wolf.png??wolf",
+            "loopable": false
+        }
+    ]
+}

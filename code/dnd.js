@@ -1419,6 +1419,136 @@ function handleImagePreviewMouseEnter(event, previewId, url, txt) {
         window.imagePreviewState.isPreviewVisible = true;
     }, 0);
 }
+async function loadSoundBoard() {
+    const jsonData = JSON.parse(localStorage.getItem('soundboard'));
+    // Create a container div
+    const container = document.createElement('div');
+    container.className = 'soundboard-container';
+    
+    // Group sounds by category
+    const categories = {};
+    
+    jsonData.sounds.forEach(sound => {
+        if (!categories[sound.category]) {
+            categories[sound.category] = [];
+        }
+        categories[sound.category].push(sound);
+    });
+    
+    // Object to track currently playing sounds
+    const playingSounds = {};
+    
+    // Create category sections
+    Object.keys(categories).forEach(category => {
+        // Create category container
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category-container';
+        
+        // Add category title
+        const categoryTitle = document.createElement('h3');
+        categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+        categoryDiv.appendChild(categoryTitle);
+        
+        // Create button container for this category
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'button-container';
+        
+        // Create buttons for each sound in this category
+        categories[category].forEach(sound => {
+            // Create sound URL
+            const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
+            
+            // Create audio element
+            const audio = new Audio(soundUrl);
+            audio.loop = sound.loopable;
+            
+            // Create button
+            const button = document.createElement('button');
+            button.className = 'sound-button';
+            button.dataset.soundId = sound.sound;
+            
+            // Create icon
+            const icon = document.createElement('img');
+            icon.width = 50;
+            icon.height = 50;
+            icon.src = sound.icon.split('?')[0]; // Remove query parameters if present
+            icon.alt = sound.sound;
+            
+            // Add icon to button
+            button.appendChild(icon);
+            
+            // Store audio reference on button
+            button.dataset.audioId = sound.sound;
+            
+            // Left click to play/pause
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const soundId = this.dataset.soundId;
+                const currentAudio = playingSounds[soundId];
+                
+                if (currentAudio && !currentAudio.paused) {
+                    // Pause if already playing
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    this.classList.remove('playing');
+                    delete playingSounds[soundId];
+                } else {
+                    // Stop other sounds
+                    Object.keys(playingSounds).forEach(id => {
+                        if (id !== soundId) {
+                            playingSounds[id].pause();
+                            playingSounds[id].currentTime = 0;
+                            const otherButton = document.querySelector(`[data-sound-id="${id}"]`);
+                            if (otherButton) otherButton.classList.remove('playing');
+                            delete playingSounds[id];
+                        }
+                    });
+                    
+                    // Play this sound
+                    audio.play();
+                    playingSounds[soundId] = audio;
+                    this.classList.add('playing');
+                    
+                    // Handle when sound ends (for non-loopable sounds)
+                    if (!sound.loopable) {
+                        const onEnded = () => {
+                            this.classList.remove('playing');
+                            delete playingSounds[soundId];
+                            audio.removeEventListener('ended', onEnded);
+                        };
+                        audio.addEventListener('ended', onEnded, { once: true });
+                    }
+                }
+            });
+            
+            // Right click to stop
+            button.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                
+                const soundId = this.dataset.soundId;
+                const currentAudio = playingSounds[soundId];
+                
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    this.classList.remove('playing');
+                    delete playingSounds[soundId];
+                }
+            });
+            
+            // Add tooltip
+            button.title = `${sound.sound} (${sound.loopable ? 'Loopable' : 'Single play'})\nLeft click: Play/Pause\nRight click: Stop`;
+            
+            buttonContainer.appendChild(button);
+        });
+        
+        categoryDiv.appendChild(buttonContainer);
+        container.appendChild(categoryDiv);
+    });
+    
+    document.getElementById('soundboard-container').appendChild(container);
+}
 async function getSoundboardForCreature(sounds) {
     if (!sounds) return '';
     let html = '';

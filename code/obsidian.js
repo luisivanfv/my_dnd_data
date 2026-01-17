@@ -226,11 +226,16 @@ async function loadAllReplacementsToStorage() {
     
     localStorage.setItem('allReplacements', JSON.stringify(result));
 }
+async function loadSoundboard() {
+    console.log('Loading soundboard...');
+    localStorage.setItem('soundboard', JSON.stringify(await getJson('soundboard.json')));
+}
 async function loadAllStorageData() {
     localStorage.clear();
     await loadAllReplacementsToStorage();
     await loadDirectoriesToStorage();
     await loadAllCreatures();
+    await loadSoundboard();
     console.log('Local storage:');
     console.log(localStorage);
 }
