@@ -1786,7 +1786,7 @@ async function loadSoundBoard() {
             display: block;
             margin: 0 auto 20px auto;
             padding: 10px 20px;
-            background-color: #ff4444;
+            background-color: #601414ff;
             color: white;
             border: none;
             border-radius: 5px;
@@ -1797,13 +1797,13 @@ async function loadSoundBoard() {
         }
         
         .stop-all-button:hover {
-            background-color: #cc0000;
+            background-color: #701313ff;
         }
         
         .category-container {
             margin-bottom: 30px;
             padding: 15px;
-            background-color: #f5f5f5;
+            background-color: #3b3b3bff;
             border-radius: 8px;
         }
         
@@ -1811,7 +1811,7 @@ async function loadSoundBoard() {
             margin-top: 0;
             margin-bottom: 15px;
             color: #333;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 2px solid #333333ff;
             padding-bottom: 5px;
         }
         
@@ -1823,7 +1823,7 @@ async function loadSoundBoard() {
         
         .sound-button {
             background: white;
-            border: 2px solid #ddd;
+            border: 2px solid #1d1d1dff;
             border-radius: 8px;
             padding: 10px;
             cursor: pointer;
@@ -1834,14 +1834,14 @@ async function loadSoundBoard() {
         }
         
         .sound-button:hover {
-            border-color: #1A1A1A;
+            border-color: #272727ff;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .sound-button.playing {
-            border-color: #4CAF50;
-            background-color: #f0fff0;
+            border-color: #3b7e3eff;
+            background-color: #464f46ff;
         }
         
         .sound-button img {

@@ -6,19 +6,44 @@
             "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/campfire.png??campfire",
             "loopable": true
         }, {
+            "category": "river",
+            "sound": "river",
+            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/sea-waves.png??sea-waves",
+            "loopable": true
+        }, {
             "category": "weather",
             "sound": "rain_mild",
             "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/rain--v1.png??rain--v1",
-            "loopable": false
+            "loopable": true
         }, {
             "category": "weather",
-            "sound": "rain_strong",
+            "sound": "rain_heavy",
             "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/torrential-rain--v1.png??torrential-rain--v1",
-            "loopable": false
+            "loopable": true
+        }, {
+            "category": "weather",
+            "sound": "wind_strong",
+            "icon": "https://img.icons8.com/sf-black-filled/64/1A1A1A/wind.png??wind",
+            "loopable": true
         }, {
             "category": "creature",
             "sound": "wolf_howl",
             "icon": "https://img.icons8.com/glyph-neue/64/1A1A1A/wolf.png??wolf",
+            "loopable": false
+        }, {
+            "category": "creature",
+            "sound": "horse_neigh_intense",
+            "icon": "https://img.icons8.com/ios-glyphs/30/1A1A1A/horse.png??horse",
+            "loopable": false
+        }, {
+            "category": "creature",
+            "sound": "horse_galloping",
+            "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/trotting-horse.png??trotting-horse",
+            "loopable": true
+        }, {
+            "category": "effect",
+            "sound": "water_splash",
+            "icon": "https://img.icons8.com/external-vitaliy-gorbachev-fill-vitaly-gorbachev/60/1A1A1A/external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev.png??external-splash-aqua-park-vitaliy-gorbachev-fill-vitaly-gorbachev",
             "loopable": false
         }
     ]
