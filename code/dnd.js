@@ -1442,6 +1442,21 @@ async function loadSoundBoard() {
     // Object to track currently playing sounds
     const playingSounds = {};
     
+    // Function to stop all playing sounds
+    const stopAllSounds = () => {
+        Object.keys(playingSounds).forEach(soundId => {
+            const audio = playingSounds[soundId];
+            audio.pause();
+            audio.currentTime = 0;
+            
+            const button = document.querySelector(`[data-sound-id="${soundId}"]`);
+            if (button) button.classList.remove('playing');
+        });
+        
+        // Clear the playingSounds object
+        Object.keys(playingSounds).forEach(key => delete playingSounds[key]);
+    };
+    
     // Create category sections
     Object.keys(categories).forEach(category => {
         // Create category container
@@ -1460,7 +1475,7 @@ async function loadSoundBoard() {
         // Create buttons for each sound in this category
         categories[category].forEach(sound => {
             // Create sound URL
-            const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
+            const soundUrl = `${repositoryUrl}/sounds/${sound.sound}.mp3`;
             
             // Create audio element
             const audio = new Audio(soundUrl);
@@ -1498,18 +1513,7 @@ async function loadSoundBoard() {
                     this.classList.remove('playing');
                     delete playingSounds[soundId];
                 } else {
-                    // Stop other sounds
-                    Object.keys(playingSounds).forEach(id => {
-                        if (id !== soundId) {
-                            playingSounds[id].pause();
-                            playingSounds[id].currentTime = 0;
-                            const otherButton = document.querySelector(`[data-sound-id="${id}"]`);
-                            if (otherButton) otherButton.classList.remove('playing');
-                            delete playingSounds[id];
-                        }
-                    });
-                    
-                    // Play this sound
+                    // Play this sound (don't stop others)
                     audio.play();
                     playingSounds[soundId] = audio;
                     this.classList.add('playing');
@@ -1550,6 +1554,14 @@ async function loadSoundBoard() {
         categoryDiv.appendChild(buttonContainer);
         container.appendChild(categoryDiv);
     });
+    
+    // Add a "Stop All" button at the top
+    const stopAllButton = document.createElement('button');
+    stopAllButton.textContent = '⏹️ Stop All Sounds';
+    stopAllButton.className = 'stop-all-button';
+    stopAllButton.addEventListener('click', stopAllSounds);
+    stopAllButton.title = 'Stop all currently playing sounds';
+    container.insertBefore(stopAllButton, container.firstChild);
     
     soundboardContainer.appendChild(container);
 }
