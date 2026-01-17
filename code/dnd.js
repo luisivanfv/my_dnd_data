@@ -1465,16 +1465,29 @@ async function loadSoundBoard() {
         );
     };
     
+    // Function to get a random sound from sequence (for random starting point)
+    const getRandomSoundFromSequence = (sequence) => {
+        if (!sequence || sequence.length === 0) return null;
+        const randomIndex = Math.floor(Math.random() * sequence.length);
+        return {
+            sound: sequence[randomIndex],
+            index: randomIndex
+        };
+    };
+    
     // Function to get next sound in category sequence
     const getNextSoundInCategorySequence = (category, currentSoundId) => {
-        const sequence = categorySequences[category];
-        if (!sequence || sequence.length === 0) return null;
+        const playback = categoryPlayback[category];
+        if (!playback || !playback.sequence || playback.sequence.length === 0) return null;
         
-        const currentIndex = sequence.findIndex(sound => sound.sound === currentSoundId);
-        if (currentIndex === -1) return sequence[0];
+        const currentIndex = playback.sequence.findIndex(sound => sound.sound === currentSoundId);
+        if (currentIndex === -1) return playback.sequence[0];
         
-        const nextIndex = (currentIndex + 1) % sequence.length;
-        return sequence[nextIndex];
+        const nextIndex = (currentIndex + 1) % playback.sequence.length;
+        return {
+            sound: playback.sequence[nextIndex],
+            index: nextIndex
+        };
     };
     
     // Function to stop category playback
@@ -1487,51 +1500,115 @@ async function loadSoundBoard() {
                 audio.currentTime = 0;
                 
                 const button = document.querySelector(`[data-sound-id="${currentSoundId}"]`);
-                if (button) button.classList.remove('playing');
+                if (button) {
+                    button.classList.remove('playing');
+                    // Remove the sequence event listener
+                    button.dataset.hasSequenceListener = 'false';
+                }
                 
                 delete playingSounds[currentSoundId];
             }
             
-            clearInterval(categoryPlayback[category].intervalId);
+            clearTimeout(categoryPlayback[category].nextSoundTimeout);
             delete categoryPlayback[category];
         }
     };
     
-    // Function to start category sequence playback
-    const startCategorySequence = (category, startSound = null) => {
+    // Function to play a specific sound in a category sequence
+    const playSoundInCategorySequence = (category, sound, index) => {
+        const button = document.querySelector(`[data-sound-id="${sound.sound}"]`);
+        if (!button) return;
+        
+        // Create a fresh audio element to avoid loop interference
+        const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
+        const audio = new Audio(soundUrl);
+        
+        // Set volume from saved setting
+        const control = volumeControls[sound.sound];
+        if (control) {
+            audio.volume = control.volume;
+        }
+        
+        // IMPORTANT: Disable loop for sequence sounds
+        audio.loop = false;
+        
+        // Remove any existing sequence listener from this button
+        if (button.dataset.hasSequenceListener === 'true') {
+            // Clone and replace button to remove event listeners
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            // We'll set up the new listener below
+        }
+        
+        // Play the sound
+        audio.play();
+        playingSounds[sound.sound] = audio;
+        
+        // Update category playback state
+        categoryPlayback[category].currentSoundId = sound.sound;
+        categoryPlayback[category].currentIndex = index;
+        
+        // Update button appearance
+        const currentButton = document.querySelector(`[data-sound-id="${sound.sound}"]`);
+        if (currentButton) {
+            currentButton.classList.add('playing');
+            currentButton.classList.add('sequence-playing');
+        }
+        
+        // Set up ending handler
+        const onEnded = () => {
+            // Clean up current sound
+            if (playingSounds[sound.sound]) {
+                delete playingSounds[sound.sound];
+            }
+            
+            const currentButton = document.querySelector(`[data-sound-id="${sound.sound}"]`);
+            if (currentButton) {
+                currentButton.classList.remove('playing');
+                currentButton.classList.remove('sequence-playing');
+                currentButton.dataset.hasSequenceListener = 'false';
+            }
+            
+            // Play next sound in sequence after a short delay
+            if (categoryPlayback[category]) {
+                const nextSound = getNextSoundInCategorySequence(category, sound.sound);
+                if (nextSound) {
+                    categoryPlayback[category].nextSoundTimeout = setTimeout(() => {
+                        playSoundInCategorySequence(category, nextSound.sound, nextSound.index);
+                    }, 500); // 500ms delay between sounds
+                }
+            }
+        };
+        
+        audio.addEventListener('ended', onEnded, { once: true });
+        
+        // Mark button as having sequence listener
+        if (currentButton) {
+            currentButton.dataset.hasSequenceListener = 'true';
+        }
+    };
+    
+    // Function to start category sequence playback with random starting point
+    const startCategorySequence = (category) => {
         // Stop any existing category playback
         stopCategoryPlayback(category);
         
         const sequence = categorySequences[category];
         if (!sequence || sequence.length === 0) return;
         
-        // Find starting sound
-        let startIndex = 0;
-        if (startSound) {
-            const foundIndex = sequence.findIndex(s => s.sound === startSound.sound);
-            if (foundIndex !== -1) startIndex = foundIndex;
-        }
+        // Get random starting sound
+        const randomStart = getRandomSoundFromSequence(sequence);
         
-        // Play the first sound
-        const firstSound = sequence[startIndex];
-        const firstButton = document.querySelector(`[data-sound-id="${firstSound.sound}"]`);
+        // Set up category playback tracking
+        categoryPlayback[category] = {
+            sequence: sequence,
+            currentSoundId: randomStart.sound.sound,
+            currentIndex: randomStart.index,
+            nextSoundTimeout: null
+        };
         
-        if (firstButton) {
-            // Set up category playback tracking
-            categoryPlayback[category] = {
-                currentSoundId: firstSound.sound,
-                intervalId: null,
-                sequence: sequence
-            };
-            
-            // Simulate click on the first sound
-            const clickEvent = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            firstButton.dispatchEvent(clickEvent);
-        }
+        // Play the random starting sound
+        playSoundInCategorySequence(category, randomStart.sound, randomStart.index);
     };
     
     // Function to create volume indicator
@@ -1663,7 +1740,11 @@ async function loadSoundBoard() {
             audio.currentTime = 0;
             
             const button = document.querySelector(`[data-sound-id="${soundId}"]`);
-            if (button) button.classList.remove('playing');
+            if (button) {
+                button.classList.remove('playing');
+                button.classList.remove('sequence-playing');
+                button.dataset.hasSequenceListener = 'false';
+            }
         });
         
         // Clear the playingSounds object
@@ -1709,7 +1790,7 @@ async function loadSoundBoard() {
             const sequenceIndicator = document.createElement('span');
             sequenceIndicator.className = 'sequence-indicator';
             sequenceIndicator.textContent = ' 🔄';
-            sequenceIndicator.title = `Click to play all ${categorySequences[category.name].length} sounds in sequence`;
+            sequenceIndicator.title = `Click to play ${categorySequences[category.name].length} sounds in random sequence`;
             categoryTitle.appendChild(sequenceIndicator);
             
             // Make the entire category title clickable for sequence playback
@@ -1721,7 +1802,7 @@ async function loadSoundBoard() {
                     stopCategoryPlayback(category.name);
                     this.classList.remove('playing');
                 } else {
-                    // Start the category sequence
+                    // Start the category sequence with random starting point
                     startCategorySequence(category.name);
                     this.classList.add('playing');
                 }
@@ -1740,7 +1821,7 @@ async function loadSoundBoard() {
             // Create sound URL
             const soundUrl = `${githubRoot}/sound_effects/${sound.sound}.mp3`;
             
-            // Create audio element
+            // Create audio element (will be recreated for sequence playback)
             const audio = new Audio(soundUrl);
             audio.loop = sound.loopable;
             
@@ -1866,67 +1947,44 @@ async function loadSoundBoard() {
                 const currentAudio = playingSounds[soundId];
                 const control = volumeControls[soundId];
                 
+                // If category sequence is playing and this is a sequence sound, stop the sequence first
+                if (categoryPlayback[category.name] && control?.isInSequence) {
+                    stopCategoryPlayback(category.name);
+                    const categoryTitle = this.closest('.category-container').querySelector('h3');
+                    if (categoryTitle) categoryTitle.classList.remove('playing');
+                }
+                
                 if (currentAudio && !currentAudio.paused) {
                     // Pause if already playing
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
                     this.classList.remove('playing');
+                    this.classList.remove('sequence-playing');
                     delete playingSounds[soundId];
-                    
-                    // If this sound was part of category playback, stop the category sequence
-                    if (control?.isInSequence && categoryPlayback[category.name]) {
-                        stopCategoryPlayback(category.name);
-                        const categoryTitle = this.closest('.category-container').querySelector('h3');
-                        if (categoryTitle) categoryTitle.classList.remove('playing');
-                    }
                 } else {
+                    // Create a fresh audio element
+                    const newAudio = new Audio(soundUrl);
+                    newAudio.loop = sound.loopable;
+                    
                     // Get volume from controls
                     if (control) {
-                        audio.volume = control.volume;
-                    }
-                    
-                    // If category has active sequence and this sound is not in it, stop category playback
-                    if (categoryPlayback[category.name] && !control?.isInSequence) {
-                        stopCategoryPlayback(category.name);
-                        const categoryTitle = this.closest('.category-container').querySelector('h3');
-                        if (categoryTitle) categoryTitle.classList.remove('playing');
+                        newAudio.volume = control.volume;
                     }
                     
                     // Play this sound
-                    audio.play();
-                    playingSounds[soundId] = audio;
+                    newAudio.play();
+                    playingSounds[soundId] = newAudio;
                     this.classList.add('playing');
                     
-                    // Handle sound ending
-                    const onEnded = () => {
-                        this.classList.remove('playing');
-                        delete playingSounds[soundId];
-                        
-                        // If this sound is part of a category sequence and category playback is active
-                        if (control?.isInSequence && categoryPlayback[category.name]) {
-                            // Get next sound in sequence
-                            const nextSound = getNextSoundInCategorySequence(category.name, soundId);
-                            if (nextSound) {
-                                // Update category playback tracking
-                                categoryPlayback[category.name].currentSoundId = nextSound.sound;
-                                
-                                // Play next sound after a short delay
-                                setTimeout(() => {
-                                    const nextButton = document.querySelector(`[data-sound-id="${nextSound.sound}"]`);
-                                    if (nextButton) {
-                                        const clickEvent = new MouseEvent('click', {
-                                            view: window,
-                                            bubbles: true,
-                                            cancelable: true
-                                        });
-                                        nextButton.dispatchEvent(clickEvent);
-                                    }
-                                }, 500); // 500ms delay between sounds
-                            }
-                        }
-                    };
-                    
-                    audio.addEventListener('ended', onEnded, { once: true });
+                    // Handle sound ending for non-loopable sounds
+                    if (!sound.loopable) {
+                        const onEnded = () => {
+                            this.classList.remove('playing');
+                            this.classList.remove('sequence-playing');
+                            delete playingSounds[soundId];
+                        };
+                        newAudio.addEventListener('ended', onEnded, { once: true });
+                    }
                 }
             });
             
@@ -1937,15 +1995,16 @@ async function loadSoundBoard() {
                 
                 const soundId = this.dataset.soundId;
                 const currentAudio = playingSounds[soundId];
-                const control = volumeControls[soundId];
                 
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
                     this.classList.remove('playing');
+                    this.classList.remove('sequence-playing');
                     delete playingSounds[soundId];
                     
                     // If this sound was part of category playback, stop the category sequence
+                    const control = volumeControls[soundId];
                     if (control?.isInSequence && categoryPlayback[category.name]) {
                         stopCategoryPlayback(category.name);
                         const categoryTitle = this.closest('.category-container').querySelector('h3');
@@ -2040,15 +2099,18 @@ async function loadSoundBoard() {
             align-items: center;
             gap: 5px;
             transition: all 0.2s ease;
+            user-select: none;
         }
         
         .clickable-category:hover {
-            color: #2196F3;
+            color: #9C27B0;
+            border-bottom-color: #9C27B0;
         }
         
         .clickable-category.playing {
-            color: #2196F3;
+            color: #9C27B0;
             font-weight: bold;
+            border-bottom-color: #9C27B0;
         }
         
         .sequence-indicator {
@@ -2086,14 +2148,18 @@ async function loadSoundBoard() {
             background-color: #f0fff0;
         }
         
+        .sound-button.sequence-playing {
+            border-color: #9C27B0;
+            background-color: #F3E5F5;
+        }
+        
         .sound-button[data-in-sequence="true"] {
             border-style: dashed;
-            border-color: #2196F3;
+            border-color: #9C27B0;
         }
         
         .sound-button[data-in-sequence="true"].playing {
-            border-color: #2196F3;
-            background-color: #E3F2FD;
+            border-color: #9C27B0;
         }
         
         .sound-button img {
@@ -2126,7 +2192,7 @@ async function loadSoundBoard() {
             width: 0;
             height: 0;
             border-top: 6px solid transparent;
-            border-bottom: 6px solid transparent;
+            border-bottom: 6px transparent;
             border-right: 6px solid rgba(0, 0, 0, 0.9);
         }
         
@@ -2148,12 +2214,12 @@ async function loadSoundBoard() {
         
         /* Sequence animation for category sequence sounds */
         @keyframes sequencePulse {
-            0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4); }
-            70% { box-shadow: 0 0 0 5px rgba(33, 150, 243, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(156, 39, 176, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0); }
         }
         
-        .sound-button[data-in-sequence="true"].playing {
+        .sound-button.sequence-playing {
             animation: sequencePulse 2s infinite;
         }
     `;
