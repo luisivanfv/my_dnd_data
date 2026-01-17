@@ -1785,7 +1785,7 @@ async function loadSoundBoard() {
             const audio = playingSounds[soundId];
             const control = volumeControls[soundId];
             if (audio && control) {
-                audio.volume = control.volume * mainVolume;
+                audio.volume = Math.min(1.0, Math.max(0, control.volume * mainVolume));
             }
         });
     };

@@ -191,6 +191,14 @@
                     "initialVomune": 100,
                     "exclusiveInCategory": true,
                     "exclusiveWith": []
+                }, {
+                    "sound": "music_NoSurrender",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/sword.png??sword",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
                 }
             ]
         }, {
@@ -209,6 +217,22 @@
                     "icon": "https://img.icons8.com/ios-filled/customSize/customColor/werewolf.png??lion",
                     "loopable": true,
                     "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_NoSurrender",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/sword.png??sword",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_ChildOfTheElderBlood",
+                    "icon": "https://img.icons8.com/glyph-neue/customSize/customColor/ghost.png??ghost",
+                    "loopable": false,
+                    "loopWithinCategory": false,
                     "initialVomune": 100,
                     "exclusiveInCategory": true,
                     "exclusiveWith": []
@@ -409,7 +433,28 @@
                     "exclusiveWith": []
                 }, {
                     "sound": "music_AfterTheStorm",
-                    "icon": "https://img.icons8.com/ios-filled/50/1A1A1A/dove.png??dove",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/dove.png??dove",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }
+            ]
+        }, {
+            "name": "Music - Loss",
+            "sounds": [
+                {
+                    "sound": "music_FarewellOldFriend",
+                    "icon": "https://img.icons8.com/ios-filled/customSize/customColor/so-so.png??so-so",
+                    "loopable": true,
+                    "loopWithinCategory": true,
+                    "initialVomune": 100,
+                    "exclusiveInCategory": true,
+                    "exclusiveWith": []
+                }, {
+                    "sound": "music_FamilyMatters",
+                    "icon": "https://img.icons8.com/metro/26/1A1A1A/family.png??family",
                     "loopable": true,
                     "loopWithinCategory": true,
                     "initialVomune": 100,
