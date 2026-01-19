@@ -1,6 +1,6 @@
 const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxYXJzdXlrZ29wdHR4YmZuamFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NDE1NDgsImV4cCI6MjA4NDQxNzU0OH0.QK2GKvx9jBcqesC59frTNhKWOi9G7wyHdR1U8raHRbU'; // Get from Supabase dashboard
-const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const keywordColorInStatblock = '#997300';
@@ -51,7 +51,7 @@ window.initializeExternalScript = async function() {
 async function fetchCampaigns() {
     try {
         // Fetch all campaigns
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('Campaigns')
             .select('*')
             .order('created_at', { ascending: false })
