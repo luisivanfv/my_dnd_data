@@ -183,8 +183,6 @@ class DatabaseQueryBuilder {
 // Usage wrapper
 async function queryDatabase(table, filters = {}, options = {}) {
     if (!window.supabaseClient) {
-        const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
-        const supabaseAnonKey = 'your-anon-key-here';
         window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
     }
     
