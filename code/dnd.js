@@ -57,7 +57,7 @@ async function fetchCampaigns() {
         const { data, error, status, count } = await supabaseClient
             .from('Campaigns')
             .select('*')
-            .order('created_at', { ascending: false });
+            .order('id', { ascending: false });
         
         console.log('Query status:', status);
         console.log('Error:', error);
