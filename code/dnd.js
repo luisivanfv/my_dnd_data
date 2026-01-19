@@ -78,7 +78,8 @@ async function loadCharacterSheets() {
         console.log('>');
         console.log(skill)
         skills.forEach(skill => {
-            characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
+            if(item.skill_id === skill.id)
+                characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
         });
     });
     console.log(character);
