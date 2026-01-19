@@ -74,9 +74,6 @@ async function loadCharacterSheets() {
     const skills = await queryDatabase('Skills', {}, {});
     const characterSkillProficiencies = [];
     characterSkillProficienciesRows.forEach(async item => {
-        const skill = await queryDatabase('Skills', { id: item.skill_id }, {})[0];
-        console.log('>');
-        console.log(skill)
         skills.forEach(skill => {
             if(item.skill_id === skill.id)
                 characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
@@ -84,6 +81,521 @@ async function loadCharacterSheets() {
     });
     console.log(character);
     console.log(characterSkillProficiencies);
+    characterSheetContainer.appendChild(createCharacterSheet({
+        name: 'Unnamed Character',
+        race: 'Unknown',
+        class: 'Adventurer',
+        level: 1,
+        background: '',
+        alignment: 'Neutral',
+        experience: 0,
+        
+        // Ability scores
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+        
+        // Skills with proficiency
+        skills: {
+            acrobatics: { value: 0, proficient: false },
+            animalHandling: { value: 0, proficient: false },
+            arcana: { value: 0, proficient: false },
+            athletics: { value: 0, proficient: false },
+            deception: { value: 0, proficient: false },
+            history: { value: 0, proficient: false },
+            insight: { value: 0, proficient: false },
+            intimidation: { value: 0, proficient: false },
+            investigation: { value: 0, proficient: false },
+            medicine: { value: 0, proficient: false },
+            nature: { value: 0, proficient: false },
+            perception: { value: 0, proficient: false },
+            performance: { value: 0, proficient: false },
+            persuasion: { value: 0, proficient: false },
+            religion: { value: 0, proficient: false },
+            sleightOfHand: { value: 0, proficient: false },
+            stealth: { value: 0, proficient: false },
+            survival: { value: 0, proficient: false }
+        },
+        
+        // Combat stats
+        maxHP: 10,
+        currentHP: 10,
+        tempHP: 0,
+        armorClass: 10,
+        initiative: 0,
+        speed: 30,
+        
+        // Inventory
+        inventory: [],
+        currency: {
+            cp: 0,
+            sp: 0,
+            ep: 0,
+            gp: 0,
+            pp: 0
+        },
+        
+        // Features & abilities
+        features: [],
+        spells: [],
+        
+        // Notes
+        notes: '',
+        backstory: '',
+        
+        // Appearance
+        appearance: '',
+        personality: '',
+        ideals: '',
+        bonds: '',
+        flaws: ''
+    }));
+}
+function createCharacterSheet(characterData) {
+    // Default character structure
+    const defaults = {
+        name: 'Unnamed Character',
+        race: 'Unknown',
+        class: 'Adventurer',
+        level: 1,
+        background: '',
+        alignment: 'Neutral',
+        experience: 0,
+        
+        // Ability scores
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+        
+        // Skills with proficiency
+        skills: {
+            acrobatics: { value: 0, proficient: false },
+            animalHandling: { value: 0, proficient: false },
+            arcana: { value: 0, proficient: false },
+            athletics: { value: 0, proficient: false },
+            deception: { value: 0, proficient: false },
+            history: { value: 0, proficient: false },
+            insight: { value: 0, proficient: false },
+            intimidation: { value: 0, proficient: false },
+            investigation: { value: 0, proficient: false },
+            medicine: { value: 0, proficient: false },
+            nature: { value: 0, proficient: false },
+            perception: { value: 0, proficient: false },
+            performance: { value: 0, proficient: false },
+            persuasion: { value: 0, proficient: false },
+            religion: { value: 0, proficient: false },
+            sleightOfHand: { value: 0, proficient: false },
+            stealth: { value: 0, proficient: false },
+            survival: { value: 0, proficient: false }
+        },
+        
+        // Combat stats
+        maxHP: 10,
+        currentHP: 10,
+        tempHP: 0,
+        armorClass: 10,
+        initiative: 0,
+        speed: 30,
+        
+        // Inventory
+        inventory: [],
+        currency: {
+            cp: 0,
+            sp: 0,
+            ep: 0,
+            gp: 0,
+            pp: 0
+        },
+        
+        // Features & abilities
+        features: [],
+        spells: [],
+        
+        // Notes
+        notes: '',
+        backstory: '',
+        
+        // Appearance
+        appearance: '',
+        personality: '',
+        ideals: '',
+        bonds: '',
+        flaws: ''
+    };
+    
+    // Merge with provided data
+    const character = { ...defaults, ...characterData };
+    
+    // Calculate ability modifiers
+    const calculateModifier = (score) => Math.floor((score - 10) / 2);
+    
+    // Calculate proficiency bonus
+    const proficiencyBonus = Math.ceil(character.level / 4) + 1;
+    
+    // Calculate skill modifiers
+    const calculateSkillMod = (skillName) => {
+        const abilityMap = {
+            acrobatics: 'dexterity',
+            animalHandling: 'wisdom',
+            arcana: 'intelligence',
+            athletics: 'strength',
+            deception: 'charisma',
+            history: 'intelligence',
+            insight: 'wisdom',
+            intimidation: 'charisma',
+            investigation: 'intelligence',
+            medicine: 'wisdom',
+            nature: 'intelligence',
+            perception: 'wisdom',
+            performance: 'charisma',
+            persuasion: 'charisma',
+            religion: 'intelligence',
+            sleightOfHand: 'dexterity',
+            stealth: 'dexterity',
+            survival: 'wisdom'
+        };
+        
+        const skill = character.skills[skillName];
+        const abilityScore = character[abilityMap[skillName]];
+        const abilityMod = calculateModifier(abilityScore);
+        const proficiency = skill.proficient ? proficiencyBonus : 0;
+        
+        return abilityMod + proficiency + (skill.value || 0);
+    };
+    
+    // Create the character sheet HTML
+    const sheetHTML = `
+        <div class="character-sheet mobile-sheet">
+            <!-- Character header -->
+            <div class="character-header">
+                <h1 class="character-name">${character.name}</h1>
+                <div class="character-subtitle">
+                    <span class="character-race">${character.race}</span>
+                    <span class="separator">•</span>
+                    <span class="character-class">${character.class} ${character.level}</span>
+                </div>
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <span class="stat-label">HP</span>
+                        <span class="stat-value">${character.currentHP}/${character.maxHP}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">AC</span>
+                        <span class="stat-value">${character.armorClass}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Initiative</span>
+                        <span class="stat-value">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Speed</span>
+                        <span class="stat-value">${character.speed}ft</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab navigation -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="general">General</button>
+                    <button class="tab-button" data-tab="skills">Skills</button>
+                    <button class="tab-button" data-tab="inventory">Inventory</button>
+                    <button class="tab-button" data-tab="notes">Notes</button>
+                    <button class="tab-button" data-tab="wiki">Wiki</button>
+                </div>
+            </div>
+            
+            <!-- Tab content -->
+            <div class="tab-content-container">
+                <!-- General Info Tab -->
+                <div class="tab-content active" id="general-tab">
+                    <div class="general-grid">
+                        <!-- Ability Scores -->
+                        <div class="ability-scores-section">
+                            <h3>Ability Scores</h3>
+                            <div class="ability-scores-grid">
+                                ${['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => {
+                                    const score = character[ability];
+                                    const mod = calculateModifier(score);
+                                    return `
+                                        <div class="ability-score">
+                                            <div class="ability-name">${ability.substring(0, 3).toUpperCase()}</div>
+                                            <div class="ability-value">${score}</div>
+                                            <div class="ability-mod">${mod >= 0 ? '+' : ''}${mod}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Combat Stats -->
+                        <div class="combat-stats-section">
+                            <h3>Combat</h3>
+                            <div class="combat-stats">
+                                <div class="combat-stat">
+                                    <span class="combat-label">Armor Class</span>
+                                    <span class="combat-value">${character.armorClass}</span>
+                                </div>
+                                <div class="combat-stat">
+                                    <span class="combat-label">Initiative</span>
+                                    <span class="combat-value">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
+                                </div>
+                                <div class="combat-stat">
+                                    <span class="combat-label">Speed</span>
+                                    <span class="combat-value">${character.speed} ft</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Health -->
+                        <div class="health-section">
+                            <h3>Health</h3>
+                            <div class="health-display">
+                                <div class="hp-display">
+                                    <span class="hp-label">Current HP</span>
+                                    <span class="hp-value">${character.currentHP}</span>
+                                    <span class="hp-separator">/</span>
+                                    <span class="hp-max">${character.maxHP}</span>
+                                </div>
+                                ${character.tempHP > 0 ? `
+                                    <div class="temp-hp">
+                                        <span class="temp-label">Temp HP</span>
+                                        <span class="temp-value">${character.tempHP}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Character Details -->
+                        <div class="details-section">
+                            <h3>Character Details</h3>
+                            <div class="details-grid">
+                                <div class="detail">
+                                    <span class="detail-label">Background</span>
+                                    <span class="detail-value">${character.background}</span>
+                                </div>
+                                <div class="detail">
+                                    <span class="detail-label">Alignment</span>
+                                    <span class="detail-value">${character.alignment}</span>
+                                </div>
+                                <div class="detail">
+                                    <span class="detail-label">Experience</span>
+                                    <span class="detail-value">${character.experience.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Saving Throws -->
+                        <div class="saving-throws-section">
+                            <h3>Saving Throws</h3>
+                            <div class="saving-throws">
+                                ${['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => {
+                                    const mod = calculateModifier(character[ability]);
+                                    const proficient = character.skills[`${ability}Save`]?.proficient || false;
+                                    const total = mod + (proficient ? proficiencyBonus : 0);
+                                    return `
+                                        <div class="saving-throw ${proficient ? 'proficient' : ''}">
+                                            <span class="throw-name">${ability.substring(0, 3).toUpperCase()}</span>
+                                            <span class="throw-mod">${total >= 0 ? '+' : ''}${total}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills Tab -->
+                <div class="tab-content" id="skills-tab">
+                    <div class="skills-section">
+                        <h3>Skills</h3>
+                        <div class="proficiency-info">
+                            Proficiency Bonus: +${proficiencyBonus}
+                        </div>
+                        <div class="skills-list">
+                            ${Object.entries(character.skills).map(([skillName, skillData]) => {
+                                const skillMod = calculateSkillMod(skillName);
+                                const skillDisplayName = skillName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                                return `
+                                    <div class="skill-item ${skillData.proficient ? 'proficient' : ''}">
+                                        <div class="skill-checkbox">
+                                            <input type="checkbox" ${skillData.proficient ? 'checked' : ''} disabled>
+                                        </div>
+                                        <div class="skill-name">${skillDisplayName}</div>
+                                        <div class="skill-mod">${skillMod >= 0 ? '+' : ''}${skillMod}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory Tab -->
+                <div class="tab-content" id="inventory-tab">
+                    <div class="inventory-section">
+                        <!-- Currency -->
+                        <div class="currency-section">
+                            <h3>Currency</h3>
+                            <div class="currency-grid">
+                                <div class="currency-item">
+                                    <span class="currency-label">CP</span>
+                                    <span class="currency-value">${character.currency.cp}</span>
+                                </div>
+                                <div class="currency-item">
+                                    <span class="currency-label">SP</span>
+                                    <span class="currency-value">${character.currency.sp}</span>
+                                </div>
+                                <div class="currency-item">
+                                    <span class="currency-label">EP</span>
+                                    <span class="currency-value">${character.currency.ep}</span>
+                                </div>
+                                <div class="currency-item">
+                                    <span class="currency-label">GP</span>
+                                    <span class="currency-value">${character.currency.gp}</span>
+                                </div>
+                                <div class="currency-item">
+                                    <span class="currency-label">PP</span>
+                                    <span class="currency-value">${character.currency.pp}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Inventory Items -->
+                        <div class="items-section">
+                            <h3>Equipment</h3>
+                            ${character.inventory.length > 0 ? `
+                                <div class="items-list">
+                                    ${character.inventory.map((item, index) => `
+                                        <div class="inventory-item">
+                                            <div class="item-name">${item.name || `Item ${index + 1}`}</div>
+                                            ${item.quantity ? `<div class="item-quantity">x${item.quantity}</div>` : ''}
+                                            ${item.weight ? `<div class="item-weight">${item.weight} lb</div>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : `
+                                <div class="empty-state">No items in inventory</div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes Tab -->
+                <div class="tab-content" id="notes-tab">
+                    <div class="notes-section">
+                        <div class="notes-category">
+                            <h3>Backstory</h3>
+                            <div class="notes-content">${character.backstory || 'No backstory recorded.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Appearance</h3>
+                            <div class="notes-content">${character.appearance || 'No appearance description.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Personality Traits</h3>
+                            <div class="notes-content">${character.personality || 'No personality traits recorded.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Ideals</h3>
+                            <div class="notes-content">${character.ideals || 'No ideals recorded.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Bonds</h3>
+                            <div class="notes-content">${character.bonds || 'No bonds recorded.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Flaws</h3>
+                            <div class="notes-content">${character.flaws || 'No flaws recorded.'}</div>
+                        </div>
+                        
+                        <div class="notes-category">
+                            <h3>Additional Notes</h3>
+                            <div class="notes-content">${character.notes || 'No additional notes.'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wiki Tab -->
+                <div class="tab-content" id="wiki-tab">
+                    <div class="wiki-section">
+                        <h3>Features & Abilities</h3>
+                        ${character.features.length > 0 ? `
+                            <div class="features-list">
+                                ${character.features.map(feature => `
+                                    <div class="feature-item">
+                                        <h4 class="feature-name">${feature.name || 'Unnamed Feature'}</h4>
+                                        <div class="feature-description">${feature.description || 'No description available.'}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="empty-state">No features recorded</div>
+                        `}
+                        
+                        <h3>Spells</h3>
+                        ${character.spells.length > 0 ? `
+                            <div class="spells-list">
+                                ${character.spells.map(spell => `
+                                    <div class="spell-item">
+                                        <div class="spell-header">
+                                            <span class="spell-name">${spell.name || 'Unnamed Spell'}</span>
+                                            <span class="spell-level">${spell.level ? `Level ${spell.level}` : 'Cantrip'}</span>
+                                        </div>
+                                        <div class="spell-details">
+                                            ${spell.school ? `<span class="spell-school">${spell.school}</span>` : ''}
+                                            ${spell.components ? `<span class="spell-components">${spell.components}</span>` : ''}
+                                        </div>
+                                        <div class="spell-description">${spell.description || ''}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="empty-state">No spells recorded</div>
+                        `}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Create container and inject HTML
+    const container = document.createElement('div');
+    container.innerHTML = sheetHTML;
+    
+    // Add tab switching functionality
+    const tabButtons = container.querySelectorAll('.tab-button');
+    const tabContents = container.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Show corresponding content
+            const tabId = button.getAttribute('data-tab');
+            const correspondingContent = container.querySelector(`#${tabId}-tab`);
+            if (correspondingContent) {
+                correspondingContent.classList.add('active');
+            }
+        });
+    });
+    
+    return container;
 }
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

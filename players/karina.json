@@ -3,7 +3,7 @@
     "color": "yellow",
     "textColor": "black",
     "class": "Sorcerer",
-    "ac": "13",
+    "ac": "16",
     "initiativeMod": "+3",
     "maxHp": "7",
     "conditionImmunities": ["Asleep"]
