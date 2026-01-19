@@ -63,7 +63,7 @@ async function fetchCampaigns() {
         
         // Example: Display in HTML
         data.forEach(campaign => {
-            print(campaign.toString());
+            console.log(campaign.toString());
         });
     } catch (error) {
         console.error('Error fetching campaigns:', error.message)
