@@ -48,17 +48,34 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+function getProficiencyBonusForLevel(level) {
+    if(level < 5)
+        return 2;
+    if(level < 0)
+        return 3;
+    if(level < 13)
+        return 4;
+    if(level < 17)
+        return 5;
+    return 6;
+}
 async function loadCharacterSheets() {
     const characterSheetContainer = document.getElementById('character-sheet-container');
     if (!characterSheetContainer)
         return;
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
-    const characterSkillProficiencies = await queryDatabase(
+    const proficiencyBonus = getProficiencyBonusForLevel(character.level)
+    const characterSkillProficienciesRows = await queryDatabase(
         'Proficiencies',
         { player_id: character.id, skill_id: { operator: 'gt', value: 0 } },
         { orderBy: { column: 'id', ascending: false }}
     );
+    const characterSkillProficiencies = [];
+    characterSkillProficienciesRows.forEach(async item => {
+        const skill = await queryDatabase('Skills', { id: item.skill_id }, {})[0];
+        characterSkillProficiencies.push({ skill, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
+    });
     console.log(character);
     console.log(characterSkillProficiencies);
 }
