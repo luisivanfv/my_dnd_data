@@ -53,8 +53,8 @@ async function loadCharacterSheets() {
     if (!characterSheetContainer)
         return;
     const characterName = getUrlParameter('name');
-    const asdf = await debugDatabaseQuery('Players', 'name', characterName);
-    const character = await getFromDatabase('Players', 'name', characterName, {});
+    //const asdf = await debugDatabaseQuery('Players', 'name', capitalizeFirstLetter(characterName));
+    const character = await getFromDatabase('Players', 'name', capitalizeFirstLetter(characterName), {});
     console.log('Character from DB:');
     console.log(character);
 }
