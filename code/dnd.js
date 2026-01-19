@@ -54,7 +54,7 @@ async function fetchCampaigns() {
         const { data, error } = await supabaseClient
             .from('Campaigns')
             .select('*')
-            .order('created_at', { ascending: false })
+            .order('id', { ascending: false })
 
         if (error) throw error
         
