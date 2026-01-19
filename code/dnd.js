@@ -57,7 +57,7 @@ async function loadCharacterSheets() {
     const characterSkillProficiencies = await queryDatabase(
         'Proficiencies',
         { player_id: character.id, skill_id: { operator: 'gt', value: 0 } },
-        { orderBy: { column: 'name', ascending: false }}
+        { orderBy: { column: 'id', ascending: false }}
     );
     console.log(character);
     console.log(characterSkillProficiencies);
