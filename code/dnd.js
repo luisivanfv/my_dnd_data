@@ -74,7 +74,7 @@ async function loadCharacterSheets() {
     const characterSkillProficiencies = [];
     characterSkillProficienciesRows.forEach(async item => {
         const skill = await queryDatabase('Skills', { id: item.skill_id }, {})[0];
-        characterSkillProficiencies.push({ skill, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
+        characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
     });
     console.log(character);
     console.log(characterSkillProficiencies);
