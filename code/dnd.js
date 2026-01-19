@@ -53,10 +53,14 @@ async function loadCharacterSheets() {
     if (!characterSheetContainer)
         return;
     const characterName = getUrlParameter('name');
-    //const asdf = await debugDatabaseQuery('Players', 'name', capitalizeFirstLetter(characterName));
-    const character = await getFromDatabase('Players', 'name', capitalizeFirstLetter(characterName), {});
-    console.log('Character from DB:');
+    const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
+    const characterSkillProficiencies = await queryDatabase(
+        'Proficiencies',
+        { player_id: character.id, skill_id: { operator: 'gt', value: 0 } },
+        { orderBy: { column: 'name', ascending: false }}
+    );
     console.log(character);
+    console.log(characterSkillProficiencies);
 }
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -64,241 +68,147 @@ function capitalizeFirstLetter(string) {
 function capitalizeFirstLetters(string) {
     return string.split(' ').map(word => capitalizeFirstLetter(word)).join(' ');
 }
-async function debugDatabaseQuery(table, column, value) {
-    console.log('=== DATABASE DEBUG START ===');
-    console.log(`Query: ${table} where ${column} = ${value}`);
-    
-    // 1. First, check if Supabase is properly initialized
-    if (!window.supabase || !window.supabase.createClient) {
-        console.error('❌ Supabase library not loaded!');
-        return;
+class DatabaseQueryBuilder {
+    constructor(supabase) {
+        this.supabase = supabase;
+        this.query = null;
+        this.table = null;
     }
     
-    // Initialize client if not exists
-    if (!window.supabaseClient) {
-        console.log('Initializing Supabase client...');
-        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        console.log('Supabase client initialized');
+    from(table) {
+        this.table = table;
+        this.query = this.supabase.from(table);
+        return this;
     }
     
-    const supabase = window.supabaseClient;
-    
-    // 2. Test 1: Direct query with your parameters
-    console.log('\n--- Test 1: Direct query ---');
-    try {
-        const { data, error, status, count } = await supabase
-            .from(table)
-            .select('*', { count: 'exact' })
-            .eq(column, value);
-        
-        console.log(`Status: ${status}`);
-        console.log(`Error: ${error ? error.message : 'null'}`);
-        console.log(`Count: ${count}`);
-        console.log(`Data length: ${data ? data.length : 'null'}`);
-        console.log(`Data:`, data);
-        
-        if (error) {
-            console.error('Error details:', error);
-        }
-    } catch (err) {
-        console.error('Exception in Test 1:', err);
+    select(columns = '*') {
+        this.query = this.query.select(columns);
+        return this;
     }
     
-    // 3. Test 2: Try without filter to see if table has any data
-    console.log('\n--- Test 2: Get ALL rows from table ---');
-    try {
-        const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .limit(5);
-        
-        console.log(`All rows (max 5):`, data);
-        console.log(`All rows length: ${data ? data.length : 'null'}`);
-        console.log(`Error: ${error ? error.message : 'null'}`);
-    } catch (err) {
-        console.error('Exception in Test 2:', err);
-    }
-    
-    // 4. Test 3: Try different table name variations
-    console.log('\n--- Test 3: Table name variations ---');
-    const tableVariations = [table, table.toLowerCase(), table.toUpperCase(), `"${table}"`, `"${table.toLowerCase()}"`];
-    
-    for (const tableName of tableVariations) {
-        try {
-            const { data, error } = await supabase
-                .from(tableName)
-                .select('id')
-                .limit(1);
-            
-            console.log(`Table "${tableName}": ${error ? 'Error: ' + error.message : 'OK'}`);
-            if (data && data.length > 0) {
-                console.log(`  -> Found at least 1 row with ID: ${data[0].id}`);
-            }
-        } catch (err) {
-            console.log(`Table "${tableName}": Exception - ${err.message}`);
-        }
-    }
-    
-    // 5. Test 4: Check if the exact value exists (case sensitivity)
-    console.log('\n--- Test 4: Case sensitivity test ---');
-    console.log(`Searching for: "${value}" (exact match)`);
-    
-    try {
-        // Get all names to see what's actually in the database
-        const { data: allNames, error } = await supabase
-            .from(table)
-            .select(column)
-            .order(column);
-        
-        if (error) {
-            console.log(`Error fetching all ${column}s:`, error.message);
-        } else if (allNames && allNames.length > 0) {
-            console.log(`All ${column}s in database:`);
-            allNames.forEach((item, index) => {
-                const name = item[column];
-                console.log(`  ${index + 1}: "${name}" (exact match: ${name === value})`);
+    where(column, operator = 'eq', value) {
+        if (typeof column === 'object') {
+            // Object syntax: {column: value} or {column: {operator: value}}
+            Object.entries(column).forEach(([col, val]) => {
+                if (typeof val === 'object' && val !== null && val.operator) {
+                    this.applyOperator(col, val.operator, val.value);
+                } else {
+                    this.applyOperator(col, 'eq', val);
+                }
             });
-            
-            // Check for case-insensitive matches
-            const matches = allNames.filter(item => 
-                item[column] && 
-                item[column].toString().toLowerCase() === value.toString().toLowerCase()
-            );
-            
-            console.log(`Case-insensitive matches: ${matches.length}`);
-        } else {
-            console.log(`No ${column}s found in table (table might be empty or RLS blocking)`);
-        }
-    } catch (err) {
-        console.error('Exception in Test 4:', err);
-    }
-    
-    // 6. Test 5: Try REST API directly
-    console.log('\n--- Test 5: Direct REST API test ---');
-    try {
-        
-        // URL encode the value for special characters
-        const encodedValue = encodeURIComponent(value);
-        const encodedColumn = encodeURIComponent(column);
-        
-        const url = `${supabaseUrl}/rest/v1/${table}?${encodedColumn}=eq.${encodedValue}`;
-        console.log('REST URL:', url);
-        
-        const response = await fetch(url, {
-            headers: {
-                'apikey': supabaseAnonKey,
-                'Authorization': `Bearer ${supabaseAnonKey}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        console.log(`REST Response Status: ${response.status} ${response.statusText}`);
-        
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            const data = await response.json();
-            console.log(`REST Data (${data.length} items):`, data);
-            
-            if (response.status === 401 || response.status === 403) {
-                console.log('⚠️ Permission denied - RLS likely blocking access');
-            }
-        } else {
-            const text = await response.text();
-            console.log('REST Response (non-JSON):', text.substring(0, 200));
-        }
-    } catch (err) {
-        console.error('Exception in REST API test:', err);
-    }
-    
-    // 7. Test 6: Check database schema
-    console.log('\n--- Test 6: Database schema check ---');
-    try {
-        const { data: columns, error } = await supabase
-            .from('information_schema.columns')
-            .select('column_name, data_type')
-            .eq('table_schema', 'public')
-            .eq('table_name', table.toLowerCase())
-            .order('ordinal_position');
-        
-        if (error) {
-            console.log(`Error fetching schema: ${error.message}`);
-        } else if (columns && columns.length > 0) {
-            console.log(`Columns in table "${table}":`);
-            columns.forEach(col => {
-                console.log(`  - ${col.column_name} (${col.data_type})`);
+        } else if (Array.isArray(column)) {
+            // Array of conditions
+            column.forEach(condition => {
+                if (condition && condition.column) {
+                    this.applyOperator(
+                        condition.column, 
+                        condition.operator || 'eq', 
+                        condition.value
+                    );
+                }
             });
-            
-            // Check if our column exists
-            const columnExists = columns.some(col => 
-                col.column_name.toLowerCase() === column.toLowerCase()
-            );
-            
-            console.log(`Column "${column}" exists: ${columnExists}`);
         } else {
-            console.log(`No columns found for table "${table}" - table might not exist`);
+            // Simple column, operator, value
+            this.applyOperator(column, operator, value);
         }
-    } catch (err) {
-        console.error('Exception in schema check:', err);
+        return this;
     }
     
-    console.log('\n=== DATABASE DEBUG END ===');
-}
-async function getFromDatabase(table, column, value, options = {}) {
-    try {
-        // Initialize Supabase if not already done
-        if (!window.supabaseClient) {
-            const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
-            window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    applyOperator(column, operator, value) {
+        if (value === undefined || value === null) return this;
+        
+        switch(operator.toLowerCase()) {
+            case 'eq': this.query = this.query.eq(column, value); break;
+            case 'neq': this.query = this.query.neq(column, value); break;
+            case 'gt': this.query = this.query.gt(column, value); break;
+            case 'gte': this.query = this.query.gte(column, value); break;
+            case 'lt': this.query = this.query.lt(column, value); break;
+            case 'lte': this.query = this.query.lte(column, value); break;
+            case 'like': this.query = this.query.like(column, value); break;
+            case 'ilike': this.query = this.query.ilike(column, value); break;
+            case 'in': this.query = this.query.in(column, value); break;
+            case 'is': this.query = this.query.is(column, value); break;
+            case 'contains': this.query = this.query.contains(column, value); break;
+            case 'cs': this.query = this.query.contains(column, value); break; // alias
+            case 'cd': this.query = this.query.containedBy(column, value); break;
+            case 'ov': this.query = this.query.overlaps(column, value); break;
+            case 'sl': this.query = this.query.sl(column, value); break;
+            case 'sr': this.query = this.query.sr(column, value); break;
+            case 'nxr': this.query = this.query.nxr(column, value); break;
+            case 'nxl': this.query = this.query.nxl(column, value); break;
+            case 'adj': this.query = this.query.adj(column, value); break;
+            case 'fts': this.query = this.query.textSearch(column, value); break;
+            default: this.query = this.query.eq(column, value);
         }
-        
-        const supabase = window.supabaseClient;
-        
-        // Build the query
-        let query = supabase
-            .from(table)
-            .select(options.select || '*');
-        
-        // Apply filter if column and value are provided
-        if (column && value !== undefined) {
-            query = query.eq(column, value);
+        return this;
+    }
+    
+    or(conditions) {
+        if (this.query.or && conditions) {
+            const orString = conditions.map(cond => {
+                if (cond.column && cond.value !== undefined) {
+                    return `${cond.column}.${cond.operator || 'eq'}.${cond.value}`;
+                }
+                return '';
+            }).filter(Boolean).join(',');
+            
+            if (orString) this.query = this.query.or(orString);
         }
-        
-        // Apply additional options
-        if (options.limit) query = query.limit(options.limit);
-        if (options.orderBy) {
-            query = query.order(options.orderBy.column, { 
-                ascending: options.orderBy.ascending !== false 
-            });
-        }
-        if (options.range) {
-            query = query.range(options.range.from, options.range.to);
-        }
-        
-        // Execute query
-        const { data, error, status, count } = await query;
-
-        console.log(`Status: ${status}`);
-        console.log(`Error: ${error ? error.message : 'null'}`);
-        console.log(`Count: ${count}`);
-        console.log(`Data length: ${data ? data.length : 'null'}`);
-        console.log(`Data:`, data);
-        
-        if (error) {
-            console.error(`Database error (${status}):`, error);
-            throw new Error(`Database query failed: ${error.message}`);
-        }
-        
-        // Convert to JSON if requested
-        if (options.returnJSON && data) {
-            return JSON.parse(JSON.stringify(data));
-        }
-        
+        return this;
+    }
+    
+    limit(num) {
+        this.query = this.query.limit(num);
+        return this;
+    }
+    
+    order(column, ascending = true) {
+        this.query = this.query.order(column, { ascending });
+        return this;
+    }
+    
+    range(from, to) {
+        this.query = this.query.range(from, to);
+        return this;
+    }
+    
+    async execute() {
+        if (!this.query) throw new Error('Query not initialized');
+        const { data, error } = await this.query;
+        if (error) throw error;
         return data;
-        
-    } catch (error) {
-        console.error('Error in getFromDatabase:', error);
-        throw error;
     }
+}
+
+// Usage wrapper
+async function queryDatabase(table, filters = {}, options = {}) {
+    if (!window.supabaseClient) {
+        const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
+        const supabaseAnonKey = 'your-anon-key-here';
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    }
+    
+    const builder = new DatabaseQueryBuilder(window.supabaseClient);
+    
+    builder.from(table).select(options.select || '*');
+    
+    // Apply filters
+    if (filters && Object.keys(filters).length > 0) {
+        builder.where(filters);
+    }
+    
+    // Apply options
+    if (options.limit) builder.limit(options.limit);
+    if (options.orderBy) {
+        builder.order(options.orderBy.column, options.orderBy.ascending !== false);
+    }
+    if (options.range) {
+        builder.range(options.range.from, options.range.to);
+    }
+    
+    const result = await builder.execute();
+    
+    return options.returnJSON ? JSON.parse(JSON.stringify(result)) : result;
 }
 async function getObjectFromDatabase(searchedTxt, columnSearchedIn, table) {
     try {
