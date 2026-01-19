@@ -72,15 +72,14 @@ async function loadCharacterSheets() {
         { orderBy: { column: 'id', ascending: false }}
     );
     const skills = await queryDatabase('Skills', {}, {});
-    console.log('skills');
-    console.log(skills);
     const characterSkillProficiencies = [];
     characterSkillProficienciesRows.forEach(async item => {
-        console.log('items:');
-        console.log(item);
         const skill = await queryDatabase('Skills', { id: item.skill_id }, {})[0];
+        console.log('>');
         console.log(skill)
-        characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
+        skills.forEach(skill => {
+            characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
+        });
     });
     console.log(character);
     console.log(characterSkillProficiencies);
