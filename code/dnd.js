@@ -58,6 +58,12 @@ async function loadCharacterSheets() {
     console.log('Character from DB:');
     console.log(character);
 }
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function capitalizeFirstLetters(string) {
+    return string.split(' ').map(word => capitalizeFirstLetter(word)).join(' ');
+}
 async function debugDatabaseQuery(table, column, value) {
     console.log('=== DATABASE DEBUG START ===');
     console.log(`Query: ${table} where ${column} = ${value}`);
