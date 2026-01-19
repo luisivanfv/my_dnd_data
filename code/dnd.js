@@ -53,9 +53,189 @@ async function loadCharacterSheets() {
     if (!characterSheetContainer)
         return;
     const characterName = getUrlParameter('name');
+    const asdf = await debugDatabaseQuery('Players', 'name', characterName);
     const character = await getFromDatabase('Players', 'name', characterName, {});
     console.log('Character from DB:');
     console.log(character);
+}
+async function debugDatabaseQuery(table, column, value) {
+    console.log('=== DATABASE DEBUG START ===');
+    console.log(`Query: ${table} where ${column} = ${value}`);
+    
+    // 1. First, check if Supabase is properly initialized
+    if (!window.supabase || !window.supabase.createClient) {
+        console.error('❌ Supabase library not loaded!');
+        return;
+    }
+    
+    // Initialize client if not exists
+    if (!window.supabaseClient) {
+        console.log('Initializing Supabase client...');
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        console.log('Supabase client initialized');
+    }
+    
+    const supabase = window.supabaseClient;
+    
+    // 2. Test 1: Direct query with your parameters
+    console.log('\n--- Test 1: Direct query ---');
+    try {
+        const { data, error, status, count } = await supabase
+            .from(table)
+            .select('*', { count: 'exact' })
+            .eq(column, value);
+        
+        console.log(`Status: ${status}`);
+        console.log(`Error: ${error ? error.message : 'null'}`);
+        console.log(`Count: ${count}`);
+        console.log(`Data length: ${data ? data.length : 'null'}`);
+        console.log(`Data:`, data);
+        
+        if (error) {
+            console.error('Error details:', error);
+        }
+    } catch (err) {
+        console.error('Exception in Test 1:', err);
+    }
+    
+    // 3. Test 2: Try without filter to see if table has any data
+    console.log('\n--- Test 2: Get ALL rows from table ---');
+    try {
+        const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .limit(5);
+        
+        console.log(`All rows (max 5):`, data);
+        console.log(`All rows length: ${data ? data.length : 'null'}`);
+        console.log(`Error: ${error ? error.message : 'null'}`);
+    } catch (err) {
+        console.error('Exception in Test 2:', err);
+    }
+    
+    // 4. Test 3: Try different table name variations
+    console.log('\n--- Test 3: Table name variations ---');
+    const tableVariations = [table, table.toLowerCase(), table.toUpperCase(), `"${table}"`, `"${table.toLowerCase()}"`];
+    
+    for (const tableName of tableVariations) {
+        try {
+            const { data, error } = await supabase
+                .from(tableName)
+                .select('id')
+                .limit(1);
+            
+            console.log(`Table "${tableName}": ${error ? 'Error: ' + error.message : 'OK'}`);
+            if (data && data.length > 0) {
+                console.log(`  -> Found at least 1 row with ID: ${data[0].id}`);
+            }
+        } catch (err) {
+            console.log(`Table "${tableName}": Exception - ${err.message}`);
+        }
+    }
+    
+    // 5. Test 4: Check if the exact value exists (case sensitivity)
+    console.log('\n--- Test 4: Case sensitivity test ---');
+    console.log(`Searching for: "${value}" (exact match)`);
+    
+    try {
+        // Get all names to see what's actually in the database
+        const { data: allNames, error } = await supabase
+            .from(table)
+            .select(column)
+            .order(column);
+        
+        if (error) {
+            console.log(`Error fetching all ${column}s:`, error.message);
+        } else if (allNames && allNames.length > 0) {
+            console.log(`All ${column}s in database:`);
+            allNames.forEach((item, index) => {
+                const name = item[column];
+                console.log(`  ${index + 1}: "${name}" (exact match: ${name === value})`);
+            });
+            
+            // Check for case-insensitive matches
+            const matches = allNames.filter(item => 
+                item[column] && 
+                item[column].toString().toLowerCase() === value.toString().toLowerCase()
+            );
+            
+            console.log(`Case-insensitive matches: ${matches.length}`);
+        } else {
+            console.log(`No ${column}s found in table (table might be empty or RLS blocking)`);
+        }
+    } catch (err) {
+        console.error('Exception in Test 4:', err);
+    }
+    
+    // 6. Test 5: Try REST API directly
+    console.log('\n--- Test 5: Direct REST API test ---');
+    try {
+        
+        // URL encode the value for special characters
+        const encodedValue = encodeURIComponent(value);
+        const encodedColumn = encodeURIComponent(column);
+        
+        const url = `${supabaseUrl}/rest/v1/${table}?${encodedColumn}=eq.${encodedValue}`;
+        console.log('REST URL:', url);
+        
+        const response = await fetch(url, {
+            headers: {
+                'apikey': supabaseAnonKey,
+                'Authorization': `Bearer ${supabaseAnonKey}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log(`REST Response Status: ${response.status} ${response.statusText}`);
+        
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            const data = await response.json();
+            console.log(`REST Data (${data.length} items):`, data);
+            
+            if (response.status === 401 || response.status === 403) {
+                console.log('⚠️ Permission denied - RLS likely blocking access');
+            }
+        } else {
+            const text = await response.text();
+            console.log('REST Response (non-JSON):', text.substring(0, 200));
+        }
+    } catch (err) {
+        console.error('Exception in REST API test:', err);
+    }
+    
+    // 7. Test 6: Check database schema
+    console.log('\n--- Test 6: Database schema check ---');
+    try {
+        const { data: columns, error } = await supabase
+            .from('information_schema.columns')
+            .select('column_name, data_type')
+            .eq('table_schema', 'public')
+            .eq('table_name', table.toLowerCase())
+            .order('ordinal_position');
+        
+        if (error) {
+            console.log(`Error fetching schema: ${error.message}`);
+        } else if (columns && columns.length > 0) {
+            console.log(`Columns in table "${table}":`);
+            columns.forEach(col => {
+                console.log(`  - ${col.column_name} (${col.data_type})`);
+            });
+            
+            // Check if our column exists
+            const columnExists = columns.some(col => 
+                col.column_name.toLowerCase() === column.toLowerCase()
+            );
+            
+            console.log(`Column "${column}" exists: ${columnExists}`);
+        } else {
+            console.log(`No columns found for table "${table}" - table might not exist`);
+        }
+    } catch (err) {
+        console.error('Exception in schema check:', err);
+    }
+    
+    console.log('\n=== DATABASE DEBUG END ===');
 }
 async function getFromDatabase(table, column, value, options = {}) {
     try {
