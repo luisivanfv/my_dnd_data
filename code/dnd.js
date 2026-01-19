@@ -62,7 +62,6 @@ async function getFromDatabase(table, column, value, options = {}) {
         // Initialize Supabase if not already done
         if (!window.supabaseClient) {
             const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
-            const supabaseAnonKey = 'your-anon-key-here';
             window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
         }
         
