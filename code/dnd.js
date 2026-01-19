@@ -54,7 +54,7 @@ async function fetchCampaigns() {
         console.log('Supabase client:', supabase ? 'Loaded' : 'Missing');
         
         // Test with a simple query first
-        const { data, error, status, count } = await supabase
+        const { data, error, status, count } = await supabaseClient
             .from('Campaigns')
             .select('*')
             .order('created_at', { ascending: false });
