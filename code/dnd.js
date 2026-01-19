@@ -89,7 +89,13 @@ async function getFromDatabase(table, column, value, options = {}) {
         }
         
         // Execute query
-        const { data, error, status } = await query;
+        const { data, error, status, count } = await query;
+
+        console.log(`Status: ${status}`);
+        console.log(`Error: ${error ? error.message : 'null'}`);
+        console.log(`Count: ${count}`);
+        console.log(`Data length: ${data ? data.length : 'null'}`);
+        console.log(`Data:`, data);
         
         if (error) {
             console.error(`Database error (${status}):`, error);
