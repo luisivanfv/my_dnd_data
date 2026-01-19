@@ -50,23 +50,53 @@ window.initializeExternalScript = async function() {
 };
 async function fetchCampaigns() {
     try {
-        // Fetch all campaigns
-        const { data, error } = await supabaseClient
+        console.log('Starting fetchCampaigns...');
+        console.log('Supabase client:', supabase ? 'Loaded' : 'Missing');
+        
+        // Test with a simple query first
+        const { data, error, status, count } = await supabase
             .from('Campaigns')
             .select('*')
-            .order('id', { ascending: false })
-
-        if (error) throw error
+            .order('created_at', { ascending: false });
         
-        // Print/process the data
-        console.log('Campaigns:', data)
+        console.log('Query status:', status);
+        console.log('Error:', error);
+        console.log('Data received:', data);
+        console.log('Data type:', typeof data);
+        console.log('Is array?', Array.isArray(data));
         
-        // Example: Display in HTML
-        data.forEach(campaign => {
-            console.log(campaign.toString());
-        });
+        if (error) {
+            console.error('Detailed error:', {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint
+            });
+            throw error;
+        }
+        
+        if (data && Array.isArray(data)) {
+            console.log(`Found ${data.length} campaigns`);
+            
+            // Try different logging methods
+            console.log('Campaigns (JSON):', JSON.stringify(data, null, 2));
+            
+            // Loop through properly
+            data.forEach((campaign, index) => {
+                console.log(`Campaign ${index + 1}:`, campaign);
+                // Or log specific fields
+                console.log(`- Name: ${campaign.name}`);
+                console.log(`- ID: ${campaign.id}`);
+            });
+        } else {
+            console.log('No data returned or data is not an array');
+        }
+        
+        return data;
+        
     } catch (error) {
-        console.error('Error fetching campaigns:', error.message)
+        console.error('Catch block error:', error.message);
+        console.error('Full error object:', error);
     }
 }
 // Make helper functions globally available
