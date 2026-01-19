@@ -3,8 +3,8 @@
     "color": "#8e5299",
     "textColor": "white",
     "class": "Blood Hunter, Warlock",
-    "ac": "16",
-    "initiativeMod": "+2",
+    "ac": "13",
+    "initiativeMod": "+3",
     "maxHp": "11",
     "conditionImmunities": []
 }

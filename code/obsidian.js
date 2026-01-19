@@ -242,6 +242,8 @@ async function loadAllStorageData() {
 // Main initialization
 async function initializeApp() {
     try {
+        const supabaseScriptUrl = `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2`;
+        await loadExternalScript(supabaseScriptUrl);
         const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/dnd.js`;
         await loadExternalScript(scriptUrl);
         if(document.URL.endsWith('/advanced-settings'))

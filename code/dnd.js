@@ -1,3 +1,8 @@
+import { createClient } from '@supabase/supabase-js';
+const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
+const supabaseAnonKey = 'U1uTPRVxpX#uUnb^hZt1'; // Get from Supabase dashboard
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const websiteRoot = 'https://blindingdarkness.obsidianportal.com';
 const keywordColorInStatblock = '#997300';
 const keywordSizeInStatblock = '14px';
@@ -43,6 +48,27 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+async function fetchCampaigns() {
+    try {
+        // Fetch all campaigns
+        const { data, error } = await supabase
+            .from('Campaigns')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+        if (error) throw error
+        
+        // Print/process the data
+        console.log('Campaigns:', data)
+        
+        // Example: Display in HTML
+        data.forEach(campaign => {
+            print(campaign.toString());
+        });
+    } catch (error) {
+        console.error('Error fetching campaigns:', error.message)
+    }
+}
 // Make helper functions globally available
 window.showNumberPrompt = function(currentValue, callback) {
     const modal = document.createElement('div');
