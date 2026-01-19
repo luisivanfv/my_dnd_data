@@ -26,7 +26,6 @@ window.initializeExternalScript = async function() {
         //await loadEncounterTables();
         //loadEncounterLoaders();
         //loadCustomAccordions();
-        await fetchCampaigns();
         loadPageBackgrounds();
         await recolor();
         //await fetchFolderDataSequentially();
@@ -40,6 +39,7 @@ window.initializeExternalScript = async function() {
         await loadLookers();
         await loadSoundBoard();
         await renameWikisWithNames();
+        await loadCharacterSheets();
         addSearchBarStyles();
         convertToSearchBar();
         addEncounterTableStyles();
@@ -48,6 +48,97 @@ window.initializeExternalScript = async function() {
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
+async function loadCharacterSheets() {
+    const characterSheetContainer = document.getElementById('character-sheet-container');
+    if (!characterSheetContainer)
+        return;
+    const characterName = getUrlParameter('name');
+    const character = await getFromDatabase('Players', 'name', characterName, {});
+    console.log('Character from DB:');
+    console.log(character);
+}
+async function getFromDatabase(table, column, value, options = {}) {
+    try {
+        // Initialize Supabase if not already done
+        if (!window.supabaseClient) {
+            const supabaseUrl = 'https://dqarsuykgopttxbfnjad.supabase.co';
+            const supabaseAnonKey = 'your-anon-key-here';
+            window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        }
+        
+        const supabase = window.supabaseClient;
+        
+        // Build the query
+        let query = supabase
+            .from(table)
+            .select(options.select || '*');
+        
+        // Apply filter if column and value are provided
+        if (column && value !== undefined) {
+            query = query.eq(column, value);
+        }
+        
+        // Apply additional options
+        if (options.limit) query = query.limit(options.limit);
+        if (options.orderBy) {
+            query = query.order(options.orderBy.column, { 
+                ascending: options.orderBy.ascending !== false 
+            });
+        }
+        if (options.range) {
+            query = query.range(options.range.from, options.range.to);
+        }
+        
+        // Execute query
+        const { data, error, status } = await query;
+        
+        if (error) {
+            console.error(`Database error (${status}):`, error);
+            throw new Error(`Database query failed: ${error.message}`);
+        }
+        
+        // Convert to JSON if requested
+        if (options.returnJSON && data) {
+            return JSON.parse(JSON.stringify(data));
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('Error in getFromDatabase:', error);
+        throw error;
+    }
+}
+async function getObjectFromDatabase(searchedTxt, columnSearchedIn, table) {
+    try {
+        const { data, error, status, count } = await supabaseClient
+            .from(table)
+            .select('*')
+            .where({ columnSearchedIn: searchedTxt })
+            .order('id', { ascending: false });
+        
+        console.log('Query status:', status);
+        console.log('Error:', error);
+        console.log('Data received:', data);
+        console.log('Data type:', typeof data);
+        console.log('Is array?', Array.isArray(data));
+        
+        if (error) {
+            console.error('Detailed error:', {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint
+            });
+            throw error;
+        }
+        return data;
+        
+    } catch (error) {
+        console.error('Catch block error:', error.message);
+        console.error('Full error object:', error);
+    }
+}
 async function fetchCampaigns() {
     try {
         console.log('Starting fetchCampaigns...');
