@@ -773,6 +773,8 @@ class InventoryItemMenu {
         this.toggleEquip(itemData);
     }
     handleClick(e, itemElement) {
+        const currentTime = new Date().getTime();
+        this.lastTapTime = currentTime;
         popup.show([`#8A95A8=Debug: `, 'white=handleClick']);
         this.activeItem = {
             element: itemElement,
@@ -780,16 +782,14 @@ class InventoryItemMenu {
         };
         
         // For desktop, check for double click
-        const currentTime = new Date().getTime();
         const clickLength = currentTime - this.lastTapTime;
         popup.show([`#8A95A8=Debug: `, `white=clickLength: ${clickLength}`]);
         if (clickLength < 300 && clickLength > 0) {
             // Double click detected
+            popup.show([`green=Debug: `, `white=Double click!`]);
             this.handleDoubleTap(itemElement);
         } else {
-            this.doubleTapTimer = setTimeout(() => {
-                this.lastTapTime = currentTime;
-            }, 300);
+            popup.show([`orange=Debug: `, `white=Single click!`]);
         }
     }
     handleTouchStart(e, itemElement) {
