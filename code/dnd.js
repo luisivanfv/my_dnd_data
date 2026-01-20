@@ -419,7 +419,7 @@ function createCharacterSheet(characterData) {
                 <div class="tabs">
                     <button class="tab-button active" data-tab="general">General</button>
                     <button class="tab-button" data-tab="skills">Habilidades</button>
-                    <button class="tab-button" data-tab="inventory">Inventario</button>
+                    <button class="tab-button" data-tab="inventory"><img width="50" height="50" src="https://img.icons8.com/glyph-neue/64/1A1A1A/bag-front-view.png" alt="bag-front-view"/></button>
                     <button class="tab-button" data-tab="notes">Notas</button>
                     <button class="tab-button" data-tab="wiki">Wiki</button>
                 </div>
