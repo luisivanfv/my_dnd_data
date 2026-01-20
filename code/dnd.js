@@ -78,8 +78,10 @@ function getArmorClass(dexterity, inventory, itemList) {
             itemList.forEach(item => {
                 if(inventoryItem.itemId === item.id) {
                     console.log('testtt');
-                    if(item.wearableIn === 'torso')
+                    if(item.wearableIn === 'torso') {
+                        console.log('torso!');
                         return item.armorClass + Math.min(item.maxDexMod, dexMod);
+                    }
                 }
             });
         }
@@ -190,7 +192,19 @@ async function loadCharacterSheets() {
         intelligence: character.int,
         wisdom: character.wis,
         charisma: character.cha,
-        
+        // Saving throws
+        strSavingThrows: getMod(str) + strProficiencyBonus,
+        dexSavingThrows: getMod(dex) + dexProficiencyBonus,
+        conSavingThrows: getMod(con) + conProficiencyBonus,
+        intSavingThrows: getMod(int) + intProficiencyBonus,
+        wisSavingThrows: getMod(wis) + wisProficiencyBonus,
+        chaSavingThrows: getMod(cha) + chaProficiencyBonus,
+        strProficiency: strProficiencyBonus > 0,
+        dexProficiency: dexProficiencyBonus > 0,
+        conProficiency: conProficiencyBonus > 0,
+        intProficiency: intProficiencyBonus > 0,
+        wisProficiency: wisProficiencyBonus > 0,
+        chaProficiency: chaProficiencyBonus > 0,
         // Skills with proficiency
         skills: {
             acrobatics: { value: acrobaticsBonus, proficient: acrobaticProficiency },
@@ -413,7 +427,6 @@ function createCharacterSheet(characterData) {
                     <div class="general-grid">
                         <!-- Ability Scores -->
                         <div class="ability-scores-section">
-                            <h3>Ability Scores</h3>
                             <div class="ability-scores-grid">
                                 ${['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => {
                                     const score = character[ability];
@@ -431,76 +444,50 @@ function createCharacterSheet(characterData) {
                         
                         <!-- Combat Stats -->
                         <div class="combat-stats-section">
-                            <h3>Combat</h3>
                             <div class="combat-stats">
                                 <div class="combat-stat">
                                     <span class="combat-label">Armor Class</span>
                                     <span class="combat-value">${character.armorClass}</span>
                                 </div>
                                 <div class="combat-stat">
-                                    <span class="combat-label">Initiative</span>
+                                    <span class="combat-label">Iniciativa</span>
                                     <span class="combat-value">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
                                 </div>
                                 <div class="combat-stat">
-                                    <span class="combat-label">Speed</span>
-                                    <span class="combat-value">${character.speed} ft</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Health -->
-                        <div class="health-section">
-                            <h3>Health</h3>
-                            <div class="health-display">
-                                <div class="hp-display">
-                                    <span class="hp-label">Current HP</span>
-                                    <span class="hp-value">${character.currentHP}</span>
-                                    <span class="hp-separator">/</span>
-                                    <span class="hp-max">${character.maxHP}</span>
-                                </div>
-                                ${character.tempHP > 0 ? `
-                                    <div class="temp-hp">
-                                        <span class="temp-label">Temp HP</span>
-                                        <span class="temp-value">${character.tempHP}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
-                        <!-- Character Details -->
-                        <div class="details-section">
-                            <h3>Character Details</h3>
-                            <div class="details-grid">
-                                <div class="detail">
-                                    <span class="detail-label">Background</span>
-                                    <span class="detail-value">${character.background}</span>
-                                </div>
-                                <div class="detail">
-                                    <span class="detail-label">Alignment</span>
-                                    <span class="detail-value">${character.alignment}</span>
-                                </div>
-                                <div class="detail">
-                                    <span class="detail-label">Experience</span>
-                                    <span class="detail-value">${character.experience.toLocaleString()}</span>
+                                    <span class="combat-label">Velocidad</span>
+                                    <span class="combat-value">${character.speed}</span>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Saving Throws -->
                         <div class="saving-throws-section">
-                            <h3>Saving Throws</h3>
+                            <h3>Salvadas</h3>
                             <div class="saving-throws">
-                                ${['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => {
-                                    const mod = calculateModifier(character[ability]);
-                                    const proficient = character.skills[`${ability}Save`]?.proficient || false;
-                                    const total = mod + (proficient ? proficiencyBonus : 0);
-                                    return `
-                                        <div class="saving-throw ${proficient ? 'proficient' : ''}">
-                                            <span class="throw-name">${ability.substring(0, 3).toUpperCase()}</span>
-                                            <span class="throw-mod">${total >= 0 ? '+' : ''}${total}</span>
-                                        </div>
-                                    `;
-                                }).join('')}
+                                <div class="saving-throw ${strProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">STR</span>
+                                    <span class="throw-mod">${strSavingThrows >= 0 ? '+' : ''}${strSavingThrows}</span>
+                                </div>
+                                <div class="saving-throw ${dexProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">DEX</span>
+                                    <span class="throw-mod">${dexSavingThrows >= 0 ? '+' : ''}${dexSavingThrows}</span>
+                                </div>
+                                <div class="saving-throw ${conProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">CON</span>
+                                    <span class="throw-mod">${conSavingThrows >= 0 ? '+' : ''}${conSavingThrows}</span>
+                                </div>
+                                <div class="saving-throw ${intProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">INT</span>
+                                    <span class="throw-mod">${intSavingThrows >= 0 ? '+' : ''}${intSavingThrows}</span>
+                                </div>
+                                <div class="saving-throw ${wisProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">WIS</span>
+                                    <span class="throw-mod">${wisSavingThrows >= 0 ? '+' : ''}${wisSavingThrows}</span>
+                                </div>
+                                <div class="saving-throw ${chaProficiency ? 'proficient' : ''}">
+                                    <span class="throw-name">CHA</span>
+                                    <span class="throw-mod">${chaSavingThrows >= 0 ? '+' : ''}${chaSavingThrows}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -514,19 +501,48 @@ function createCharacterSheet(characterData) {
                             Proficiency Bonus: +${proficiencyBonus}
                         </div>
                         <div class="skills-list">
-                            ${Object.entries(character.skills).map(([skillName, skillData]) => {
-                                const skillMod = calculateSkillMod(skillName);
-                                const skillDisplayName = skillName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                                return `
-                                    <div class="skill-item ${skillData.proficient ? 'proficient' : ''}">
-                                        <div class="skill-checkbox">
-                                            <input type="checkbox" ${skillData.proficient ? 'checked' : ''} disabled>
-                                        </div>
-                                        <div class="skill-name">${skillDisplayName}</div>
-                                        <div class="skill-mod">${skillMod >= 0 ? '+' : ''}${skillMod}</div>
-                                    </div>
-                                `;
-                            }).join('')}
+                            <div class="skill-item ${character.skills.acrobatics.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.acrobatics.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Acrobacia</div>
+                                <div class="skill-mod">${character.skills.acrobatics.value >= 0 ? '+' : ''}${character.skills.acrobatics.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.animalHandling.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.animalHandling.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Manejo Animal</div>
+                                <div class="skill-mod">${character.skills.animalHandling.value >= 0 ? '+' : ''}${character.skills.animalHandling.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.arcana.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.arcana.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Arcana</div>
+                                <div class="skill-mod">${character.skills.arcana.value >= 0 ? '+' : ''}${character.skills.arcana.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.athletics.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.athletics.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Atleticismo</div>
+                                <div class="skill-mod">${character.skills.athletics.value >= 0 ? '+' : ''}${character.skills.athletics.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.deception.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.deception.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Engaño</div>
+                                <div class="skill-mod">${character.skills.deception.value >= 0 ? '+' : ''}${character.skills.deception.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.history.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.history.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Historia</div>
+                                <div class="skill-mod">${character.skills.history.value >= 0 ? '+' : ''}${character.skills.history.value}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
