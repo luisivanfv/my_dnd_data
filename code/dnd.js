@@ -96,7 +96,7 @@ async function updateCharacterSheet() {
     console.log('New sheet');
     console.log(sheet);
     document.getElementById('character-sheet-container').innerHTML = '';
-    characterSheetContainer.appendChild(sheet);
+    document.getElementById('character-sheet-container').appendChild(sheet);
 }
 async function generateSheet(character) {
     const proficiencyBonus = getProficiencyBonusForLevel(character.level)
