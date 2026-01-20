@@ -71,23 +71,17 @@ function getMod(ability) {
     return Math.floor((ability -10) / 2);
 }
 function getArmorClass(dexterity, inventory, itemList) {
-    console.log(inventory);
-    console.log(itemList);
     const dexMod = getMod(dexterity);
     let armorClass = 10 + dexMod;
     inventory.forEach(inventoryItem =>  {
         if (inventoryItem.equipped) {
             itemList.forEach(item => {
-                if(inventoryItem.itemId === item.id) {
-                    console.log('testtt');
-                    if(item.wearableIn === 'torso') {
+                if(inventoryItem.itemId === item.id)
+                    if(item.wearableIn === 'torso')
                         armorClass = item.armorClass + Math.min(item.maxDexMod, dexMod);
-                    }
-                }
             });
         }
     });
-    console.log('armorClass calculado: ', armorClass);
     return armorClass;
 }
 async function updateCharacterSheet() {
@@ -165,8 +159,6 @@ async function generateSheet(character) {
     animalHandlingBonus += getMod(character.wis);
     arcanaBonus += getMod(character.int);
     athleticsBonus += getMod(character.str);
-    console.log('Athletics (2): ', athleticsBonus);
-    console.log('strMod: ', getMod(character.str));
     deceptionBonus += getMod(character.cha);
     historyBonus += getMod(character.int);
     insightBonus += getMod(character.wis);
@@ -184,7 +176,6 @@ async function generateSheet(character) {
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
     const itemList = await queryDatabase('Items', {}, {});
     const activeTab = localStorage.getItem('activeTab') ?? 'general';
-    console.log('Active tab while generating sheet: ', activeTab);
     return createCharacterSheet({
         name: character.name,
         race: character.race,
@@ -289,8 +280,6 @@ async function loadCharacterSheets() {
     document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
 }
 function createCharacterSheet(characterData) {
-    console.log('CharacterData: ');
-    console.log(characterData);
     // Default character structure
     const defaults = {
         name: 'Unnamed Character',
@@ -406,7 +395,6 @@ function createCharacterSheet(characterData) {
     });
     // Create the character sheet HTML
     const activeTab = localStorage.getItem('activeTab') ?? 'general';
-    console.log('Active tab is: ', activeTab);
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -415,26 +403,26 @@ function createCharacterSheet(characterData) {
                 <div class="character-subtitle">
                     <span class="character-race" style="color: ${character.secondaryTextColor};">${character.race}</span>
                     <span class="separator">•</span>
-                    <span class="character-class">${character.class}</span>
+                    <span class="character-class" style="color: ${character.secondaryTextColor};">${character.class}</span>
                     <span class="separator">•</span>
-                    <span>Nivel ${character.level}</span>
+                    <span style="color: ${character.secondaryTextColor};">Nivel ${character.level}</span>
                 </div>
                 <div class="quick-stats">
                     <div class="quick-stat">
-                        <span class="stat-label">HP</span>
-                        <span class="stat-value">${character.currentHP}/${character.maxHP}</span>
+                        <span class="stat-label" style="color: ${character.secondaryTextColor};">HP</span>
+                        <span class="stat-value" style="color: ${character.textColor};">${character.currentHP}/${character.maxHP}</span>
                     </div>
                     <div class="quick-stat">
-                        <span class="stat-label">AC</span>
-                        <span class="stat-value">${character.armorClass}</span>
+                        <span class="stat-label" style="color: ${character.secondaryTextColor};">AC</span>
+                        <span class="stat-value" style="color: ${character.textColor};">${character.armorClass}</span>
                     </div>
                     <div class="quick-stat">
-                        <span class="stat-label">Initiative</span>
-                        <span class="stat-value">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
+                        <span class="stat-label" style="color: ${character.secondaryTextColor};">Initiative</span>
+                        <span class="stat-value" style="color: ${character.textColor};">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
                     </div>
                     <div class="quick-stat">
-                        <span class="stat-label">Speed</span>
-                        <span class="stat-value">${character.speed}</span>
+                        <span class="stat-label" style="color: ${character.secondaryTextColor};">Speed</span>
+                        <span class="stat-value" style="color: ${character.textColor};">${character.speed}</span>
                     </div>
                 </div>
             </div>
@@ -826,53 +814,13 @@ async function queryDatabase(table, filters = {}, options = {}) {
     
     return options.returnJSON ? JSON.parse(JSON.stringify(result)) : result;
 }
-async function getObjectFromDatabase(searchedTxt, columnSearchedIn, table) {
-    try {
-        const { data, error, status, count } = await supabaseClient
-            .from(table)
-            .select('*')
-            .where({ columnSearchedIn: searchedTxt })
-            .order('id', { ascending: false });
-        
-        console.log('Query status:', status);
-        console.log('Error:', error);
-        console.log('Data received:', data);
-        console.log('Data type:', typeof data);
-        console.log('Is array?', Array.isArray(data));
-        
-        if (error) {
-            console.error('Detailed error:', {
-                message: error.message,
-                code: error.code,
-                details: error.details,
-                hint: error.hint
-            });
-            throw error;
-        }
-        return data;
-        
-    } catch (error) {
-        console.error('Catch block error:', error.message);
-        console.error('Full error object:', error);
-    }
-}
 async function fetchCampaigns() {
     try {
-        console.log('Starting fetchCampaigns...');
-        console.log('Supabase client:', supabase ? 'Loaded' : 'Missing');
-        
-        // Test with a simple query first
         const { data, error, status, count } = await supabaseClient
             .from('Campaigns')
             .select('*')
             .order('id', { ascending: false });
         
-        console.log('Query status:', status);
-        console.log('Error:', error);
-        console.log('Data received:', data);
-        console.log('Data type:', typeof data);
-        console.log('Is array?', Array.isArray(data));
-        
         if (error) {
             console.error('Detailed error:', {
                 message: error.message,
@@ -882,24 +830,6 @@ async function fetchCampaigns() {
             });
             throw error;
         }
-        
-        if (data && Array.isArray(data)) {
-            console.log(`Found ${data.length} campaigns`);
-            
-            // Try different logging methods
-            console.log('Campaigns (JSON):', JSON.stringify(data, null, 2));
-            
-            // Loop through properly
-            data.forEach((campaign, index) => {
-                console.log(`Campaign ${index + 1}:`, campaign);
-                // Or log specific fields
-                console.log(`- Name: ${campaign.name}`);
-                console.log(`- ID: ${campaign.id}`);
-            });
-        } else {
-            console.log('No data returned or data is not an array');
-        }
-        
         return data;
         
     } catch (error) {
