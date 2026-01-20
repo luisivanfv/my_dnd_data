@@ -537,7 +537,7 @@ async function createCharacterSheet(characterData) {
                     <div class="inventory-section">
                         <!-- Currency -->
                         <div class="currency-section">
-                            <h3 style="color: ${character.secondaryTextColor}">${character.gold} <img width="15" height="15" src="https://img.icons8.com/glyph-neue/64/${character.textColor}/cheap-2.png" alt="cheap-2"/></h3>
+                            <h3 style="color: ${character.secondaryTextColor}">${character.gold} <img width="15" height="15" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
                             </div>
                         </div>
                         
