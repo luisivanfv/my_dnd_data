@@ -1549,7 +1549,7 @@ async function createCharacterSheet(characterData) {
                                 data-equipped="${item.equipped}"
                                 data-item-data='${JSON.stringify(item)}'
                                 style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px;">
-                                <div class="item-icon" style="margin-right: 10px;><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
+                                <div class="item-icon" style="margin-right: 10px;"><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
                                 <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
                                 ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
                                 ${item.weight && item.quantity ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight * item.quantity} kg</div>` : ''}
