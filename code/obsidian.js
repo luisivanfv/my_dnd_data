@@ -287,10 +287,20 @@ async function initializeApp() {
     }
 }
 
-function startApp() {
-    initializeApp().catch(err => {
+async function startApp() {
+    try {
+        await initializeApp();
+        
+        // Wait a bit longer before starting updates
+        setTimeout(() => {
+            initializeAutoUpdates().catch(err => {
+                console.error('Auto updates failed to start:', err);
+            });
+        }, 3000); // Give external script more time to load
+        
+    } catch (err) {
         console.error('Unhandled error in app:', err);
-    });
+    }
 }
 
 if (document.readyState === 'loading') {
@@ -425,7 +435,16 @@ class SmartPoller {
                 // Check if data has actually changed
                 if (this.hasCharacterChanged(character)) {
                     console.log('Character data changed, updating sheet');
-                    await window.updateCharacterSheet();
+                    
+                    // CHECK IF FUNCTION EXISTS BEFORE CALLING
+                    if (typeof window.updateCharacterSheet === 'function') {
+                        await window.updateCharacterSheet();
+                    } else {
+                        console.warn('updateCharacterSheet function not available yet');
+                        // Optionally, reload the page or retry later
+                        return [];
+                    }
+                    
                     this.lastCharacterData = character;
                 } else {
                     console.log('No changes detected, skipping update');
