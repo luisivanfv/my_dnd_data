@@ -623,6 +623,38 @@ class InventoryItemMenu {
     }
     
     setupInventoryItems() {
+        console.log('Setting up inventory item event listeners...');
+    
+        // Clear existing event listeners first
+        document.removeEventListener('touchstart', this.touchStartHandler);
+        document.removeEventListener('touchend', this.touchEndHandler);
+        document.removeEventListener('touchmove', this.touchMoveHandler);
+        document.removeEventListener('click', this.clickHandler);
+        // Create bound handlers to maintain 'this' context
+        this.touchStartHandler = this.handleTouchStart.bind(this);
+        this.touchEndHandler = this.handleTouchEnd.bind(this);
+        this.touchMoveHandler = this.handleTouchMove.bind(this);
+        this.clickHandler = this.handleClick.bind(this);
+        
+        // Use event delegation on the document
+        document.addEventListener('touchstart', this.touchStartHandler, { passive: true });
+        document.addEventListener('touchend', this.touchEndHandler);
+        document.addEventListener('touchmove', this.touchMoveHandler, { passive: true });
+        document.addEventListener('click', this.clickHandler);
+        
+        console.log('Event listeners attached to document');
+        
+        // Also check if inventory items exist
+        const inventoryItems = document.querySelectorAll('.inventory-item');
+        console.log(`Found ${inventoryItems.length} inventory items in the DOM`);
+        
+        inventoryItems.forEach((item, index) => {
+            console.log(`Item ${index}:`, {
+                id: item.dataset.itemId,
+                name: item.dataset.itemName,
+                hasClickListener: item.hasAttribute('data-click-bound')
+            });
+        });
         // Use event delegation for dynamic inventory items
         document.addEventListener('touchstart', (e) => {
             const itemElement = e.target.closest('.inventory-item');
@@ -668,8 +700,57 @@ class InventoryItemMenu {
             }
         });
     }
-    
+    handleClick(e, itemElement) {
+        console.log('Click event triggered');
+        console.log('Target:', e.target);
+        console.log('Closest inventory item:', itemElement);
+        
+        if (!itemElement) {
+            console.log('No inventory item found for click');
+            return;
+        }
+        
+        this.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
+        
+        console.log('Active item data:', this.activeItem.data);
+        
+        // For desktop, check for double click
+        const currentTime = new Date().getTime();
+        const clickLength = currentTime - this.lastTapTime;
+        
+        console.log(`Time since last click: ${clickLength}ms`);
+        
+        if (clickLength < 300 && clickLength > 0) {
+            // Double click detected
+            console.log('Double click detected!');
+            clearTimeout(this.doubleTapTimer);
+            this.handleDoubleTap(itemElement);
+        } else {
+            console.log('Single click detected, setting timer');
+            this.doubleTapTimer = setTimeout(() => {
+                this.lastTapTime = currentTime;
+            }, 300);
+        }
+    }
+
+    handleDoubleTap(itemElement) {
+        console.log('handleDoubleTap called for item:', itemElement);
+        const itemData = this.getItemData(itemElement);
+        console.log('Item data for double tap:', itemData);
+        this.toggleEquip(itemData);
+    }
     handleTouchStart(e, itemElement) {
+        console.log('Touch start event triggered');
+        console.log('Target:', e.target);
+        console.log('Closest inventory item:', itemElement);
+        
+        if (!itemElement) {
+            console.log('No inventory item found');
+            return;
+        }
         e.preventDefault();
         this.touchStartPosition = {
             x: e.touches[0].clientX,
@@ -681,13 +762,17 @@ class InventoryItemMenu {
             data: this.getItemData(itemElement)
         };
         
+        console.log('Active item set:', this.activeItem.data);
         // Add visual feedback
         itemElement.classList.add('long-press-active');
         
+        console.log('Added long-press-active class');
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
             this.showMenu(e.touches[0]);
         }, 500); // 500ms for long press
+    
+        console.log('Touch start handler completed');
     }
     
     handleTouchEnd(e, itemElement) {
