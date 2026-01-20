@@ -768,6 +768,25 @@ class InventoryItemMenu {
         console.log('Item data for double tap:', itemData);
         this.toggleEquip(itemData);
     }
+    handleClick(e, itemElement) {
+        this.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
+        
+        // For desktop, check for double click
+        const currentTime = new Date().getTime();
+        const clickLength = currentTime - this.lastTapTime;
+        
+        if (clickLength < 300 && clickLength > 0) {
+            // Double click detected
+            this.handleDoubleTap(itemElement);
+        } else {
+            this.doubleTapTimer = setTimeout(() => {
+                this.lastTapTime = currentTime;
+            }, 300);
+        }
+    }
     handleTouchStart(e, itemElement) {
         console.log('Touch start event triggered');
         console.log('Target:', e.target);
