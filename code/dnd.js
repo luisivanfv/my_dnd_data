@@ -80,7 +80,7 @@ function getArmorClass(dexterity, inventory, itemList) {
                 if(inventoryItem.itemId === item.id) {
                     console.log('testtt');
                     if(item.wearableIn === 'torso') {
-                        console.log(item);
+                        console.log(item.armorClass + Math.min(item.maxDexMod, dexMod));
                         return item.armorClass + Math.min(item.maxDexMod, dexMod);
                     }
                 }
@@ -114,8 +114,6 @@ async function generateSheet(character) {
                 characterSkillProficiencies.push({ skill: skill.name, bonus: item.isExpertise ? proficiencyBonus * 2 : proficiencyBonus });
         });
     });
-    console.log(character);
-    console.log(characterSkillProficiencies);
     const skillNames = [];
     skills.forEach(skill => {
         skillNames.push(skill.name);
@@ -124,8 +122,6 @@ async function generateSheet(character) {
     let animalHandlingBonus = getBonusIn('Manejo Animal', characterSkillProficiencies);
     let arcanaBonus = getBonusIn('Arcana', characterSkillProficiencies);
     let athleticsBonus = getBonusIn('Atleticismo', characterSkillProficiencies);
-    console.log('Athletics (1): ', athleticsBonus);
-    console.log('strMod: ', characterSkillProficiencies);
     let deceptionBonus = getBonusIn('Engaño', characterSkillProficiencies);
     let historyBonus = getBonusIn('Historia', characterSkillProficiencies);
     let insightBonus = getBonusIn('Entendimiento', characterSkillProficiencies);
@@ -292,6 +288,8 @@ async function loadCharacterSheets() {
     document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
 }
 function createCharacterSheet(characterData) {
+    console.log('CharacterData: ');
+    console.log(characterData);
     // Default character structure
     const defaults = {
         name: 'Unnamed Character',
