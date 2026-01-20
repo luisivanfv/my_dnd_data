@@ -93,6 +93,8 @@ async function updateCharacterSheet() {
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
     const sheet = await generateSheet(character);
+    console.log('New sheet');
+    console.log(sheet);
     document.getElementById('character-sheet-container').innerHTML = '';
     characterSheetContainer.appendChild(sheet);
 }
