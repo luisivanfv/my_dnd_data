@@ -485,9 +485,8 @@ function createManualRefreshButton() {
         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     `;
     
-    button.addEventListener('click', () => {
-        // Force an immediate update
-        window.dispatchEvent(new CustomEvent('forceRefresh'));
+    button.addEventListener('click', async () => {
+        await updateCharacterSheet();
     });
     
     document.body.appendChild(button);

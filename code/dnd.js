@@ -80,7 +80,7 @@ function getArmorClass(dexterity, inventory, itemList) {
                 if(inventoryItem.itemId === item.id) {
                     console.log('testtt');
                     if(item.wearableIn === 'torso') {
-                        console.log('torso!');
+                        console.log(item);
                         return item.armorClass + Math.min(item.maxDexMod, dexMod);
                     }
                 }
