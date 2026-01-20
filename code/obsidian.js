@@ -246,9 +246,9 @@ async function initializeApp() {
         await loadExternalScript(supabaseScriptUrl);
         const scriptUrl = `https://cdn.jsdelivr.net/gh/luisivanfv/my_dnd_data@${await getLatestCommitHash()}/code/dnd.js`;
         await loadExternalScript(scriptUrl);
+        
         if(document.URL.endsWith('/advanced-settings'))
             await loadAllStorageData();
-        //await new Promise(resolve => setTimeout(resolve, 1000));
         
         var initFunctions = [];
         for (var key in window) {
@@ -268,12 +268,19 @@ async function initializeApp() {
         }
         
         console.log('✅ Application initialization complete!');
+        
+        // NOW initialize auto updates AFTER external script is loaded
+        await initializeAutoUpdates();
+        
     } catch (error) {
         console.error('❌ Initialization failed:', error);
         try {
             const fallbackUrl = 'https://raw.githubusercontent.com/luisivanfv/my_dnd_data/main/code/public.js?t=' + Date.now();
             await loadExternalScript(fallbackUrl);
             console.log('✅ Fallback script loaded');
+            
+            // Try to initialize auto updates with fallback
+            setTimeout(initializeAutoUpdates, 1000);
         } catch (fallbackError) {
             console.error('Fallback also failed:', fallbackError);
         }
@@ -302,7 +309,106 @@ class SmartPoller {
         this.currentInterval = this.baseInterval;
         this.consecutiveErrors = 0;
         this.isPolling = false;
-        this.lastCharacterData = null; // Track last known character state
+        this.lastCharacterData = null;
+    }
+    
+    start() {
+        if (this.isPolling) return;
+        
+        console.log(`Starting smart poller with ${this.currentInterval}ms interval`);
+        this.isPolling = true;
+        this.poll();
+    }
+    
+    stop() {
+        if (this.pollTimer) {
+            clearTimeout(this.pollTimer);
+            this.pollTimer = null;
+        }
+        this.isPolling = false;
+        console.log('Smart poller stopped');
+    }
+    
+    async poll() {
+        if (!this.isPolling) return;
+        
+        try {
+            const updates = await this.fetchUpdates();
+            
+            // Reset backoff on success
+            if (this.consecutiveErrors > 0) {
+                this.consecutiveErrors = 0;
+                this.resetInterval();
+            }
+            
+            if (updates && updates.length > 0) {
+                this.handleUpdates(updates);
+            }
+            
+        } catch (error) {
+            console.error('Poll failed:', error);
+            this.consecutiveErrors++;
+            this.handlePollError(error);
+        } finally {
+            this.scheduleNextPoll();
+        }
+    }
+    
+    scheduleNextPoll() {
+        if (!this.isPolling) return;
+        
+        // Calculate next interval with backoff and jitter
+        let nextInterval = this.currentInterval;
+        
+        if (this.consecutiveErrors > 0) {
+            nextInterval = Math.min(
+                this.baseInterval * Math.pow(this.backoffFactor, this.consecutiveErrors),
+                this.maxInterval
+            );
+        }
+        
+        // Add jitter to prevent thundering herd
+        const jitterAmount = nextInterval * this.jitter;
+        nextInterval += (Math.random() * jitterAmount * 2) - jitterAmount;
+        
+        this.currentInterval = Math.max(this.baseInterval, nextInterval);
+        
+        this.pollTimer = setTimeout(() => {
+            this.poll();
+        }, this.currentInterval);
+    }
+    
+    resetInterval() {
+        this.currentInterval = this.baseInterval;
+        console.log('Poll interval reset to base');
+    }
+    
+    handlePollError(error) {
+        // Notify user of connection issues
+        this.showConnectionWarning();
+        
+        // If too many errors, switch to a different strategy
+        if (this.consecutiveErrors >= 5) {
+            console.warn('Multiple consecutive errors, switching to fallback mode');
+            this.switchToFallbackMode();
+        }
+    }
+    
+    switchToFallbackMode() {
+        // Implement fallback (longer intervals, cached data, etc.)
+        this.baseInterval = 30000; // 30 seconds in fallback mode
+        this.resetInterval();
+    }
+    
+    showConnectionWarning() {
+        // Show a temporary warning
+        const warning = document.getElementById('connection-warning');
+        if (warning) {
+            warning.style.display = 'block';
+            setTimeout(() => {
+                warning.style.display = 'none';
+            }, 5000);
+        }
     }
     
     async fetchUpdates() {
@@ -360,7 +466,99 @@ class SmartPoller {
         
         return false;
     }
+    
+    handleUpdates(updates) {
+        console.log(`Received ${updates.length} updates`);
+        
+        // Process each update
+        updates.forEach(update => {
+            this.processSingleUpdate(update);
+        });
+        
+        // Show notification
+        this.showUpdateNotification(updates.length);
+    }
+    
+    processSingleUpdate(update) {
+        // Based on update type, update specific parts of your UI
+        switch(update.type) {
+            case 'character_update':
+                this.updateCharacterInfo(update.data);
+                break;
+            case 'campaign_update':
+                this.updateCampaignDisplay(update.data);
+                break;
+            case 'message':
+                this.addNewMessage(update.data);
+                break;
+        }
+    }
+    
+    showUpdateNotification(count) {
+        // Optional: Show a subtle notification
+        if (count > 0 && Notification.permission === 'granted') {
+            new Notification('D&D Campaign', {
+                body: `${count} update${count > 1 ? 's' : ''} received`
+            });
+        }
+    }
 }
+
+// Initialize in your main script
+async function initializeAutoUpdates() {
+    // Check if we're on ObsidianPortal (based on your constraints)
+    const isObsidianPortal = window.location.hostname.includes('obsidianportal');
+    
+    if (isObsidianPortal) {
+        // Use polling for ObsidianPortal since WebSockets might be blocked
+        const poller = new SmartPoller({
+            baseInterval: 30000, // 30 seconds
+            maxInterval: 120000 // 2 minutes max
+        });
+        poller.start();
+        
+        // Also set up a manual refresh button
+        createManualRefreshButton();
+    } else {
+        // For your own hosted version, use better options
+        console.log('Not on ObsidianPortal, using normal updates');
+    }
+}
+
+function createManualRefreshButton() {
+    const button = document.createElement('button');
+    button.id = 'manual-refresh';
+    button.innerHTML = '🔄 Refresh';
+    button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    
+    button.addEventListener('click', async () => {
+        if (typeof updateCharacterSheet === 'function') {
+            await updateCharacterSheet();
+        } else {
+            console.log('updateCharacterSheet function not available yet');
+        }
+    });
+    
+    document.body.appendChild(button);
+}
+
+// Start when page loads AND after external script is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // We'll initialize auto updates after the external script loads
+    // This is handled in the startApp function
+});
 // Initialize in your main script
 async function initializeAutoUpdates() {
     // Check if we're on ObsidianPortal (based on your constraints)
