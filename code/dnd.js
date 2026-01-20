@@ -395,11 +395,11 @@ function createCharacterSheet(characterData) {
             <!-- Tab navigation -->
             <div class="tabs-container">
                 <div class="tabs" style="background: ${character.secondaryColor};">
-                    <button class="tab-button active" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/></button>
-                    <button class="tab-button" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/1A1A1A/light-on.png" alt="light-on"/></button>
-                    <button class="tab-button" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/1A1A1A/bag-front-view.png" alt="bag-front-view"/></button>
-                    <button class="tab-button" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/1A1A1A/create-new.png" alt="create-new"/></button>
-                    <button class="tab-button" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/1A1A1A/geography.png" alt="geography"/></button>
+                    <button class="tab-button active" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
+                    <button class="tab-button" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
+                    <button class="tab-button" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
+                    <button class="tab-button" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
+                    <button class="tab-button" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
                 </div>
             </div>
             
@@ -415,10 +415,10 @@ function createCharacterSheet(characterData) {
                                     const score = character[ability];
                                     const mod = calculateModifier(score);
                                     return `
-                                        <div class="ability-score">
-                                            <div class="ability-name">${ability.substring(0, 3).toUpperCase()}</div>
-                                            <div class="ability-value">${score}</div>
-                                            <div class="ability-mod">${mod >= 0 ? '+' : ''}${mod}</div>
+                                        <div class="ability-score" style="background: ${character.secondaryColor};">
+                                            <div class="ability-name" style="color: ${character.textColor};">${ability.substring(0, 3).toUpperCase()}</div>
+                                            <div class="ability-value" style="color: ${character.secondaryTextColor};">${score}</div>
+                                            <div class="ability-mod" style="color: ${character.textColor};">${mod >= 0 ? '+' : ''}${mod}</div>
                                         </div>
                                     `;
                                 }).join('')}
@@ -427,31 +427,31 @@ function createCharacterSheet(characterData) {
                         
                         <!-- Saving Throws -->
                         <div class="saving-throws-section" style="background: ${character.color};">
-                            <h3>Salvadas</h3>
+                            <h3 style="color: ${character.textColor};">Salvadas</h3>
                             <div class="saving-throws">
-                                <div class="saving-throw ${character.strProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">STR</span>
-                                    <span class="throw-mod">${character.strSavingThrows >= 0 ? '+' : ''}${character.strSavingThrows}</span>
+                                <div class="saving-throw ${character.strProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">STR</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.strSavingThrows >= 0 ? '+' : ''}${character.strSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${character.dexProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">DEX</span>
-                                    <span class="throw-mod">${character.dexSavingThrows >= 0 ? '+' : ''}${character.dexSavingThrows}</span>
+                                <div class="saving-throw ${character.dexProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">DEX</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.dexSavingThrows >= 0 ? '+' : ''}${character.dexSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${character.conProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">CON</span>
-                                    <span class="throw-mod">${character.conSavingThrows >= 0 ? '+' : ''}${character.conSavingThrows}</span>
+                                <div class="saving-throw ${character.conProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">CON</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.conSavingThrows >= 0 ? '+' : ''}${character.conSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${character.intProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">INT</span>
-                                    <span class="throw-mod">${character.intSavingThrows >= 0 ? '+' : ''}${character.intSavingThrows}</span>
+                                <div class="saving-throw ${character.intProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">INT</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.intSavingThrows >= 0 ? '+' : ''}${character.intSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${character.wisProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">WIS</span>
-                                    <span class="throw-mod">${character.wisSavingThrows >= 0 ? '+' : ''}${character.wisSavingThrows}</span>
+                                <div class="saving-throw ${character.wisProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">WIS</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.wisSavingThrows >= 0 ? '+' : ''}${character.wisSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${character.chaProficiency ? 'proficient' : ''}">
-                                    <span class="throw-name">CHA</span>
-                                    <span class="throw-mod">${character.chaSavingThrows >= 0 ? '+' : ''}${character.chaSavingThrows}</span>
+                                <div class="saving-throw ${character.chaProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
+                                    <span class="throw-name" style="color: ${character.secondaryTextColor};">CHA</span>
+                                    <span class="throw-mod" style="color: ${character.textColor};">${character.chaSavingThrows >= 0 ? '+' : ''}${character.chaSavingThrows}</span>
                                 </div>
                             </div>
                         </div>
