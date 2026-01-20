@@ -464,29 +464,29 @@ function createCharacterSheet(characterData) {
                         <div class="saving-throws-section">
                             <h3>Salvadas</h3>
                             <div class="saving-throws">
-                                <div class="saving-throw ${strProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.strProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">STR</span>
-                                    <span class="throw-mod">${strSavingThrows >= 0 ? '+' : ''}${strSavingThrows}</span>
+                                    <span class="throw-mod">${character.strSavingThrows >= 0 ? '+' : ''}${character.strSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${dexProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.dexProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">DEX</span>
-                                    <span class="throw-mod">${dexSavingThrows >= 0 ? '+' : ''}${dexSavingThrows}</span>
+                                    <span class="throw-mod">${character.dexSavingThrows >= 0 ? '+' : ''}${character.dexSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${conProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.conProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">CON</span>
-                                    <span class="throw-mod">${conSavingThrows >= 0 ? '+' : ''}${conSavingThrows}</span>
+                                    <span class="throw-mod">${character.conSavingThrows >= 0 ? '+' : ''}${character.conSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${intProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.intProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">INT</span>
-                                    <span class="throw-mod">${intSavingThrows >= 0 ? '+' : ''}${intSavingThrows}</span>
+                                    <span class="throw-mod">${character.intSavingThrows >= 0 ? '+' : ''}${character.intSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${wisProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.wisProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">WIS</span>
-                                    <span class="throw-mod">${wisSavingThrows >= 0 ? '+' : ''}${wisSavingThrows}</span>
+                                    <span class="throw-mod">${character.wisSavingThrows >= 0 ? '+' : ''}${character.wisSavingThrows}</span>
                                 </div>
-                                <div class="saving-throw ${chaProficiency ? 'proficient' : ''}">
+                                <div class="saving-throw ${character.chaProficiency ? 'proficient' : ''}">
                                     <span class="throw-name">CHA</span>
-                                    <span class="throw-mod">${chaSavingThrows >= 0 ? '+' : ''}${chaSavingThrows}</span>
+                                    <span class="throw-mod">${character.chaSavingThrows >= 0 ? '+' : ''}${character.chaSavingThrows}</span>
                                 </div>
                             </div>
                         </div>
