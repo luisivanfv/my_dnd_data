@@ -174,6 +174,7 @@ async function generateSheet(character) {
     stealthBonus += getMod(character.dex);
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
+    const itemList = await queryDatabase('Items', {}, {});
     return createCharacterSheet({
         id: character.id,
         allItems: itemList,
