@@ -77,6 +77,7 @@ function getArmorClass(dexterity, inventory, itemList) {
         if (inventoryItem.equipped) {
             itemList.forEach(item => {
                 if(inventoryItem.itemId === item.id) {
+                    console.log('testtt');
                     if(item.wearableIn === 'torso')
                         return item.armorClass + Math.min(item.maxDexMod, dexMod);
                 }
@@ -365,12 +366,13 @@ function createCharacterSheet(characterData) {
     const sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
-            <div class="character-header">
+            <div class="character-header" style="background: ${character.color};">
                 <h1 class="character-name">${character.name}</h1>
                 <div class="character-subtitle">
                     <span class="character-race">${character.race}</span>
+                    <span class="character-class">${character.class}</span>
                     <span class="separator">•</span>
-                    <span class="character-class">${character.class} ${character.level}</span>
+                    <span>Nivel ${character.level}</span>
                 </div>
                 <div class="quick-stats">
                     <div class="quick-stat">
@@ -387,7 +389,7 @@ function createCharacterSheet(characterData) {
                     </div>
                     <div class="quick-stat">
                         <span class="stat-label">Speed</span>
-                        <span class="stat-value">${character.speed}ft</span>
+                        <span class="stat-value">${character.speed}</span>
                     </div>
                 </div>
             </div>
