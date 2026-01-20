@@ -1292,7 +1292,6 @@ class InventoryItemMenu {
         }, 2000);
     }
 }
-window.inventoryMenu = new InventoryItemMenu();
 
 // Also call setupInventoryItems when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -8237,3 +8236,4 @@ window.handleCreatureTurnStart = handleCreatureTurnStart;
 window.handleCreatureTurnEnd = handleCreatureTurnEnd;
 window.handleCreatureDeathDuringTurn = handleCreatureDeathDuringTurn;
 window.currentTurnCreatureId = currentTurnCreatureId;
+window.inventoryMenu = new InventoryItemMenu();
