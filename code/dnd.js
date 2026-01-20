@@ -109,6 +109,10 @@ async function updateCharacterSheet() {
         }, 100);
     }
 }
+window.updateCharacterSheet = updateCharacterSheet;
+window.getUrlParameter = getUrlParameter;
+window.capitalizeFirstLetter = capitalizeFirstLetter;
+window.queryDatabase = queryDatabase;
 async function loadActiveTabToStorage(playerId, tabName) {
     await updateById('Players', playerId, { activeTab: tabName });
 }
