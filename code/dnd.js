@@ -177,10 +177,22 @@ async function generateSheet(character) {
     console.log('characterInventory:');
     console.log(characterInventory);
     const itemList = await queryDatabase('Items', {}, {});
+    const inventory = [];
+    characterInventory.forEach(inventoryItem => {
+        itemList.forEach(item => {
+            if(inventoryItem.itemId == item.id) {
+                inventory.push({
+                    ...item,
+                    quantity: inventoryItem.quantity,
+                    equipped: inventoryItem.equipped
+                });
+            }
+        });
+    });
     return createCharacterSheet({
         id: character.id,
         allItems: itemList,
-        inventory: characterInventory,
+        inventory: inventory,
         activeTab: character.activeTab,
         name: character.name,
         race: character.race,
