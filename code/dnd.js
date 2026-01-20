@@ -210,6 +210,12 @@ async function loadCharacterSheets() {
         intProficiency: intProficiencyBonus > 0,
         wisProficiency: wisProficiencyBonus > 0,
         chaProficiency: chaProficiencyBonus > 0,
+        proficiencyBonus: getProficiencyBonusForLevel(character.level),
+        // Colors
+        color: character.color,
+        secondaryColor: character.secondaryColor,
+        textColor: character.textColor,
+        secondaryTextColor: character.secondaryTextColor,
         // Skills with proficiency
         skills: {
             acrobatics: { value: acrobaticsBonus, proficient: acrobaticProficiency },
@@ -266,6 +272,9 @@ async function loadCharacterSheets() {
         flaws: ''
     }));
     document.getElementsByClassName('character-header')[0].style.background = character.color;
+    document.getElementsByClassName('tabs')[0].style.background = character.secondaryColor;
+    document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
+    document.getElementsByClassName('general-tab')[0].style.background = character.color;
 }
 function createCharacterSheet(characterData) {
     // Default character structure
@@ -351,45 +360,14 @@ function createCharacterSheet(characterData) {
     // Calculate proficiency bonus
     const proficiencyBonus = Math.ceil(character.level / 4) + 1;
     
-    // Calculate skill modifiers
-    const calculateSkillMod = (skillName) => {
-        const abilityMap = {
-            acrobatics: 'dexterity',
-            animalHandling: 'wisdom',
-            arcana: 'intelligence',
-            athletics: 'strength',
-            deception: 'charisma',
-            history: 'intelligence',
-            insight: 'wisdom',
-            intimidation: 'charisma',
-            investigation: 'intelligence',
-            medicine: 'wisdom',
-            nature: 'intelligence',
-            perception: 'wisdom',
-            performance: 'charisma',
-            persuasion: 'charisma',
-            religion: 'intelligence',
-            sleightOfHand: 'dexterity',
-            stealth: 'dexterity',
-            survival: 'wisdom'
-        };
-        
-        const skill = character.skills[skillName];
-        const abilityScore = character[abilityMap[skillName]];
-        const abilityMod = calculateModifier(abilityScore);
-        const proficiency = skill.proficient ? proficiencyBonus : 0;
-        
-        return abilityMod + proficiency + (skill.value || 0);
-    };
-    
     // Create the character sheet HTML
     const sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
             <div class="character-header" style="background: ${character.color};">
-                <h1 class="character-name">${character.name}</h1>
+                <h1 class="character-name" style="color: ${character.textColor};">${character.name}</h1>
                 <div class="character-subtitle">
-                    <span class="character-race">${character.race}</span>
+                    <span class="character-race" style="color: ${character.secondaryTextColor};">${character.race}</span>
                     <span class="character-class">${character.class}</span>
                     <span class="separator">•</span>
                     <span>Nivel ${character.level}</span>
@@ -416,22 +394,22 @@ function createCharacterSheet(characterData) {
             
             <!-- Tab navigation -->
             <div class="tabs-container">
-                <div class="tabs">
-                    <button class="tab-button active" data-tab="general">General</button>
-                    <button class="tab-button" data-tab="skills">Habilidades</button>
-                    <button class="tab-button" data-tab="inventory"><img width="50" height="50" src="https://img.icons8.com/glyph-neue/64/1A1A1A/bag-front-view.png" alt="bag-front-view"/></button>
-                    <button class="tab-button" data-tab="notes">Notas</button>
-                    <button class="tab-button" data-tab="wiki">Wiki</button>
+                <div class="tabs" style="background: ${character.secondaryColor};">
+                    <button class="tab-button active" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/1A1A1A/shield.png" alt="shield"/></button>
+                    <button class="tab-button" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/1A1A1A/light-on.png" alt="light-on"/></button>
+                    <button class="tab-button" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/1A1A1A/bag-front-view.png" alt="bag-front-view"/></button>
+                    <button class="tab-button" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/1A1A1A/create-new.png" alt="create-new"/></button>
+                    <button class="tab-button" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/1A1A1A/geography.png" alt="geography"/></button>
                 </div>
             </div>
             
             <!-- Tab content -->
-            <div class="tab-content-container">
+            <div class="tab-content-container" style="background: ${character.secondaryColor};">
                 <!-- General Info Tab -->
                 <div class="tab-content active" id="general-tab">
                     <div class="general-grid">
                         <!-- Ability Scores -->
-                        <div class="ability-scores-section">
+                        <div class="ability-scores-section" style="background: ${character.color};">
                             <div class="ability-scores-grid">
                                 ${['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => {
                                     const score = character[ability];
@@ -448,7 +426,7 @@ function createCharacterSheet(characterData) {
                         </div>
                         
                         <!-- Saving Throws -->
-                        <div class="saving-throws-section">
+                        <div class="saving-throws-section" style="background: ${character.color};">
                             <h3>Salvadas</h3>
                             <div class="saving-throws">
                                 <div class="saving-throw ${character.strProficiency ? 'proficient' : ''}">
@@ -485,7 +463,7 @@ function createCharacterSheet(characterData) {
                     <div class="skills-section">
                         <h3>Skills</h3>
                         <div class="proficiency-info">
-                            Proficiency Bonus: +${proficiencyBonus}
+                            Proficiency Bonus: +${character.proficiencyBonus}
                         </div>
                         <div class="skills-list">
                             <div class="skill-item ${character.skills.acrobatics.proficient ? 'proficient' : ''}">
