@@ -74,20 +74,21 @@ function getArmorClass(dexterity, inventory, itemList) {
     console.log(inventory);
     console.log(itemList);
     const dexMod = getMod(dexterity);
+    let armorClass = 10 + dexMod;
     inventory.forEach(inventoryItem =>  {
         if (inventoryItem.equipped) {
             itemList.forEach(item => {
                 if(inventoryItem.itemId === item.id) {
                     console.log('testtt');
                     if(item.wearableIn === 'torso') {
-                        console.log(item.armorClass + Math.min(item.maxDexMod, dexMod));
-                        return item.armorClass + Math.min(item.maxDexMod, dexMod);
+                        armorClass = item.armorClass + Math.min(item.maxDexMod, dexMod);
                     }
                 }
             });
         }
     });
-    return 10 + dexMod;
+    console.log('armorClass calculado: ', armorClass);
+    return armorClass;
 }
 async function updateCharacterSheet() {
     const characterName = getUrlParameter('name');
