@@ -175,7 +175,6 @@ async function generateSheet(character) {
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
     const itemList = await queryDatabase('Items', {}, {});
-    const activeTab = localStorage.getItem('activeTab') ?? 'general';
     return createCharacterSheet({
         id: character.id,
         activeTab: character.activeTab,
@@ -306,7 +305,6 @@ async function updateById(table, id, updates) {
     }
 }
 async function createCharacterSheet(characterData) {
-    console.log(characterData);
     // Default character structure
     const defaults = {
         name: 'Unnamed Character',
