@@ -174,9 +174,10 @@ async function generateSheet(character) {
     stealthBonus += getMod(character.dex);
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
-    const itemList = await queryDatabase('Items', {}, {});
     return createCharacterSheet({
         id: character.id,
+        allItems: itemList,
+        inventory: characterInventory,
         activeTab: character.activeTab,
         name: character.name,
         race: character.race,
@@ -185,6 +186,7 @@ async function generateSheet(character) {
         background: '',
         alignment: 'Neutral',
         experience: 0,
+        gold: character.gold,
         // Ability scores
         strength: character.str,
         dexterity: character.dex,
@@ -305,6 +307,7 @@ async function updateById(table, id, updates) {
 }
 async function createCharacterSheet(characterData) {
     // Default character structure
+    const itemList = await queryDatabase('Items', {}, {});
     const defaults = {
         name: 'Unnamed Character',
         race: 'Unknown',
@@ -533,28 +536,7 @@ async function createCharacterSheet(characterData) {
                     <div class="inventory-section">
                         <!-- Currency -->
                         <div class="currency-section">
-                            <h3>Currency</h3>
-                            <div class="currency-grid">
-                                <div class="currency-item">
-                                    <span class="currency-label">CP</span>
-                                    <span class="currency-value">${character.currency.cp}</span>
-                                </div>
-                                <div class="currency-item">
-                                    <span class="currency-label">SP</span>
-                                    <span class="currency-value">${character.currency.sp}</span>
-                                </div>
-                                <div class="currency-item">
-                                    <span class="currency-label">EP</span>
-                                    <span class="currency-value">${character.currency.ep}</span>
-                                </div>
-                                <div class="currency-item">
-                                    <span class="currency-label">GP</span>
-                                    <span class="currency-value">${character.currency.gp}</span>
-                                </div>
-                                <div class="currency-item">
-                                    <span class="currency-label">PP</span>
-                                    <span class="currency-value">${character.currency.pp}</span>
-                                </div>
+                            <h3 style="color: ${character.secondaryTextColor}">${character.gold} <img width="15" height="15" src="https://img.icons8.com/glyph-neue/64/${character.textColor}/cheap-2.png" alt="cheap-2"/></h3>
                             </div>
                         </div>
                         
