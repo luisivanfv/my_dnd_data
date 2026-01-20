@@ -93,10 +93,11 @@ async function updateCharacterSheet() {
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
     const sheet = await generateSheet(character);
-    console.log('New sheet');
-    console.log(sheet);
     document.getElementById('character-sheet-container').innerHTML = '';
     document.getElementById('character-sheet-container').appendChild(sheet);
+}
+function loadActiveTabToStorage(tabName) {
+    localStorage.setItem('activeTab', tabName);
 }
 async function generateSheet(character) {
     const proficiencyBonus = getProficiencyBonusForLevel(character.level)
@@ -403,6 +404,9 @@ function createCharacterSheet(characterData) {
         </div>`;
     });
     // Create the character sheet HTML
+    let activeTab = 'general';
+    if(localStorage.getItem('activeTab'))
+        activeTab = localStorage.getItem('activeTab');
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -438,11 +442,11 @@ function createCharacterSheet(characterData) {
             <!-- Tab navigation -->
             <div class="tabs-container">
                 <div class="tabs" style="background: ${character.secondaryColor};">
-                    <button class="tab-button active" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
-                    <button class="tab-button" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
-                    <button class="tab-button" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
-                    <button class="tab-button" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
-                    <button class="tab-button" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
+                    <button onclick="loadActiveTabToStorage('general');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
+                    <button onclick="loadActiveTabToStorage('skills');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
+                    <button onclick="loadActiveTabToStorage('inventory');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
+                    <button onclick="loadActiveTabToStorage('notes');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
+                    <button onclick="loadActiveTabToStorage('wiki');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
                 </div>
             </div>
             
