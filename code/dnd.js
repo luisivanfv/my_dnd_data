@@ -62,10 +62,8 @@ function getProficiencyBonusForLevel(level) {
 function getBonusIn(skill, proficiencies) {
     let bonus = 0;
     proficiencies.forEach(proficiency => {
-        if(skill == proficiency.skill) {
-            console.log('EUREKA! ', proficiency.bonus);
+        if(skill == proficiency.skill)
             bonus = proficiency.bonus;
-        }
     });
     return bonus;
 }
@@ -420,9 +418,9 @@ function createCharacterSheet(characterData) {
             <div class="tabs-container">
                 <div class="tabs">
                     <button class="tab-button active" data-tab="general">General</button>
-                    <button class="tab-button" data-tab="skills">Skills</button>
-                    <button class="tab-button" data-tab="inventory">Inventory</button>
-                    <button class="tab-button" data-tab="notes">Notes</button>
+                    <button class="tab-button" data-tab="skills">Habilidades</button>
+                    <button class="tab-button" data-tab="inventory">Inventario</button>
+                    <button class="tab-button" data-tab="notes">Notas</button>
                     <button class="tab-button" data-tab="wiki">Wiki</button>
                 </div>
             </div>
@@ -446,24 +444,6 @@ function createCharacterSheet(characterData) {
                                         </div>
                                     `;
                                 }).join('')}
-                            </div>
-                        </div>
-                        
-                        <!-- Combat Stats -->
-                        <div class="combat-stats-section">
-                            <div class="combat-stats">
-                                <div class="combat-stat">
-                                    <span class="combat-label">Armor Class</span>
-                                    <span class="combat-value">${character.armorClass}</span>
-                                </div>
-                                <div class="combat-stat">
-                                    <span class="combat-label">Iniciativa</span>
-                                    <span class="combat-value">${character.initiative >= 0 ? '+' : ''}${character.initiative}</span>
-                                </div>
-                                <div class="combat-stat">
-                                    <span class="combat-label">Velocidad</span>
-                                    <span class="combat-value">${character.speed}</span>
-                                </div>
                             </div>
                         </div>
                         
@@ -549,6 +529,90 @@ function createCharacterSheet(characterData) {
                                 </div>
                                 <div class="skill-name">Historia</div>
                                 <div class="skill-mod">${character.skills.history.value >= 0 ? '+' : ''}${character.skills.history.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.insight.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.insight.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Entendimiento</div>
+                                <div class="skill-mod">${character.skills.insight.value >= 0 ? '+' : ''}${character.skills.insight.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.intimidation.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.intimidation.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Intimidación</div>
+                                <div class="skill-mod">${character.skills.intimidation.value >= 0 ? '+' : ''}${character.skills.intimidation.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.investigation.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.investigation.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Investigación</div>
+                                <div class="skill-mod">${character.skills.investigation.value >= 0 ? '+' : ''}${character.skills.investigation.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.medicine.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.medicine.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Medicina</div>
+                                <div class="skill-mod">${character.skills.medicine.value >= 0 ? '+' : ''}${character.skills.medicine.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.nature.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.nature.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Naturaleza</div>
+                                <div class="skill-mod">${character.skills.nature.value >= 0 ? '+' : ''}${character.skills.nature.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.perception.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.perception.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Percepción</div>
+                                <div class="skill-mod">${character.skills.perception.value >= 0 ? '+' : ''}${character.skills.perception.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.performance.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.performance.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Actuación</div>
+                                <div class="skill-mod">${character.skills.performance.value >= 0 ? '+' : ''}${character.skills.performance.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.persuasion.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.persuasion.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Persuasión</div>
+                                <div class="skill-mod">${character.skills.persuasion.value >= 0 ? '+' : ''}${character.skills.persuasion.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.religion.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.religion.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Religión</div>
+                                <div class="skill-mod">${character.skills.religion.value >= 0 ? '+' : ''}${character.skills.religion.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.sleightOfHand.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.sleightOfHand.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Truco de Manos</div>
+                                <div class="skill-mod">${character.skills.sleightOfHand.value >= 0 ? '+' : ''}${character.skills.sleightOfHand.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.stealth.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.stealth.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Sigilo</div>
+                                <div class="skill-mod">${character.skills.stealth.value >= 0 ? '+' : ''}${character.skills.stealth.value}</div>
+                            </div>
+                            <div class="skill-item ${character.skills.survival.proficient ? 'proficient' : ''}">
+                                <div class="skill-checkbox">
+                                    <input type="checkbox" ${character.skills.survival.proficient ? 'checked' : ''} disabled>
+                                </div>
+                                <div class="skill-name">Supervivencia</div>
+                                <div class="skill-mod">${character.skills.survival.value >= 0 ? '+' : ''}${character.skills.survival.value}</div>
                             </div>
                         </div>
                     </div>
