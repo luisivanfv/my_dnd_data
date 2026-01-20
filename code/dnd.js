@@ -69,11 +69,18 @@ function getBonusIn(skill, proficiencies) {
 function getMod(ability) {
     return Math.floor((ability -10) / 2);
 }
-function getArmorClass(dexterity, armor) {
+function getArmorClass(dexterity, inventory, itemList) {
     const dexMod = getMod(dexterity);
-    if(armor) {
-        return armor.armorClass + Math.min(armor.maxDexMod, dexMod);
-    }
+    inventory.forEach(inventoryItem =>  {
+        if (inventoryItem.equipped) {
+            itemList.forEach(item => {
+                if(inventoryItem.itemId === item.id) {
+                    if(item.wearableIn === 'torso')
+                        return item.armorClass + Math.min(item.maxDexMod, dexMod);
+                }
+            });
+        }
+    });
     return 10 + dexMod;
 }
 async function loadCharacterSheets() {
@@ -138,6 +145,12 @@ async function loadCharacterSheets() {
     const sleightOfHandProficiency = sleightOfHandBonus > 0;
     const stealthProficiency = stealthBonus > 0;
     const survivalProficiency = survivalBonus > 0;
+    const strProficiencyBonus = character.strProficiency ? proficiencyBonus : 0;
+    const dexProficiencyBonus = character.dexProficiency ? proficiencyBonus : 0;
+    const conProficiencyBonus = character.conProficiency ? proficiencyBonus : 0;
+    const intProficiencyBonus = character.intProficiency ? proficiencyBonus : 0;
+    const wisProficiencyBonus = character.wisProficiency ? proficiencyBonus : 0;
+    const chaProficiencyBonus = character.chaProficiency ? proficiencyBonus : 0;
     acrobaticsBonus += getMod(character.dex);
     animalHandlingBonus += getMod(character.wis);
     arcanaBonus += getMod(character.int);
