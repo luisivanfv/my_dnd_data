@@ -60,17 +60,14 @@ function getProficiencyBonusForLevel(level) {
     return 6;
 }
 function getBonusIn(skill, proficiencies) {
-    console.log('looking for skill: ', skill);
+    let bonus = 0;
     proficiencies.forEach(proficiency => {
-        if(skill == 'Atleticismo') {
-            console.log(skill, ' = ', proficiency.skill, '? ', (skill == proficiency.skill).toString());
-        }
         if(skill == proficiency.skill) {
-            console.log('EUREKA!');
-            return proficiency.bonus;
+            console.log('EUREKA! ', proficiency.bonus);
+            bonus = proficiency.bonus;
         }
     });
-    return 0;
+    return bonus;
 }
 function getMod(ability) {
     return Math.floor((ability -10) / 2);
