@@ -118,6 +118,8 @@ async function loadCharacterSheets() {
     let animalHandlingBonus = getBonusIn('Manejo Animal', characterSkillProficiencies);
     let arcanaBonus = getBonusIn('Arcana', characterSkillProficiencies);
     let athleticsBonus = getBonusIn('Atleticismo', characterSkillProficiencies);
+    console.log('Athletics (1): ', athleticsBonus);
+    console.log('strMod: ', characterSkillProficiencies);
     let deceptionBonus = getBonusIn('Engaño', characterSkillProficiencies);
     let historyBonus = getBonusIn('Historia', characterSkillProficiencies);
     let insightBonus = getBonusIn('Entendimiento', characterSkillProficiencies);
@@ -160,6 +162,8 @@ async function loadCharacterSheets() {
     animalHandlingBonus += getMod(character.wis);
     arcanaBonus += getMod(character.int);
     athleticsBonus += getMod(character.str);
+    console.log('Athletics (2): ', athleticsBonus);
+    console.log('strMod: ', getMod(character.str));
     deceptionBonus += getMod(character.cha);
     historyBonus += getMod(character.int);
     insightBonus += getMod(character.wis);
