@@ -325,7 +325,6 @@ class SmartPoller {
         if (!this.isPolling) return;
         
         try {
-            console.log('Polling for updates...');
             const updates = await this.fetchUpdates();
             
             // Reset backoff on success
@@ -365,8 +364,6 @@ class SmartPoller {
         nextInterval += (Math.random() * jitterAmount * 2) - jitterAmount;
         
         this.currentInterval = Math.max(this.baseInterval, nextInterval);
-        
-        console.log(`Next poll in ${Math.round(this.currentInterval)}ms`);
         
         this.pollTimer = setTimeout(() => {
             this.poll();

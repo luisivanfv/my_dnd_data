@@ -91,8 +91,8 @@ async function updateCharacterSheet() {
     document.getElementById('character-sheet-container').innerHTML = '';
     document.getElementById('character-sheet-container').appendChild(sheet);
 }
-function loadActiveTabToStorage(tabName) {
-    localStorage.setItem('activeTab', tabName);
+async function loadActiveTabToStorage(playerId, tabName) {
+    await updateById('Players', playerId, { activeTab: tabName });
 }
 async function generateSheet(character) {
     const proficiencyBonus = getProficiencyBonusForLevel(character.level)
@@ -177,6 +177,8 @@ async function generateSheet(character) {
     const itemList = await queryDatabase('Items', {}, {});
     const activeTab = localStorage.getItem('activeTab') ?? 'general';
     return createCharacterSheet({
+        id: character.id,
+        activeTab: character.activeTab,
         name: character.name,
         race: character.race,
         class: character.class,
@@ -279,7 +281,32 @@ async function loadCharacterSheets() {
     document.getElementsByClassName('tabs')[0].style.background = character.secondaryColor;
     document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
 }
-function createCharacterSheet(characterData) {
+async function updateById(table, id, updates) {
+    try {
+        if (!window.supabaseClient) {
+            await initializeSupabase();
+        }
+        
+        const supabase = window.supabaseClient;
+        
+        const { data, error } = await supabase
+            .from(table)
+            .update({
+                ...updates,
+                updated_at: new Date().toISOString() // Auto-update timestamp
+            })
+            .eq('id', id)
+            .select(); // Returns the updated row
+        
+        if (error) throw error;
+        return data?.[0] || null;
+        
+    } catch (error) {
+        console.error(`Error updating ${table} id ${id}:`, error);
+        throw error;
+    }
+}
+async function createCharacterSheet(characterData) {
     // Default character structure
     const defaults = {
         name: 'Unnamed Character',
@@ -394,7 +421,7 @@ function createCharacterSheet(characterData) {
         </div>`;
     });
     // Create the character sheet HTML
-    const activeTab = localStorage.getItem('activeTab') ?? 'general';
+    const activeTab = character.activeTab;
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -402,9 +429,9 @@ function createCharacterSheet(characterData) {
                 <h1 class="character-name" style="color: ${character.textColor};">${character.name}</h1>
                 <div class="character-subtitle">
                     <span class="character-race" style="color: ${character.secondaryTextColor};">${character.race}</span>
-                    <span class="separator">•</span>
+                    <span class="separator" style="color: ${character.secondaryTextColor};">•</span>
                     <span class="character-class" style="color: ${character.secondaryTextColor};">${character.class}</span>
-                    <span class="separator">•</span>
+                    <span class="separator" style="color: ${character.secondaryTextColor};">•</span>
                     <span style="color: ${character.secondaryTextColor};">Nivel ${character.level}</span>
                 </div>
                 <div class="quick-stats">
@@ -430,11 +457,11 @@ function createCharacterSheet(characterData) {
             <!-- Tab navigation -->
             <div class="tabs-container">
                 <div class="tabs" style="background: ${character.secondaryColor};">
-                    <button onclick="loadActiveTabToStorage('general');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
-                    <button onclick="loadActiveTabToStorage('skills');" class="tab-button ${activeTab == 'skills' ? 'active' : ''}" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
-                    <button onclick="loadActiveTabToStorage('inventory');" class="tab-button ${activeTab == 'inventory' ? 'active' : ''}" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
-                    <button onclick="loadActiveTabToStorage('notes');" class="tab-button ${activeTab == 'notes' ? 'active' : ''}" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
-                    <button onclick="loadActiveTabToStorage('wiki');" class="tab-button ${activeTab == 'wiki' ? 'active' : ''}" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
+                    <button onclick="loadActiveTabToStorage(${character.id}, 'general');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
+                    <button onclick="loadActiveTabToStorage(${character.id}, 'skills');" class="tab-button ${activeTab == 'skills' ? 'active' : ''}" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
+                    <button onclick="loadActiveTabToStorage(${character.id}, 'inventory');" class="tab-button ${activeTab == 'inventory' ? 'active' : ''}" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
+                    <button onclick="loadActiveTabToStorage(${character.id}, 'notes');" class="tab-button ${activeTab == 'notes' ? 'active' : ''}" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
+                    <button onclick="loadActiveTabToStorage(${character.id}, 'wiki');" class="tab-button ${activeTab == 'wiki' ? 'active' : ''}" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
                 </div>
             </div>
             
@@ -462,7 +489,6 @@ function createCharacterSheet(characterData) {
                         
                         <!-- Saving Throws -->
                         <div class="saving-throws-section" style="background: ${character.color};">
-                            <h3 style="color: ${character.textColor};">Salvadas</h3>
                             <div class="saving-throws">
                                 <div class="saving-throw ${character.strProficiency ? 'proficient' : ''}" style="background: ${character.secondaryColor};">
                                     <span class="throw-name" style="color: ${character.secondaryTextColor};">STR</span>
@@ -496,7 +522,6 @@ function createCharacterSheet(characterData) {
                 <!-- Skills Tab -->
                 <div class="tab-content ${activeTab == 'skills' ? 'active' : ''}" id="skills-tab">
                     <div class="skills-section" style="background: ${character.secondaryColor};">
-                        <h3 style="text-align: center; color: ${character.secondaryTextColor}">Habilidades</h3>
                         <div class="proficiency-info" style="background: ${character.color}; color: ${character.textColor};">
                             Proficiency Bonus: +${character.proficiencyBonus}
                         </div>
