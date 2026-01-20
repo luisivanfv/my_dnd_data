@@ -1547,9 +1547,10 @@ async function createCharacterSheet(characterData) {
                                 data-item-name="${item.name}"
                                 data-item-quantity="${item.quantity}"
                                 data-equipped="${item.equipped}"
-                                data-item-data='${JSON.stringify(item)}'>
+                                data-item-data='${JSON.stringify(item)}'
+                                style="background: ${item.equipped ? character.darkColor : character.secondaryColor};">
                                 <div class="item-icon"><img width="20" height="20" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
-                                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`} ${item.equipped ? '⚔️' : ''}</div>
+                                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
                                 ${item.quantity ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
                                 ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight} kg</div>` : ''}
                             </div>
