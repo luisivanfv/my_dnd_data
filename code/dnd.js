@@ -59,6 +59,23 @@ function getProficiencyBonusForLevel(level) {
         return 5;
     return 6;
 }
+function getBonusIn(skill, proficiencies) {
+    proficiencies.forEach(proficiency => {
+        if(skill === proficiency.skill)
+            return proficiency.bonus;
+    });
+    return 0;
+}
+function getMod(ability) {
+    return Math.floor((ability -10) / 2);
+}
+function getArmorClass(dexterity, armor) {
+    const dexMod = getMod(dexterity);
+    if(armor) {
+        return armor.armorClass + Math.min(armor.maxDexMod, dexMod);
+    }
+    return 10 + dexMod;
+}
 async function loadCharacterSheets() {
     const characterSheetContainer = document.getElementById('character-sheet-container');
     if (!characterSheetContainer)
@@ -81,52 +98,110 @@ async function loadCharacterSheets() {
     });
     console.log(character);
     console.log(characterSkillProficiencies);
+    const skillNames = [];
+    skills.forEach(skill => {
+        skillNames.push(skill.name);
+    });
+    const acrobaticsBonus = getBonusIn('Acrobacia', characterSkillProficiencies);
+    const animalHandlingBonus = getBonusIn('Manejo Animal', characterSkillProficiencies);
+    const arcanaBonus = getBonusIn('Arcana', characterSkillProficiencies);
+    const athleticsBonus = getBonusIn('Atleticismo', characterSkillProficiencies);
+    const deceptionBonus = getBonusIn('Engaño', characterSkillProficiencies);
+    const historyBonus = getBonusIn('Historia', characterSkillProficiencies);
+    const insightBonus = getBonusIn('Entendimiento', characterSkillProficiencies);
+    const intimidationBonus = getBonusIn('Intimidación', characterSkillProficiencies);
+    const investigationBonus = getBonusIn('Investigación', characterSkillProficiencies);
+    const medicineBonus = getBonusIn('Medicina', characterSkillProficiencies);
+    const natureBonus = getBonusIn('Naturaleza', characterSkillProficiencies);
+    const perceptionBonus = getBonusIn('Percepción', characterSkillProficiencies);
+    const performanceBonus = getBonusIn('Actuación', characterSkillProficiencies);
+    const persuasionBonus = getBonusIn('Persuasión', characterSkillProficiencies);
+    const religionBonus = getBonusIn('Religión', characterSkillProficiencies);
+    const sleightOfHandBonus = getBonusIn('Truco de Manos', characterSkillProficiencies);
+    const stealthBonus = getBonusIn('Sigilo', characterSkillProficiencies);
+    const survivalBonus = getBonusIn('Supervivencia', characterSkillProficiencies);
+    const acrobaticProficiency = acrobaticsBonus > 0;
+    const animalHandlingProficiency = animalHandlingBonus > 0;
+    const arcanaProficiency = arcanaBonus > 0;
+    const athleticsProficiency = athleticsBonus > 0;
+    const deceptionProficiency = deceptionBonus > 0;
+    const historyProficiency = historyBonus > 0;
+    const insightProficiency = insightBonus > 0;
+    const intimidationProficiency = intimidationBonus > 0;
+    const investigationProficiency = investigationBonus > 0;
+    const medicineProficiency = medicineBonus > 0;
+    const natureProficiency = natureBonus > 0;
+    const perceptionProficiency = perceptionBonus > 0;
+    const performanceProficiency = performanceBonus > 0;
+    const persuasionProficiency = persuasionBonus > 0;
+    const religionProficiency = religionBonus > 0;
+    const sleightOfHandProficiency = sleightOfHandBonus > 0;
+    const stealthProficiency = stealthBonus > 0;
+    const survivalProficiency = survivalBonus > 0;
+    acrobaticsBonus += getMod(character.dex);
+    animalHandlingBonus += getMod(character.wis);
+    arcanaBonus += getMod(character.int);
+    athleticsBonus += getMod(character.str);
+    deceptionBonus += getMod(character.cha);
+    historyBonus += getMod(character.int);
+    insightBonus += getMod(character.wis);
+    intimidationBonus += getMod(character.cha);
+    investigationBonus += getMod(character.int);
+    medicineBonus += getMod(character.wis);
+    natureBonus += getMod(character.int);
+    perceptionBonus += getMod(character.wis);
+    performanceBonus += getMod(character.cha);
+    persuasionBonus += getMod(character.cha);
+    religionBonus += getMod(character.int);
+    sleightOfHandBonus += getMod(character.dex);
+    stealthBonus += getMod(character.dex);
+    survivalBonus += getMod(character.wis);
     characterSheetContainer.appendChild(createCharacterSheet({
-        name: 'Unnamed Character',
-        race: 'Unknown',
-        class: 'Adventurer',
-        level: 1,
+        name: character.name,
+        race: character.race,
+        class: character.class,
+        level: character.level,
         background: '',
         alignment: 'Neutral',
         experience: 0,
         
         // Ability scores
-        strength: 10,
-        dexterity: 10,
-        constitution: 10,
-        intelligence: 10,
-        wisdom: 10,
-        charisma: 10,
+        strength: character.str,
+        dexterity: character.dex,
+        constitution: character.con,
+        intelligence: character.int,
+        wisdom: character.wis,
+        charisma: character.cha,
         
         // Skills with proficiency
         skills: {
-            acrobatics: { value: 0, proficient: false },
-            animalHandling: { value: 0, proficient: false },
-            arcana: { value: 0, proficient: false },
-            athletics: { value: 0, proficient: false },
-            deception: { value: 0, proficient: false },
-            history: { value: 0, proficient: false },
-            insight: { value: 0, proficient: false },
-            intimidation: { value: 0, proficient: false },
-            investigation: { value: 0, proficient: false },
-            medicine: { value: 0, proficient: false },
-            nature: { value: 0, proficient: false },
-            perception: { value: 0, proficient: false },
-            performance: { value: 0, proficient: false },
-            persuasion: { value: 0, proficient: false },
-            religion: { value: 0, proficient: false },
-            sleightOfHand: { value: 0, proficient: false },
-            stealth: { value: 0, proficient: false },
-            survival: { value: 0, proficient: false }
+            acrobatics: { value: acrobaticsBonus, proficient: acrobaticProficiency },
+            animalHandling: { value: animalHandlingBonus, proficient: animalHandlingProficiency },
+            arcana: { value: arcanaBonus, proficient: arcanaProficiency },
+            athletics: { value: athleticsBonus, proficient: athleticsProficiency },
+            deception: { value: deceptionBonus, proficient: deceptionProficiency },
+            history: { value: historyBonus, proficient: historyProficiency },
+            insight: { value: insightBonus, proficient: insightProficiency },
+            intimidation: { value: intimidationBonus, proficient: intimidationProficiency },
+            investigation: { value: investigationBonus, proficient: investigationProficiency },
+            medicine: { value: medicineBonus, proficient: medicineProficiency },
+            nature: { value: natureBonus, proficient: natureProficiency },
+            perception: { value: perceptionBonus, proficient: perceptionProficiency },
+            performance: { value: performanceBonus, proficient: performanceProficiency },
+            persuasion: { value: persuasionBonus, proficient: persuasionProficiency },
+            religion: { value: religionBonus, proficient: religionProficiency },
+            sleightOfHand: { value: sleightOfHandBonus, proficient: sleightOfHandProficiency },
+            stealth: { value: stealthBonus, proficient: stealthProficiency },
+            survival: { value: survivalBonus, proficient: survivalProficiency }
         },
         
         // Combat stats
-        maxHP: 10,
-        currentHP: 10,
+        maxHP: character.maxHp,
+        currentHP: character.hp,
         tempHP: 0,
-        armorClass: 10,
-        initiative: 0,
-        speed: 30,
+        armorClass: getArmorClass(character.dex, {}),
+        initiative: getMod(character.dex),
+        speed: character.speed,
         
         // Inventory
         inventory: [],
