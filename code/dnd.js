@@ -784,11 +784,7 @@ class InventoryItemMenu {
         const clickLength = currentTime - this.lastTapTime;
         popup.show([`#8A95A8=Debug: `, `white=clickLength: ${clickLength}`]);
         if (clickLength < 300 && clickLength > 0) {
-            // Double click detected
-            popup.show([`green=Debug: `, `white=Double click!`]);
             this.handleDoubleTap(itemElement);
-        } else {
-            popup.show([`orange=Debug: `, `white=Single click!`]);
         }
         this.lastTapTime = currentTime;
     }
@@ -884,7 +880,7 @@ class InventoryItemMenu {
         const viewportHeight = window.innerHeight;
         
         let left = position.clientX - (menuWidth / 2);
-        let top = position.clientY;
+        let top = position.clientY - (menuHeight / 2);
         
         // Keep menu within viewport
         left = Math.max(10, Math.min(left, viewportWidth - menuWidth - 10));
