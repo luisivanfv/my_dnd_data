@@ -185,7 +185,6 @@ async function generateSheet(character) {
         background: '',
         alignment: 'Neutral',
         experience: 0,
-        activeTab: activeTab,
         // Ability scores
         strength: character.str,
         dexterity: character.dex,
