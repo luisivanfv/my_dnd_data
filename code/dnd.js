@@ -306,6 +306,7 @@ async function updateById(table, id, updates) {
     }
 }
 async function createCharacterSheet(characterData) {
+    console.log(characterData);
     // Default character structure
     const defaults = {
         name: 'Unnamed Character',
