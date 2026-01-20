@@ -294,152 +294,71 @@ if (document.readyState === 'loading') {
 // Smart polling with backoff
 class SmartPoller {
     constructor(config = {}) {
-        this.baseInterval = config.baseInterval || 5000; // 5 seconds
-        this.maxInterval = config.maxInterval || 300000; // 5 minutes
+        this.baseInterval = config.baseInterval || 30000; // Increased from 5s to 30s
+        this.maxInterval = config.maxInterval || 300000;
         this.backoffFactor = config.backoffFactor || 2;
-        this.jitter = config.jitter || 0.1; // 10% jitter
+        this.jitter = config.jitter || 0.1;
         this.pollTimer = null;
         this.currentInterval = this.baseInterval;
         this.consecutiveErrors = 0;
         this.isPolling = false;
-    }
-    
-    start() {
-        if (this.isPolling) return;
-        
-        console.log(`Starting smart poller with ${this.currentInterval}ms interval`);
-        this.isPolling = true;
-        this.poll();
-    }
-    
-    stop() {
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
-            this.pollTimer = null;
-        }
-        this.isPolling = false;
-        console.log('Smart poller stopped');
-    }
-    
-    async poll() {
-        if (!this.isPolling) return;
-        
-        try {
-            const updates = await this.fetchUpdates();
-            
-            // Reset backoff on success
-            if (this.consecutiveErrors > 0) {
-                this.consecutiveErrors = 0;
-                this.resetInterval();
-            }
-            
-            if (updates && updates.length > 0) {
-                this.handleUpdates(updates);
-            }
-            
-        } catch (error) {
-            console.error('Poll failed:', error);
-            this.consecutiveErrors++;
-            this.handlePollError(error);
-        } finally {
-            this.scheduleNextPoll();
-        }
-    }
-    
-    scheduleNextPoll() {
-        if (!this.isPolling) return;
-        
-        // Calculate next interval with backoff and jitter
-        let nextInterval = this.currentInterval;
-        
-        if (this.consecutiveErrors > 0) {
-            nextInterval = Math.min(
-                this.baseInterval * Math.pow(this.backoffFactor, this.consecutiveErrors),
-                this.maxInterval
-            );
-        }
-        
-        // Add jitter to prevent thundering herd
-        const jitterAmount = nextInterval * this.jitter;
-        nextInterval += (Math.random() * jitterAmount * 2) - jitterAmount;
-        
-        this.currentInterval = Math.max(this.baseInterval, nextInterval);
-        
-        this.pollTimer = setTimeout(() => {
-            this.poll();
-        }, this.currentInterval);
-    }
-    
-    resetInterval() {
-        this.currentInterval = this.baseInterval;
-        console.log('Poll interval reset to base');
-    }
-    
-    handlePollError(error) {
-        // Notify user of connection issues
-        this.showConnectionWarning();
-        
-        // If too many errors, switch to a different strategy
-        if (this.consecutiveErrors >= 5) {
-            console.warn('Multiple consecutive errors, switching to fallback mode');
-            this.switchToFallbackMode();
-        }
-    }
-    
-    switchToFallbackMode() {
-        // Implement fallback (longer intervals, cached data, etc.)
-        this.baseInterval = 30000; // 30 seconds in fallback mode
-        this.resetInterval();
-    }
-    
-    showConnectionWarning() {
-        // Show a temporary warning
-        const warning = document.getElementById('connection-warning');
-        if (warning) {
-            warning.style.display = 'block';
-            setTimeout(() => {
-                warning.style.display = 'none';
-            }, 5000);
-        }
+        this.lastCharacterData = null; // Track last known character state
     }
     
     async fetchUpdates() {
         const url = new URL(window.location.href);
         const value = url.searchParams.get('name');
+        
+        // Only update if we're on a character sheet page
         if(window.location.href.includes('charactersheet') && value) {
             try {
-                await updateCharacterSheet();
+                // Get current character data
+                const characterName = value;
+                const character = await this.getCharacterData(characterName);
+                
+                // Check if data has actually changed
+                if (this.hasCharacterChanged(character)) {
+                    console.log('Character data changed, updating sheet');
+                    await updateCharacterSheet();
+                    this.lastCharacterData = character;
+                } else {
+                    console.log('No changes detected, skipping update');
+                }
             } catch (error) {
-                return;
+                console.error('Error checking for updates:', error);
+                throw error;
             }
         }
+        return [];
     }
     
-    handleUpdates(updates) {
-        console.log(`Received ${updates.length} updates`);
-        
-        // Process each update
-        updates.forEach(update => {
-            this.processSingleUpdate(update);
-        });
-        
-        // Show notification
-        this.showUpdateNotification(updates.length);
-    }
-    
-    processSingleUpdate(update) {
-        // Based on update type, update specific parts of your UI
-        switch(update.type) {
-            case 'character_update':
-                this.updateCharacterInfo(update.data);
-                break;
-            case 'campaign_update':
-                this.updateCampaignDisplay(update.data);
-                break;
-            case 'message':
-                this.addNewMessage(update.data);
-                break;
+    async getCharacterData(characterName) {
+        // Use your existing queryDatabase function
+        if (typeof window.queryDatabase === 'function') {
+            const characters = await window.queryDatabase('Players', 
+                { name: capitalizeFirstLetter(characterName) }, 
+                {});
+            return characters[0];
         }
+        return null;
+    }
+    
+    hasCharacterChanged(newCharacter) {
+        if (!this.lastCharacterData) return true;
+        
+        // Compare key properties that would require a UI update
+        const keysToCompare = [
+            'hp', 'maxHp', 'gold', 'level', 
+            'str', 'dex', 'con', 'int', 'wis', 'cha'
+        ];
+        
+        for (const key of keysToCompare) {
+            if (this.lastCharacterData[key] !== newCharacter[key]) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
 // Initialize in your main script

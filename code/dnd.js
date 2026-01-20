@@ -88,8 +88,26 @@ async function updateCharacterSheet() {
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
     const sheet = await generateSheet(character);
+    
+    // Store the active tab before replacing
+    const currentActiveTab = document.querySelector('.tab-button.active')?.dataset.tab || 'general';
+    
     document.getElementById('character-sheet-container').innerHTML = '';
     document.getElementById('character-sheet-container').appendChild(sheet);
+    
+    // Restore the active tab
+    const tabButton = document.querySelector(`.tab-button[data-tab="${currentActiveTab}"]`);
+    if (tabButton) {
+        tabButton.click();
+    }
+    
+    // Re-setup inventory item event listeners
+    if (window.inventoryMenu) {
+        console.log('Re-setting up inventory events after sheet update');
+        setTimeout(() => {
+            window.inventoryMenu.setupInventoryItems();
+        }, 100);
+    }
 }
 async function loadActiveTabToStorage(playerId, tabName) {
     await updateById('Players', playerId, { activeTab: tabName });
@@ -290,10 +308,28 @@ async function loadCharacterSheets() {
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
     const sheet = await generateSheet(character);
+    characterSheetContainer.innerHTML = '';
     characterSheetContainer.appendChild(sheet);
     document.getElementsByClassName('character-header')[0].style.background = character.color;
     document.getElementsByClassName('tabs')[0].style.background = character.secondaryColor;
     document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
+    
+    // Setup inventory item event listeners
+    if (window.inventoryMenu) {
+        console.log('Setting up inventory events after sheet load');
+        
+        // Wait for DOM to be fully rendered
+        setTimeout(() => {
+            window.inventoryMenu.setupInventoryItems();
+            
+            // Test that events are working
+            setTimeout(() => {
+                console.log('Testing inventory events...');
+                const items = document.querySelectorAll('.inventory-item');
+                console.log(`Inventory items ready: ${items.length}`);
+            }, 200);
+        }, 100);
+    }
 }
 async function updateById(table, id, updates) {
     try {
@@ -334,6 +370,57 @@ class InventoryItemMenu {
     init() {
         this.createMenuElements();
         this.bindEvents();
+        this.addMutationObserver(); // Add this line
+        
+        // Also set up events immediately
+        setTimeout(() => {
+            this.setupInventoryItems();
+        }, 500);
+    }
+
+    addMutationObserver() {
+        // Stop existing observer
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+        }
+        
+        // Watch for changes to the character sheet container
+        const sheetContainer = document.getElementById('character-sheet-container');
+        if (!sheetContainer) return;
+        
+        this.mutationObserver = new MutationObserver((mutations) => {
+            let shouldReattach = false;
+            
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    // Check if inventory items were added/removed
+                    const addedNodes = Array.from(mutation.addedNodes);
+                    for (const node of addedNodes) {
+                        if (node.nodeType === 1 && 
+                            (node.classList.contains('inventory-item') || 
+                            node.querySelector('.inventory-item'))) {
+                            shouldReattach = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (shouldReattach) {
+                console.log('DOM changed, re-attaching inventory events');
+                setTimeout(() => {
+                    this.setupInventoryItems();
+                }, 50);
+            }
+        });
+        
+        // Start observing
+        this.mutationObserver.observe(sheetContainer, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('Mutation observer started');
     }
     
     createMenuElements() {
@@ -624,115 +711,54 @@ class InventoryItemMenu {
     
     setupInventoryItems() {
         console.log('Setting up inventory item event listeners...');
-    
-        // Clear existing event listeners first
-        document.removeEventListener('touchstart', this.touchStartHandler);
-        document.removeEventListener('touchend', this.touchEndHandler);
-        document.removeEventListener('touchmove', this.touchMoveHandler);
-        document.removeEventListener('click', this.clickHandler);
-        // Create bound handlers to maintain 'this' context
-        this.touchStartHandler = this.handleTouchStart.bind(this);
-        this.touchEndHandler = this.handleTouchEnd.bind(this);
-        this.touchMoveHandler = this.handleTouchMove.bind(this);
-        this.clickHandler = this.handleClick.bind(this);
         
-        // Use event delegation on the document
-        document.addEventListener('touchstart', this.touchStartHandler, { passive: true });
-        document.addEventListener('touchend', this.touchEndHandler);
-        document.addEventListener('touchmove', this.touchMoveHandler, { passive: true });
-        document.addEventListener('click', this.clickHandler);
-        
-        console.log('Event listeners attached to document');
-        
-        // Also check if inventory items exist
-        const inventoryItems = document.querySelectorAll('.inventory-item');
-        console.log(`Found ${inventoryItems.length} inventory items in the DOM`);
-        
-        inventoryItems.forEach((item, index) => {
-            console.log(`Item ${index}:`, {
-                id: item.dataset.itemId,
-                name: item.dataset.itemName,
-                hasClickListener: item.hasAttribute('data-click-bound')
-            });
-        });
-        // Use event delegation for dynamic inventory items
-        document.addEventListener('touchstart', (e) => {
-            const itemElement = e.target.closest('.inventory-item');
-            if (itemElement) {
-                this.handleTouchStart(e, itemElement);
-            }
-        }, { passive: true });
-        
-        document.addEventListener('touchend', (e) => {
-            const itemElement = e.target.closest('.inventory-item');
-            if (itemElement) {
-                this.handleTouchEnd(e, itemElement);
-            }
-        });
-        
-        document.addEventListener('touchmove', (e) => {
-            if (this.touchTimer && this.touchStartPosition) {
-                const currentPosition = e.touches[0];
-                const distance = Math.sqrt(
-                    Math.pow(currentPosition.clientX - this.touchStartPosition.x, 2) +
-                    Math.pow(currentPosition.clientY - this.touchStartPosition.y, 2)
-                );
-                
-                // If finger moved too far, cancel long press
-                if (distance > 10) {
-                    this.cancelLongPress();
-                }
-            }
-        }, { passive: true });
-        
-        // Mouse events for desktop testing
-        document.addEventListener('mousedown', (e) => {
-            const itemElement = e.target.closest('.inventory-item');
-            if (itemElement) {
-                this.handleMouseDown(e, itemElement);
-            }
-        });
-        
-        document.addEventListener('mouseup', (e) => {
-            const itemElement = e.target.closest('.inventory-item');
-            if (itemElement) {
-                this.handleMouseUp(e, itemElement);
-            }
-        });
-    }
-    handleClick(e, itemElement) {
-        console.log('Click event triggered');
-        console.log('Target:', e.target);
-        console.log('Closest inventory item:', itemElement);
-        
-        if (!itemElement) {
-            console.log('No inventory item found for click');
+        // Use a single event listener on the character sheet container
+        // This will survive DOM replacements
+        const sheetContainer = document.getElementById('character-sheet-container');
+        if (!sheetContainer) {
+            console.log('Character sheet container not found');
             return;
         }
         
-        this.activeItem = {
-            element: itemElement,
-            data: this.getItemData(itemElement)
-        };
+        // Remove existing listeners if any
+        sheetContainer.removeEventListener('click', this.handleSheetClick);
+        sheetContainer.removeEventListener('touchstart', this.handleSheetTouchStart);
+        sheetContainer.removeEventListener('touchend', this.handleSheetTouchEnd);
         
-        console.log('Active item data:', this.activeItem.data);
+        // Create bound handlers
+        this.handleSheetClick = this.handleSheetClick.bind(this);
+        this.handleSheetTouchStart = this.handleSheetTouchStart.bind(this);
+        this.handleSheetTouchEnd = this.handleSheetTouchEnd.bind(this);
         
-        // For desktop, check for double click
-        const currentTime = new Date().getTime();
-        const clickLength = currentTime - this.lastTapTime;
+        // Add new listeners
+        sheetContainer.addEventListener('click', this.handleSheetClick);
+        sheetContainer.addEventListener('touchstart', this.handleSheetTouchStart, { passive: true });
+        sheetContainer.addEventListener('touchend', this.handleSheetTouchEnd);
         
-        console.log(`Time since last click: ${clickLength}ms`);
-        
-        if (clickLength < 300 && clickLength > 0) {
-            // Double click detected
-            console.log('Double click detected!');
-            clearTimeout(this.doubleTapTimer);
-            this.handleDoubleTap(itemElement);
-        } else {
-            console.log('Single click detected, setting timer');
-            this.doubleTapTimer = setTimeout(() => {
-                this.lastTapTime = currentTime;
-            }, 300);
+        console.log('Event listeners attached to sheet container');
+    }
+
+    handleSheetClick(e) {
+        const itemElement = e.target.closest('.inventory-item');
+        if (itemElement) {
+            console.log('Inventory item clicked via delegation');
+            this.handleClick(e, itemElement);
+        }
+    }
+
+    handleSheetTouchStart(e) {
+        const itemElement = e.target.closest('.inventory-item');
+        if (itemElement) {
+            console.log('Inventory item touch start via delegation');
+            this.handleTouchStart(e, itemElement);
+        }
+    }
+
+    handleSheetTouchEnd(e) {
+        const itemElement = e.target.closest('.inventory-item');
+        if (itemElement) {
+            console.log('Inventory item touch end via delegation');
+            this.handleTouchEnd(e, itemElement);
         }
     }
 
