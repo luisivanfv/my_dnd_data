@@ -65,8 +65,10 @@ function getBonusIn(skill, proficiencies) {
         if(skill == 'Atleticismo') {
             console.log(skill, ' = ', proficiency.skill, '? ', (skill == proficiency.skill).toString());
         }
-        if(skill == proficiency.skill)
+        if(skill == proficiency.skill) {
+            console.log('EUREKA!');
             return proficiency.bonus;
+        }
     });
     return 0;
 }
