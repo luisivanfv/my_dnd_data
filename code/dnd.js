@@ -90,13 +90,13 @@ function getArmorClass(dexterity, inventory, itemList) {
     return 10 + dexMod;
 }
 async function updateCharacterSheet() {
-    const sheet = await generateSheet();
+    const characterName = getUrlParameter('name');
+    const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
+    const sheet = await generateSheet(character);
     document.getElementById('character-sheet-container').innerHTML = '';
     characterSheetContainer.appendChild(sheet);
 }
-async function generateSheet() {
-    const characterName = getUrlParameter('name');
-    const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
+async function generateSheet(character) {
     const proficiencyBonus = getProficiencyBonusForLevel(character.level)
     const characterSkillProficienciesRows = await queryDatabase(
         'Proficiencies',
@@ -278,7 +278,9 @@ async function loadCharacterSheets() {
     const characterSheetContainer = document.getElementById('character-sheet-container');
     if (!characterSheetContainer)
         return;
-    const sheet = await generateSheet();
+    const characterName = getUrlParameter('name');
+    const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
+    const sheet = await generateSheet(character);
     characterSheetContainer.appendChild(sheet);
     document.getElementsByClassName('character-header')[0].style.background = character.color;
     document.getElementsByClassName('tabs')[0].style.background = character.secondaryColor;
