@@ -773,6 +773,7 @@ class InventoryItemMenu {
         this.toggleEquip(itemData);
     }
     handleClick(e, itemElement) {
+        popup.show([`#8A95A8=Debug: `, 'white=handleClick']);
         this.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
@@ -781,7 +782,7 @@ class InventoryItemMenu {
         // For desktop, check for double click
         const currentTime = new Date().getTime();
         const clickLength = currentTime - this.lastTapTime;
-        
+        popup.show([`#8A95A8=Debug: `, `white=clickLength: ${clickLength}`]);
         if (clickLength < 300 && clickLength > 0) {
             // Double click detected
             this.handleDoubleTap(itemElement);
