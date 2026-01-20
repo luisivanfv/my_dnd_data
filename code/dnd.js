@@ -360,8 +360,38 @@ function createCharacterSheet(characterData) {
     // Calculate proficiency bonus
     const proficiencyBonus = Math.ceil(character.level / 4) + 1;
     
+    const skillsAndNames = [
+        { property: 'acrobatics', name: 'Acrobacia'},
+        { property: 'performance', name: 'Actuación'},
+        { property: 'arcana', name: 'Arcana'},
+        { property: 'athletics', name: 'Atleticismo'},
+        { property: 'animalHandling', name: 'Manejo Animal'},
+        { property: 'deception', name: 'Engaño'},
+        { property: 'insight', name: 'Entendimiento'},
+        { property: 'history', name: 'Historia'},
+        { property: 'intimidation', name: 'Intimidación'},
+        { property: 'investigation', name: 'Investigación'},
+        { property: 'medicine', name: 'Medicina'},
+        { property: 'nature', name: 'Naturaleza'},
+        { property: 'perception', name: 'Percepción'},
+        { property: 'persuasion', name: 'Persuasión'},
+        { property: 'religion', name: 'Religión'},
+        { property: 'stealth', name: 'Sigilo'},
+        { property: 'survival', name: 'Supervivencia'},
+        { property: 'sleightOfHand', name: 'Truco de Manos'}
+    ];
+    let skillsHtml = '';
+    skillsAndNames.forEach(item => {
+        skillsHtml += `<div class="skill-item ${character.skills[item.property].proficient ? 'proficient' : ''}" style="background: ${character.color};">
+            <div class="skill-checkbox">
+                <input type="checkbox" ${character.skills[item.property].proficient ? 'checked' : ''} disabled>
+            </div>
+            <div class="skill-name" style="color: ${character.secondaryTextColor};">${item.name}</div>
+            <div class="skill-mod" style="color: ${character.textColor};">${character.skills[item.property].value >= 0 ? '+' : ''}${character.skills[item.property].value}</div>
+        </div>`;
+    });
     // Create the character sheet HTML
-    const sheetHTML = `
+    let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
             <div class="character-header" style="background: ${character.color};">
@@ -465,134 +495,9 @@ function createCharacterSheet(characterData) {
                         <div class="proficiency-info" style="background: ${character.color}; color: ${character.textColor};">
                             Proficiency Bonus: +${character.proficiencyBonus}
                         </div>
-                        <div class="skills-list" style="color: ${character.textColor};">
-                            <div class="skill-item ${character.skills['acrobatics'].proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.acrobatics.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Acrobacia</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.acrobatics.value >= 0 ? '+' : ''}${character.skills.acrobatics.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.animalHandling.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.animalHandling.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Manejo Animal</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.animalHandling.value >= 0 ? '+' : ''}${character.skills.animalHandling.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.arcana.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.arcana.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Arcana</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.arcana.value >= 0 ? '+' : ''}${character.skills.arcana.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.athletics.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.athletics.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Atleticismo</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.athletics.value >= 0 ? '+' : ''}${character.skills.athletics.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.deception.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.deception.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Engaño</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.deception.value >= 0 ? '+' : ''}${character.skills.deception.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.history.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.history.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Historia</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.history.value >= 0 ? '+' : ''}${character.skills.history.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.insight.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.insight.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Entendimiento</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.insight.value >= 0 ? '+' : ''}${character.skills.insight.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.intimidation.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.intimidation.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Intimidación</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.intimidation.value >= 0 ? '+' : ''}${character.skills.intimidation.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.investigation.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.investigation.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Investigación</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.investigation.value >= 0 ? '+' : ''}${character.skills.investigation.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.medicine.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.medicine.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Medicina</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.medicine.value >= 0 ? '+' : ''}${character.skills.medicine.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.nature.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.nature.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Naturaleza</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.nature.value >= 0 ? '+' : ''}${character.skills.nature.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.perception.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.perception.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Percepción</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.perception.value >= 0 ? '+' : ''}${character.skills.perception.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.performance.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.performance.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Actuación</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.performance.value >= 0 ? '+' : ''}${character.skills.performance.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.persuasion.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.persuasion.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Persuasión</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.persuasion.value >= 0 ? '+' : ''}${character.skills.persuasion.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.religion.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.religion.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Religión</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.religion.value >= 0 ? '+' : ''}${character.skills.religion.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.sleightOfHand.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.sleightOfHand.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Truco de Manos</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.sleightOfHand.value >= 0 ? '+' : ''}${character.skills.sleightOfHand.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.stealth.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.stealth.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Sigilo</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.stealth.value >= 0 ? '+' : ''}${character.skills.stealth.value}</div>
-                            </div>
-                            <div class="skill-item ${character.skills.survival.proficient ? 'proficient' : ''}">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" ${character.skills.survival.proficient ? 'checked' : ''} disabled>
-                                </div>
-                                <div class="skill-name" style="color: ${character.textColor};">Supervivencia</div>
-                                <div class="skill-mod" style="color: ${character.secondaryTextColor};">${character.skills.survival.value >= 0 ? '+' : ''}${character.skills.survival.value}</div>
-                            </div>
-                        </div>
+                        <div class="skills-list" style="color: ${character.textColor};">`
+    sheetHTML += skillsHtml;
+    sheetHTML +=`       </div>
                     </div>
                 </div>
                 
