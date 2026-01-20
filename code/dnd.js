@@ -236,6 +236,7 @@ async function generateSheet(character) {
         secondaryColor: character.secondaryColor,
         textColor: character.textColor,
         secondaryTextColor: character.secondaryTextColor,
+        darkColor: character.darkColor,
         // Skills with proficiency
         skills: {
             acrobatics: { value: acrobaticsBonus, proficient: acrobaticProficiency },
@@ -318,6 +319,798 @@ async function updateById(table, id, updates) {
         throw error;
     }
 }
+class InventoryItemMenu {
+    constructor() {
+        this.activeItem = null;
+        this.menuElement = null;
+        this.backdrop = null;
+        this.touchTimer = null;
+        this.touchStartPosition = null;
+        this.isMenuVisible = false;
+        
+        this.init();
+    }
+    
+    init() {
+        this.createMenuElements();
+        this.bindEvents();
+    }
+    
+    createMenuElements() {
+        // Create backdrop
+        this.backdrop = document.createElement('div');
+        this.backdrop.className = 'menu-backdrop';
+        this.backdrop.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        
+        // Create menu
+        this.menuElement = document.createElement('div');
+        this.menuElement.className = 'inventory-item-menu';
+        this.menuElement.style.cssText = `
+            position: fixed;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            min-width: 250px;
+            overflow: hidden;
+        `;
+        
+        // Menu header
+        const menuHeader = document.createElement('div');
+        menuHeader.className = 'menu-header';
+        menuHeader.style.cssText = `
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        `;
+        menuHeader.textContent = 'Item Actions';
+        this.menuElement.appendChild(menuHeader);
+        
+        // Menu items container
+        const menuItems = document.createElement('div');
+        menuItems.className = 'menu-items';
+        menuItems.style.cssText = `
+            max-height: 300px;
+            overflow-y: auto;
+        `;
+        
+        // Menu items
+        const menuOptions = [
+            { id: 'use', text: 'Use', icon: '⚗️', color: '#3498db' },
+            { id: 'equip', text: 'Equip', icon: '⚔️', color: '#2ecc71' },
+            { id: 'info', text: 'Information', icon: 'ℹ️', color: '#9b59b6' },
+            { id: 'delete', text: 'Delete', icon: '🗑️', color: '#e74c3c' }
+        ];
+        
+        menuOptions.forEach(option => {
+            const menuItem = document.createElement('button');
+            menuItem.className = 'menu-item';
+            menuItem.dataset.action = option.id;
+            menuItem.style.cssText = `
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 16px;
+                border: none;
+                background: transparent;
+                text-align: left;
+                font-size: 16px;
+                color: #333;
+                transition: background-color 0.2s;
+                border-bottom: 1px solid #f5f5f5;
+            `;
+            
+            menuItem.innerHTML = `
+                <span class="menu-item-icon" style="font-size: 20px; margin-right: 12px; color: ${option.color}">
+                    ${option.icon}
+                </span>
+                <span class="menu-item-text">${option.text}</span>
+            `;
+            
+            menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
+            menuItems.appendChild(menuItem);
+        });
+        
+        this.menuElement.appendChild(menuItems);
+        
+        // Add to DOM
+        document.body.appendChild(this.backdrop);
+        document.body.appendChild(this.menuElement);
+        
+        // Add CSS for touch feedback
+        this.addStyles();
+    }
+    
+    addStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .menu-item:active {
+                background-color: #f8f9fa;
+            }
+            
+            .menu-item:last-child {
+                border-bottom: none;
+            }
+            
+            /* Touch feedback for inventory items */
+            .inventory-item:active {
+                background-color: #f0f0f0;
+                transition: background-color 0.1s;
+            }
+            
+            .inventory-item.long-press-active {
+                background-color: #e3f2fd !important;
+                transform: scale(0.98);
+                transition: all 0.2s;
+            }
+            
+            /* Modal styles */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            
+            .modal-overlay.active {
+                opacity: 1;
+            }
+            
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                max-width: 400px;
+                width: 100%;
+                max-height: 80vh;
+                overflow: hidden;
+                transform: translateY(20px);
+                transition: transform 0.3s;
+            }
+            
+            .modal-overlay.active .modal-content {
+                transform: translateY(0);
+            }
+            
+            .modal-header {
+                padding: 20px;
+                border-bottom: 1px solid #eee;
+                font-weight: 600;
+                font-size: 18px;
+                color: #333;
+            }
+            
+            .modal-body {
+                padding: 20px;
+                color: #666;
+                line-height: 1.6;
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+            
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid #eee;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+            
+            .modal-button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: none;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            
+            .modal-button.primary {
+                background: #3498db;
+                color: white;
+            }
+            
+            .modal-button.primary:active {
+                background: #2980b9;
+            }
+            
+            .modal-button.secondary {
+                background: #f8f9fa;
+                color: #666;
+            }
+            
+            .modal-button.secondary:active {
+                background: #e9ecef;
+            }
+            
+            /* Use modal specific */
+            .use-option {
+                padding: 15px;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                background: #f8f9fa;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            
+            .use-option:active {
+                background: #e9ecef;
+                transform: translateY(2px);
+            }
+            
+            .use-option-title {
+                font-weight: 600;
+                margin-bottom: 5px;
+                color: #333;
+            }
+            
+            .use-option-description {
+                font-size: 14px;
+                color: #666;
+            }
+            
+            /* Delete confirmation */
+            .delete-icon {
+                font-size: 48px;
+                text-align: center;
+                margin: 20px 0;
+                color: #e74c3c;
+            }
+            
+            .delete-warning {
+                text-align: center;
+                color: #e74c3c;
+                font-weight: 500;
+                margin: 10px 0;
+            }
+            
+            /* Responsive */
+            @media (max-width: 480px) {
+                .inventory-item-menu {
+                    min-width: 200px;
+                    max-width: 90vw;
+                }
+                
+                .modal-content {
+                    max-width: 90vw;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    bindEvents() {
+        // Close menu when clicking backdrop
+        this.backdrop.addEventListener('click', () => this.hideMenu());
+        
+        // Close menu with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isMenuVisible) {
+                this.hideMenu();
+            }
+        });
+        
+        // Bind to inventory items (delegated)
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupInventoryItems();
+        });
+    }
+    
+    setupInventoryItems() {
+        // Use event delegation for dynamic inventory items
+        document.addEventListener('touchstart', (e) => {
+            const itemElement = e.target.closest('.inventory-item');
+            if (itemElement) {
+                this.handleTouchStart(e, itemElement);
+            }
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            const itemElement = e.target.closest('.inventory-item');
+            if (itemElement) {
+                this.handleTouchEnd(e, itemElement);
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (this.touchTimer && this.touchStartPosition) {
+                const currentPosition = e.touches[0];
+                const distance = Math.sqrt(
+                    Math.pow(currentPosition.clientX - this.touchStartPosition.x, 2) +
+                    Math.pow(currentPosition.clientY - this.touchStartPosition.y, 2)
+                );
+                
+                // If finger moved too far, cancel long press
+                if (distance > 10) {
+                    this.cancelLongPress();
+                }
+            }
+        }, { passive: true });
+        
+        // Mouse events for desktop testing
+        document.addEventListener('mousedown', (e) => {
+            const itemElement = e.target.closest('.inventory-item');
+            if (itemElement) {
+                this.handleMouseDown(e, itemElement);
+            }
+        });
+        
+        document.addEventListener('mouseup', (e) => {
+            const itemElement = e.target.closest('.inventory-item');
+            if (itemElement) {
+                this.handleMouseUp(e, itemElement);
+            }
+        });
+    }
+    
+    handleTouchStart(e, itemElement) {
+        e.preventDefault();
+        this.touchStartPosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+        
+        this.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
+        
+        // Add visual feedback
+        itemElement.classList.add('long-press-active');
+        
+        // Start timer for long press
+        this.touchTimer = setTimeout(() => {
+            this.showMenu(e.touches[0]);
+        }, 500); // 500ms for long press
+    }
+    
+    handleTouchEnd(e, itemElement) {
+        this.cancelLongPress();
+    }
+    
+    handleMouseDown(e, itemElement) {
+        this.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
+        
+        itemElement.classList.add('long-press-active');
+        
+        this.touchTimer = setTimeout(() => {
+            this.showMenu(e);
+        }, 500);
+    }
+    
+    handleMouseUp(e, itemElement) {
+        this.cancelLongPress();
+    }
+    
+    cancelLongPress() {
+        if (this.touchTimer) {
+            clearTimeout(this.touchTimer);
+            this.touchTimer = null;
+        }
+        
+        if (this.activeItem && this.activeItem.element) {
+            this.activeItem.element.classList.remove('long-press-active');
+        }
+        
+        this.touchStartPosition = null;
+    }
+    
+    getItemData(itemElement) {
+        // Extract item data from element attributes or dataset
+        return {
+            id: itemElement.dataset.itemId || null,
+            name: itemElement.dataset.itemName || itemElement.querySelector('.item-name')?.textContent || 'Unknown Item',
+            quantity: parseInt(itemElement.dataset.itemQuantity) || 1,
+            type: itemElement.dataset.itemType || 'item',
+            // Add more properties as needed
+            ...JSON.parse(itemElement.dataset.itemData || '{}')
+        };
+    }
+    
+    showMenu(position) {
+        if (!this.activeItem) return;
+        
+        // Clear timer
+        this.cancelLongPress();
+        
+        // Calculate position
+        const menuWidth = 250;
+        const menuHeight = 280;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        let left = position.clientX - (menuWidth / 2);
+        let top = position.clientY;
+        
+        // Keep menu within viewport
+        left = Math.max(10, Math.min(left, viewportWidth - menuWidth - 10));
+        top = Math.max(10, Math.min(top, viewportHeight - menuHeight - 10));
+        
+        // Update menu position
+        this.menuElement.style.left = left + 'px';
+        this.menuElement.style.top = top + 'px';
+        
+        // Show menu
+        this.backdrop.style.display = 'block';
+        this.menuElement.style.display = 'block';
+        
+        // Trigger animations
+        requestAnimationFrame(() => {
+            this.backdrop.style.opacity = '1';
+            this.menuElement.style.opacity = '1';
+            this.menuElement.style.transform = 'scale(1)';
+        });
+        
+        this.isMenuVisible = true;
+        
+        // Add haptic feedback on mobile
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }
+    
+    hideMenu() {
+        this.backdrop.style.opacity = '0';
+        this.menuElement.style.opacity = '0';
+        this.menuElement.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+            this.backdrop.style.display = 'none';
+            this.menuElement.style.display = 'none';
+        }, 300);
+        
+        this.isMenuVisible = false;
+        this.activeItem = null;
+    }
+    
+    handleMenuAction(action) {
+        if (!this.activeItem) return;
+        
+        this.hideMenu();
+        
+        switch(action) {
+            case 'use':
+                this.showUseModal();
+                break;
+            case 'equip':
+                this.toggleEquip();
+                break;
+            case 'info':
+                this.showInfoModal();
+                break;
+            case 'delete':
+                this.showDeleteModal();
+                break;
+        }
+    }
+    
+    showUseModal() {
+        const item = this.activeItem.data;
+        const modal = this.createModal('use', item);
+        
+        // Add use options
+        const useOptions = item.useOptions || this.getDefaultUseOptions(item);
+        
+        if (useOptions.length === 0) {
+            const noUses = document.createElement('div');
+            noUses.className = 'modal-body';
+            noUses.style.textAlign = 'center';
+            noUses.innerHTML = `
+                <div style="font-size: 48px; margin: 20px 0;">❓</div>
+                <p>No uses available for this item</p>
+            `;
+            modal.content.querySelector('.modal-body').appendChild(noUses);
+        } else {
+            const useOptionsContainer = document.createElement('div');
+            useOptionsContainer.className = 'use-options';
+            
+            useOptions.forEach((option, index) => {
+                const useOption = document.createElement('div');
+                useOption.className = 'use-option';
+                useOption.innerHTML = `
+                    <div class="use-option-title">${option.name || 'Use Item'}</div>
+                    ${option.description ? `<div class="use-option-description">${option.description}</div>` : ''}
+                `;
+                
+                useOption.addEventListener('click', () => {
+                    this.handleUseItem(option);
+                    this.closeModal(modal);
+                });
+                
+                useOptionsContainer.appendChild(useOption);
+            });
+            
+            modal.content.querySelector('.modal-body').appendChild(useOptionsContainer);
+        }
+        
+        this.showModal(modal);
+    }
+    
+    getDefaultUseOptions(item) {
+        // Default use options based on item type
+        const options = [];
+        
+        switch(item.type) {
+            case 'potion':
+            case 'consumable':
+                options.push({
+                    name: 'Consume',
+                    description: 'Use this item',
+                    action: 'consume'
+                });
+                break;
+            case 'weapon':
+                options.push({
+                    name: 'Attack',
+                    description: 'Use as a weapon',
+                    action: 'attack'
+                });
+                break;
+            case 'armor':
+            case 'clothing':
+                options.push({
+                    name: 'Wear',
+                    description: 'Put this item on',
+                    action: 'wear'
+                });
+                break;
+            default:
+                // Empty array - no default uses
+        }
+        
+        return options;
+    }
+    
+    toggleEquip() {
+        const item = this.activeItem.data;
+        console.log(`Toggling equip for: ${item.name}`);
+        
+        // Placeholder - implement your equip logic here
+        this.showToast(`${item.name} ${item.equipped ? 'unequipped' : 'equipped'}`);
+    }
+    
+    showInfoModal() {
+        const item = this.activeItem.data;
+        const modal = this.createModal('info', item);
+        
+        const infoContent = document.createElement('div');
+        infoContent.className = 'modal-body';
+        infoContent.innerHTML = `
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📦</div>
+                <h3 style="margin: 0; color: #333;">${item.name}</h3>
+                ${item.quantity > 1 ? `<p style="color: #666; margin: 5px 0;">Quantity: ${item.quantity}</p>` : ''}
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <p style="margin: 0; color: #666; text-align: center;">
+                    ${item.description || 'No additional information available.'}
+                </p>
+            </div>
+        `;
+        
+        modal.content.querySelector('.modal-body').appendChild(infoContent);
+        this.showModal(modal);
+    }
+    
+    showDeleteModal() {
+        const item = this.activeItem.data;
+        const modal = this.createModal('delete', item);
+        
+        const deleteContent = document.createElement('div');
+        deleteContent.className = 'modal-body';
+        deleteContent.innerHTML = `
+            <div class="delete-icon">🗑️</div>
+            <h3 style="text-align: center; color: #333; margin: 0 0 10px 0;">
+                Delete ${item.name}?
+            </h3>
+            <p class="delete-warning">
+                This action cannot be undone!
+            </p>
+            <p style="text-align: center; color: #666; margin: 0;">
+                ${item.quantity > 1 ? `You will lose ${item.quantity} items.` : 'This item will be permanently removed.'}
+            </p>
+        `;
+        
+        modal.content.querySelector('.modal-body').appendChild(deleteContent);
+        
+        // Custom footer with delete button
+        const footer = modal.content.querySelector('.modal-footer');
+        footer.innerHTML = '';
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'modal-button secondary';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.addEventListener('click', () => this.closeModal(modal));
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'modal-button primary';
+        deleteBtn.style.background = '#e74c3c';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+            this.handleDeleteItem();
+            this.closeModal(modal);
+        });
+        
+        footer.appendChild(cancelBtn);
+        footer.appendChild(deleteBtn);
+        
+        this.showModal(modal);
+    }
+    
+    createModal(type, item) {
+        const modal = {
+            overlay: document.createElement('div'),
+            content: document.createElement('div')
+        };
+        
+        modal.overlay.className = 'modal-overlay';
+        
+        modal.content.className = 'modal-content';
+        modal.content.innerHTML = `
+            <div class="modal-header">
+                ${this.getModalTitle(type, item)}
+            </div>
+            <div class="modal-body">
+                <!-- Content will be added dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button primary close-modal">OK</button>
+            </div>
+        `;
+        
+        modal.overlay.appendChild(modal.content);
+        document.body.appendChild(modal.overlay);
+        
+        // Add close button handler
+        modal.content.querySelector('.close-modal').addEventListener('click', () => {
+            this.closeModal(modal);
+        });
+        
+        // Close on backdrop click
+        modal.overlay.addEventListener('click', (e) => {
+            if (e.target === modal.overlay) {
+                this.closeModal(modal);
+            }
+        });
+        
+        return modal;
+    }
+    
+    getModalTitle(type, item) {
+        switch(type) {
+            case 'use': return `Use ${item.name}`;
+            case 'info': return `Item Information`;
+            case 'delete': return `Confirm Delete`;
+            default: return 'Item Actions';
+        }
+    }
+    
+    showModal(modal) {
+        requestAnimationFrame(() => {
+            modal.overlay.classList.add('active');
+        });
+    }
+    
+    closeModal(modal) {
+        modal.overlay.classList.remove('active');
+        setTimeout(() => {
+            if (modal.overlay.parentNode) {
+                modal.overlay.remove();
+            }
+        }, 300);
+    }
+    
+    handleUseItem(option) {
+        const item = this.activeItem.data;
+        console.log(`Using item: ${item.name} with option:`, option);
+        
+        // Placeholder - implement your use logic here
+        this.showToast(`Used ${item.name}: ${option.name}`);
+        
+        // Dispatch event for other components
+        document.dispatchEvent(new CustomEvent('itemUsed', {
+            detail: { item, option }
+        }));
+    }
+    
+    handleDeleteItem() {
+        const item = this.activeItem.data;
+        console.log(`Deleting item: ${item.name}`);
+        
+        // Remove item from DOM
+        if (this.activeItem.element && this.activeItem.element.parentNode) {
+            this.activeItem.element.remove();
+        }
+        
+        // Show confirmation
+        this.showToast(`Deleted ${item.name}`, 'error');
+        
+        // Dispatch event for database update
+        document.dispatchEvent(new CustomEvent('itemDeleted', {
+            detail: { item }
+        }));
+    }
+    
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = 'item-toast';
+        toast.textContent = message;
+        
+        const bgColor = type === 'error' ? '#e74c3c' : '#2ecc71';
+        
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: ${bgColor};
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10001;
+            opacity: 0;
+            transition: all 0.3s ease;
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        
+        // Auto remove
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(100px)';
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 2000);
+    }
+}
+window.inventoryMenu = new InventoryItemMenu();
+
+// Also call setupInventoryItems when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.inventoryMenu) {
+        window.inventoryMenu.setupInventoryItems();
+    }
+});
 async function createCharacterSheet(characterData) {
     console.log('createCharacterSheet:');
     console.log(characterData);
@@ -560,20 +1353,19 @@ async function createCharacterSheet(characterData) {
                         <!-- Inventory Items -->
                         <div class="items-section" style="background: ${character.color};">
                             <h3 style="color: ${character.textColor};">Inventario</h3>
-                            ${character.inventory.length > 0 ? `
-                                <div class="items-list">
-                                    ${character.inventory.map((item, index) => `
-                                        <div class="inventory-item" style="background: ${character.secondaryColor};">
-                                            <div class="item-icon"><img width="20" height="20" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
-                                            <div class="item-name" style="color: ${character.textColor};">  ${item.name || `Item ${index + 1}`}</div>
-                                            ${item.quantity ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
-                                            ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight} kg</div>` : ''}
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : `
-                                <div class="empty-state">Inventario vacío</div>
-                            `}
+                            ${character.inventory.map((item, index) => `
+                            <div class="inventory-item" 
+                                data-item-id="${item.id}"
+                                data-item-name="${item.name}"
+                                data-item-quantity="${item.quantity}"
+                                data-equipped="${item.equipped}"
+                                data-item-data='${JSON.stringify(item)}'>
+                                <div class="item-icon"><img width="20" height="20" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
+                                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`} ${item.equipped ? '⚔️' : ''}</div>
+                                ${item.quantity ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
+                                ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight} kg</div>` : ''}
+                            </div>
+                        `).join('')}
                         </div>
                     </div>
                 </div>
