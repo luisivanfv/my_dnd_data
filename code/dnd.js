@@ -177,15 +177,23 @@ async function generateSheet(character) {
     console.log('characterInventory:');
     console.log(characterInventory);
     const itemList = await queryDatabase('Items', {}, {});
+    const itemTypes = await queryDatabase('ItemTypes', {}, {});
     const inventory = [];
     characterInventory.forEach(inventoryItem => {
         itemList.forEach(item => {
             if(inventoryItem.itemId == item.id) {
-                inventory.push({
+                const itemToPush = {
                     ...item,
                     quantity: inventoryItem.quantity,
                     equipped: inventoryItem.equipped
+                };
+                itemTypes.forEach(itemType => {
+                    if(item.itemTypeId == itemType.id) {
+                        itemToPush['iconUrl'] = itemType.icon.split('??')[0];
+                        itemToPush['iconAlt'] = itemType.icon.split('??')[1];
+                    }
                 });
+                inventory.push(itemToPush);
             }
         });
     });
@@ -555,10 +563,11 @@ async function createCharacterSheet(characterData) {
                             ${character.inventory.length > 0 ? `
                                 <div class="items-list">
                                     ${character.inventory.map((item, index) => `
-                                        <div class="inventory-item">
-                                            <div class="item-name">${item.name || `Item ${index + 1}`}</div>
-                                            ${item.quantity ? `<div class="item-quantity">x${item.quantity}</div>` : ''}
-                                            ${item.weight ? `<div class="item-weight">${item.weight} lb</div>` : ''}
+                                        <div class="inventory-item" style="background: ${character.secondaryColor};">
+                                            <div class="item-icon"><img width="15" height="15" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
+                                            <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
+                                            ${item.quantity ? `<div class="item-quantity" style="color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
+                                            ${item.weight ? `<div class="item-weight" style="color: ${character.textColor};">${item.weight} kg</div>` : ''}
                                         </div>
                                     `).join('')}
                                 </div>
