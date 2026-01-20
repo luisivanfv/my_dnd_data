@@ -246,6 +246,7 @@ async function loadCharacterSheets() {
         bonds: '',
         flaws: ''
     }));
+    document.getElementsByClassName('character-header')[0].style.background = character.color;
 }
 function createCharacterSheet(characterData) {
     // Default character structure
