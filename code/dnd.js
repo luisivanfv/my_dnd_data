@@ -774,7 +774,6 @@ class InventoryItemMenu {
     }
     handleClick(e, itemElement) {
         const currentTime = new Date().getTime();
-        this.lastTapTime = currentTime;
         popup.show([`#8A95A8=Debug: `, 'white=handleClick']);
         this.activeItem = {
             element: itemElement,
@@ -791,6 +790,7 @@ class InventoryItemMenu {
         } else {
             popup.show([`orange=Debug: `, `white=Single click!`]);
         }
+        this.lastTapTime = currentTime;
     }
     handleTouchStart(e, itemElement) {
         console.log('Touch start event triggered');
