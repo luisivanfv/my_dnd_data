@@ -62,7 +62,9 @@ function getProficiencyBonusForLevel(level) {
 function getBonusIn(skill, proficiencies) {
     console.log('looking for skill: ', skill);
     proficiencies.forEach(proficiency => {
-        console.log('proficiency found: ', proficiency)
+        if(skill == 'Atleticismo') {
+            console.log(skill, ' = ', proficiency.skill, '? ', (skill == proficiency.skill).toString());
+        }
         if(skill == proficiency.skill)
             return proficiency.bonus;
     });
