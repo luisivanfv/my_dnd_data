@@ -407,8 +407,9 @@ class SmartPoller {
     }
     
     async fetchUpdates() {
-        const url = window.location.href;
-        if(url.includes('charactersheet') && getUrlParameter('name')) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get('name');
+        if(url.includes('charactersheet') && value) {
             console.log("We're on a character sheet, we might want to update something!");
             await updateCharacterSheet();
             //await queryDatabase();
