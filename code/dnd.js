@@ -186,6 +186,8 @@ async function generateSheet(character) {
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
     const itemList = await queryDatabase('Items', {}, {});
+    const activeTab = localStorage.getItem('activeTab') ?? 'general';
+    console.log('Active tab while generating sheet: ', activeTab);
     return createCharacterSheet({
         name: character.name,
         race: character.race,
@@ -194,7 +196,7 @@ async function generateSheet(character) {
         background: '',
         alignment: 'Neutral',
         experience: 0,
-        
+        activeTab: activeTab,
         // Ability scores
         strength: character.str,
         dexterity: character.dex,
@@ -404,9 +406,8 @@ function createCharacterSheet(characterData) {
         </div>`;
     });
     // Create the character sheet HTML
-    let activeTab = 'general';
-    if(localStorage.getItem('activeTab'))
-        activeTab = localStorage.getItem('activeTab');
+    const activeTab = localStorage.getItem('activeTab') ?? 'general';
+    console.log('Active tab is: ', activeTab);
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -443,17 +444,17 @@ function createCharacterSheet(characterData) {
             <div class="tabs-container">
                 <div class="tabs" style="background: ${character.secondaryColor};">
                     <button onclick="loadActiveTabToStorage('general');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="general"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/64/${character.secondaryTextColor.replace('#', '')}/shield.png" alt="shield"/></button>
-                    <button onclick="loadActiveTabToStorage('skills');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
-                    <button onclick="loadActiveTabToStorage('inventory');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
-                    <button onclick="loadActiveTabToStorage('notes');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
-                    <button onclick="loadActiveTabToStorage('wiki');" class="tab-button ${activeTab == 'general' ? 'active' : ''}" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
+                    <button onclick="loadActiveTabToStorage('skills');" class="tab-button ${activeTab == 'skills' ? 'active' : ''}" data-tab="skills"><img width="30" height="30" src="https://img.icons8.com/sf-regular-filled/50/${character.secondaryTextColor.replace('#', '')}/light-on.png" alt="light-on"/></button>
+                    <button onclick="loadActiveTabToStorage('inventory');" class="tab-button ${activeTab == 'inventory' ? 'active' : ''}" data-tab="inventory"><img width="30" height="30" src="https://img.icons8.com/glyph-neue/64/${character.secondaryTextColor.replace('#', '')}/bag-front-view.png" alt="bag-front-view"/></button>
+                    <button onclick="loadActiveTabToStorage('notes');" class="tab-button ${activeTab == 'notes' ? 'active' : ''}" data-tab="notes"><img width="30" height="30" src="https://img.icons8.com/sf-black-filled/50/${character.secondaryTextColor.replace('#', '')}/create-new.png" alt="create-new"/></button>
+                    <button onclick="loadActiveTabToStorage('wiki');" class="tab-button ${activeTab == 'wiki' ? 'active' : ''}" data-tab="wiki"><img width="30" height="30" src="https://img.icons8.com/ios-filled/50/${character.secondaryTextColor.replace('#', '')}/geography.png" alt="geography"/></button>
                 </div>
             </div>
             
             <!-- Tab content -->
             <div class="tab-content-container" style="background: ${character.secondaryColor};">
                 <!-- General Info Tab -->
-                <div class="tab-content active" id="general-tab">
+                <div class="tab-content ${activeTab == 'general' ? 'active' : ''}" id="general-tab">
                     <div class="general-grid" style="background: ${character.secondaryColor};">
                         <!-- Ability Scores -->
                         <div class="ability-scores-section" style="background: ${character.color};">
@@ -506,7 +507,7 @@ function createCharacterSheet(characterData) {
                 </div>
                 
                 <!-- Skills Tab -->
-                <div class="tab-content" id="skills-tab">
+                <div class="tab-content ${activeTab == 'skills' ? 'active' : ''}" id="skills-tab">
                     <div class="skills-section" style="background: ${character.secondaryColor};">
                         <h3 style="text-align: center; color: ${character.secondaryTextColor}">Habilidades</h3>
                         <div class="proficiency-info" style="background: ${character.color}; color: ${character.textColor};">
@@ -519,7 +520,7 @@ function createCharacterSheet(characterData) {
                 </div>
                 
                 <!-- Inventory Tab -->
-                <div class="tab-content" id="inventory-tab">
+                <div class="tab-content ${activeTab == 'inventory' ? 'active' : ''}" id="inventory-tab">
                     <div class="inventory-section">
                         <!-- Currency -->
                         <div class="currency-section">
@@ -569,7 +570,7 @@ function createCharacterSheet(characterData) {
                 </div>
                 
                 <!-- Notes Tab -->
-                <div class="tab-content" id="notes-tab">
+                <div class="tab-content ${activeTab == 'notes' ? 'active' : ''}" id="notes-tab">
                     <div class="notes-section">
                         <div class="notes-category">
                             <h3>Backstory</h3>
@@ -609,7 +610,7 @@ function createCharacterSheet(characterData) {
                 </div>
                 
                 <!-- Wiki Tab -->
-                <div class="tab-content" id="wiki-tab">
+                <div class="tab-content ${activeTab == 'wiki' ? 'active' : ''}" id="wiki-tab">
                     <div class="wiki-section">
                         <h3>Features & Abilities</h3>
                         ${character.features.length > 0 ? `
