@@ -70,6 +70,8 @@ function getMod(ability) {
     return Math.floor((ability -10) / 2);
 }
 function getArmorClass(dexterity, inventory, itemList) {
+    console.log(inventory);
+    console.log(itemList);
     const dexMod = getMod(dexterity);
     inventory.forEach(inventoryItem =>  {
         if (inventoryItem.equipped) {
@@ -169,6 +171,8 @@ async function loadCharacterSheets() {
     sleightOfHandBonus += getMod(character.dex);
     stealthBonus += getMod(character.dex);
     survivalBonus += getMod(character.wis);
+    const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
+    const itemList = await queryDatabase('Items', {}, {});
     characterSheetContainer.appendChild(createCharacterSheet({
         name: character.name,
         race: character.race,
@@ -212,7 +216,7 @@ async function loadCharacterSheets() {
         maxHP: character.maxHp,
         currentHP: character.hp,
         tempHP: 0,
-        armorClass: getArmorClass(character.dex, {}),
+        armorClass: getArmorClass(character.dex, characterInventory, itemList),
         initiative: getMod(character.dex),
         speed: character.speed,
         
