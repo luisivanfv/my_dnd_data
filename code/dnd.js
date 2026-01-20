@@ -307,6 +307,8 @@ async function updateById(table, id, updates) {
     }
 }
 async function createCharacterSheet(characterData) {
+    console.log('createCharacterSheet:');
+    console.log(characterData);
     // Default character structure
     const itemList = await queryDatabase('Items', {}, {});
     const defaults = {
@@ -557,7 +559,7 @@ async function createCharacterSheet(characterData) {
                                     `).join('')}
                                 </div>
                             ` : `
-                                <div class="empty-state">No items in inventory</div>
+                                <div class="empty-state">Inventario vacío</div>
                             `}
                         </div>
                     </div>
