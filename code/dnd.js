@@ -839,6 +839,7 @@ class InventoryItemMenu {
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
             this.showMenu(e.touches[0]);
+            popup.show(["lightblue=here!"]);
         }, 500); // 500ms for long press
     
         console.log('Touch start handler completed');
