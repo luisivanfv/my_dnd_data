@@ -425,7 +425,7 @@ class SmartPoller {
                 // Check if data has actually changed
                 if (this.hasCharacterChanged(character)) {
                     console.log('Character data changed, updating sheet');
-                    await updateCharacterSheet();
+                    await window.updateCharacterSheet();
                     this.lastCharacterData = character;
                 } else {
                     console.log('No changes detected, skipping update');
