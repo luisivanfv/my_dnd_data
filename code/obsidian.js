@@ -410,9 +410,11 @@ class SmartPoller {
         const url = new URL(window.location.href);
         const value = url.searchParams.get('name');
         if(window.location.href.includes('charactersheet') && value) {
-            console.log("We're on a character sheet, we might want to update something!");
-            await updateCharacterSheet();
-            //await queryDatabase();
+            try {
+                await updateCharacterSheet();
+            } catch (error) {
+                return;
+            }
         }
     }
     
