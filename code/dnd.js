@@ -428,6 +428,7 @@ class InventoryItemMenu {
     }
     
     createMenuElements() {
+        popup.show(['blue=createMenuElements'], 2);
         // Create backdrop
         this.backdrop = document.createElement('div');
         this.backdrop.className = 'menu-backdrop';
@@ -1081,7 +1082,7 @@ class InventoryItemMenu {
     toggleEquip() {
         const item = this.activeItem.data;
         console.log(`Toggling equip for: ${item.name}`);
-        
+        // asdf
         // Placeholder - implement your equip logic here
         this.showToast(`${item.name} ${item.equipped ? 'unequipped' : 'equipped'}`);
     }
