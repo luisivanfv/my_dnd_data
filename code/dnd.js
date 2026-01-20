@@ -736,7 +736,7 @@ class InventoryItemMenu {
         
         // Add new listeners
         sheetContainer.addEventListener('click', this.handleSheetClick);
-        sheetContainer.addEventListener('touchstart', this.handleSheetTouchStart, { passive: true });
+        sheetContainer.addEventListener('touchstart', this.handleSheetTouchStart, { passive: false });
         sheetContainer.addEventListener('touchend', this.handleSheetTouchEnd);
         
         console.log('Event listeners attached to sheet container');
