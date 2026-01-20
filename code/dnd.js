@@ -564,10 +564,10 @@ async function createCharacterSheet(characterData) {
                                 <div class="items-list">
                                     ${character.inventory.map((item, index) => `
                                         <div class="inventory-item" style="background: ${character.secondaryColor};">
-                                            <div class="item-icon"><img width="15" height="15" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
-                                            <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
-                                            ${item.quantity ? `<div class="item-quantity" style="color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
-                                            ${item.weight ? `<div class="item-weight" style="color: ${character.textColor};">${item.weight} kg</div>` : ''}
+                                            <div class="item-icon"><img width="20" height="20" src="${item.iconUrl}" alt="${item.iconAlt}"/></div>
+                                            <div class="item-name" style="color: ${character.textColor};">  ${item.name || `Item ${index + 1}`}</div>
+                                            ${item.quantity ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
+                                            ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight} kg</div>` : ''}
                                         </div>
                                     `).join('')}
                                 </div>
