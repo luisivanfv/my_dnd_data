@@ -291,3 +291,53 @@ if (document.readyState === 'loading') {
 } else {
     startApp();
 }
+// Initialize in your main script
+async function initializeAutoUpdates() {
+    // Check if we're on ObsidianPortal (based on your constraints)
+    const isObsidianPortal = window.location.hostname.includes('obsidianportal');
+    
+    if (isObsidianPortal) {
+        // Use polling for ObsidianPortal since WebSockets might be blocked
+        const poller = new SmartPoller({
+            baseInterval: 15000, // 15 seconds
+            maxInterval: 120000 // 2 minutes max
+        });
+        poller.start();
+        
+        // Also set up a manual refresh button
+        createManualRefreshButton();
+    } else {
+        // For your own hosted version, use better options
+        const hybridUpdater = new HybridUpdater();
+        await hybridUpdater.initialize();
+    }
+}
+
+function createManualRefreshButton() {
+    const button = document.createElement('button');
+    button.id = 'manual-refresh';
+    button.innerHTML = '🔄 Refresh';
+    button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    
+    button.addEventListener('click', () => {
+        // Force an immediate update
+        window.dispatchEvent(new CustomEvent('forceRefresh'));
+    });
+    
+    document.body.appendChild(button);
+}
+
+// Start when page loads
+document.addEventListener('DOMContentLoaded', initializeAutoUpdates);

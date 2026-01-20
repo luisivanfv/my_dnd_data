@@ -274,7 +274,6 @@ async function loadCharacterSheets() {
     document.getElementsByClassName('character-header')[0].style.background = character.color;
     document.getElementsByClassName('tabs')[0].style.background = character.secondaryColor;
     document.getElementsByClassName('tab-content-container')[0].style.background = character.secondaryColor;
-    document.getElementsByClassName('general-tab')[0].style.background = character.color;
 }
 function createCharacterSheet(characterData) {
     // Default character structure
@@ -398,6 +397,7 @@ function createCharacterSheet(characterData) {
                 <h1 class="character-name" style="color: ${character.textColor};">${character.name}</h1>
                 <div class="character-subtitle">
                     <span class="character-race" style="color: ${character.secondaryTextColor};">${character.race}</span>
+                    <span class="separator">•</span>
                     <span class="character-class">${character.class}</span>
                     <span class="separator">•</span>
                     <span>Nivel ${character.level}</span>
@@ -437,7 +437,7 @@ function createCharacterSheet(characterData) {
             <div class="tab-content-container" style="background: ${character.secondaryColor};">
                 <!-- General Info Tab -->
                 <div class="tab-content active" id="general-tab">
-                    <div class="general-grid">
+                    <div class="general-grid" style="background: ${character.secondaryColor};">
                         <!-- Ability Scores -->
                         <div class="ability-scores-section" style="background: ${character.color};">
                             <div class="ability-scores-grid">
@@ -661,6 +661,156 @@ function createCharacterSheet(characterData) {
     });
     
     return container;
+}
+// Smart polling with backoff
+class SmartPoller {
+    constructor(config = {}) {
+        this.baseInterval = config.baseInterval || 5000; // 5 seconds
+        this.maxInterval = config.maxInterval || 300000; // 5 minutes
+        this.backoffFactor = config.backoffFactor || 2;
+        this.jitter = config.jitter || 0.1; // 10% jitter
+        this.pollTimer = null;
+        this.currentInterval = this.baseInterval;
+        this.consecutiveErrors = 0;
+        this.isPolling = false;
+    }
+    
+    start() {
+        if (this.isPolling) return;
+        
+        console.log(`Starting smart poller with ${this.currentInterval}ms interval`);
+        this.isPolling = true;
+        this.poll();
+    }
+    
+    stop() {
+        if (this.pollTimer) {
+            clearTimeout(this.pollTimer);
+            this.pollTimer = null;
+        }
+        this.isPolling = false;
+        console.log('Smart poller stopped');
+    }
+    
+    async poll() {
+        if (!this.isPolling) return;
+        
+        try {
+            console.log('Polling for updates...');
+            const updates = await this.fetchUpdates();
+            
+            // Reset backoff on success
+            if (this.consecutiveErrors > 0) {
+                this.consecutiveErrors = 0;
+                this.resetInterval();
+            }
+            
+            if (updates && updates.length > 0) {
+                this.handleUpdates(updates);
+            }
+            
+        } catch (error) {
+            console.error('Poll failed:', error);
+            this.consecutiveErrors++;
+            this.handlePollError(error);
+        } finally {
+            this.scheduleNextPoll();
+        }
+    }
+    
+    scheduleNextPoll() {
+        if (!this.isPolling) return;
+        
+        // Calculate next interval with backoff and jitter
+        let nextInterval = this.currentInterval;
+        
+        if (this.consecutiveErrors > 0) {
+            nextInterval = Math.min(
+                this.baseInterval * Math.pow(this.backoffFactor, this.consecutiveErrors),
+                this.maxInterval
+            );
+        }
+        
+        // Add jitter to prevent thundering herd
+        const jitterAmount = nextInterval * this.jitter;
+        nextInterval += (Math.random() * jitterAmount * 2) - jitterAmount;
+        
+        this.currentInterval = Math.max(this.baseInterval, nextInterval);
+        
+        console.log(`Next poll in ${Math.round(this.currentInterval)}ms`);
+        
+        this.pollTimer = setTimeout(() => {
+            this.poll();
+        }, this.currentInterval);
+    }
+    
+    resetInterval() {
+        this.currentInterval = this.baseInterval;
+        console.log('Poll interval reset to base');
+    }
+    
+    handlePollError(error) {
+        // Notify user of connection issues
+        this.showConnectionWarning();
+        
+        // If too many errors, switch to a different strategy
+        if (this.consecutiveErrors >= 5) {
+            console.warn('Multiple consecutive errors, switching to fallback mode');
+            this.switchToFallbackMode();
+        }
+    }
+    
+    switchToFallbackMode() {
+        // Implement fallback (longer intervals, cached data, etc.)
+        this.baseInterval = 30000; // 30 seconds in fallback mode
+        this.resetInterval();
+    }
+    
+    showConnectionWarning() {
+        // Show a temporary warning
+        const warning = document.getElementById('connection-warning');
+        if (warning) {
+            warning.style.display = 'block';
+            setTimeout(() => {
+                warning.style.display = 'none';
+            }, 5000);
+        }
+    }
+    
+    async fetchUpdates() {
+        // Your update fetching logic
+        // Example with Supabase:
+        return await getFromDatabase('Updates', 'is_read', false, {
+            orderBy: { column: 'created_at', ascending: false }
+        });
+    }
+    
+    handleUpdates(updates) {
+        console.log(`Received ${updates.length} updates`);
+        
+        // Process each update
+        updates.forEach(update => {
+            this.processSingleUpdate(update);
+        });
+        
+        // Show notification
+        this.showUpdateNotification(updates.length);
+    }
+    
+    processSingleUpdate(update) {
+        // Based on update type, update specific parts of your UI
+        switch(update.type) {
+            case 'character_update':
+                this.updateCharacterInfo(update.data);
+                break;
+            case 'campaign_update':
+                this.updateCampaignDisplay(update.data);
+                break;
+            case 'message':
+                this.addNewMessage(update.data);
+                break;
+        }
+    }
 }
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
