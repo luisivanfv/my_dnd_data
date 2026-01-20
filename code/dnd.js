@@ -423,6 +423,8 @@ async function createCharacterSheet(characterData) {
     });
     // Create the character sheet HTML
     const activeTab = character.activeTab;
+    console.log('Inventory:');
+    console.log(character.inventory);
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -533,17 +535,17 @@ async function createCharacterSheet(characterData) {
                 </div>
                 
                 <!-- Inventory Tab -->
-                <div class="tab-content ${activeTab == 'inventory' ? 'active' : ''}" id="inventory-tab">
+                <div class="tab-content ${activeTab == 'inventory' ? 'active' : ''}" id="inventory-tab" style="background: ${character.secondaryColor};">
                     <div class="inventory-section">
                         <!-- Currency -->
-                        <div class="currency-section">
-                            <h3 style="color: ${character.secondaryTextColor}">${character.gold} <img width="15" height="15" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
+                        <div class="currency-section" style="background: ${character.color};">
+                            <h3 style="text-align: center; color: ${character.secondaryTextColor}">${character.gold} <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
                             </div>
                         </div>
                         
                         <!-- Inventory Items -->
-                        <div class="items-section">
-                            <h3>Equipment</h3>
+                        <div class="items-section" style="background: ${character.color};">
+                            <h3 style="color: ${character.textColor};">Inventario</h3>
                             ${character.inventory.length > 0 ? `
                                 <div class="items-list">
                                     ${character.inventory.map((item, index) => `
