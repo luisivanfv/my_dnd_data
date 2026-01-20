@@ -63,7 +63,7 @@ function getBonusIn(skill, proficiencies) {
     console.log('looking for skill: ', skill);
     proficiencies.forEach(proficiency => {
         console.log('proficiency found: ', proficiency)
-        if(skill === proficiency.skill)
+        if(skill == proficiency.skill)
             return proficiency.bonus;
     });
     return 0;
