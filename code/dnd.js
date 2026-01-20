@@ -292,8 +292,7 @@ async function updateById(table, id, updates) {
         const { data, error } = await supabase
             .from(table)
             .update({
-                ...updates,
-                updated_at: new Date().toISOString() // Auto-update timestamp
+                ...updates
             })
             .eq('id', id)
             .select(); // Returns the updated row
