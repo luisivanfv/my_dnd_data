@@ -728,16 +728,22 @@ class InventoryItemMenu {
         sheetContainer.removeEventListener('click', this.handleSheetClick);
         sheetContainer.removeEventListener('touchstart', this.handleSheetTouchStart);
         sheetContainer.removeEventListener('touchend', this.handleSheetTouchEnd);
+        sheetContainer.removeEventListener('touchend', this.handleSheetMouseDown);
+        sheetContainer.removeEventListener('touchend', this.handleSheetMouseUp);
         
         // Create bound handlers
         this.handleSheetClick = this.handleSheetClick.bind(this);
         this.handleSheetTouchStart = this.handleSheetTouchStart.bind(this);
         this.handleSheetTouchEnd = this.handleSheetTouchEnd.bind(this);
+        this.handleSheetMouseDown = this.handleSheetMouseDown.bind(this);
+        this.handleSheetMouseUp = this.handleSheetMouseUp.bind(this);
         
         // Add new listeners
         sheetContainer.addEventListener('click', this.handleSheetClick);
         sheetContainer.addEventListener('touchstart', this.handleSheetTouchStart, { passive: false });
         sheetContainer.addEventListener('touchend', this.handleSheetTouchEnd);
+        sheetContainer.addEventListener('onmousedown', this.handleSheetMouseDown);
+        sheetContainer.addEventListener('onmouseup', this.handleSheetMouseUp);
         
         console.log('Event listeners attached to sheet container');
     }
@@ -758,11 +764,27 @@ class InventoryItemMenu {
         }
     }
 
+    handleSheetMouseDown(e) {
+        const itemElement = e.target.closest('.inventory-item');
+        if (itemElement) {
+            console.log('Inventory item touch start via delegation');
+            this.handleClickStart(e, itemElement);
+        }
+    }
+
     handleSheetTouchEnd(e) {
         const itemElement = e.target.closest('.inventory-item');
         if (itemElement) {
             console.log('Inventory item touch end via delegation');
             this.handleTouchEnd(e, itemElement);
+        }
+    }
+
+    handleSheetMouseUp(e) {
+        const itemElement = e.target.closest('.inventory-item');
+        if (itemElement) {
+            console.log('Inventory item touch end via delegation');
+            this.handleMouseUp(e, itemElement);
         }
     }
 
@@ -787,6 +809,38 @@ class InventoryItemMenu {
             this.handleDoubleTap(itemElement);
         }
         this.lastTapTime = currentTime;
+    }
+    handleClickStart(e, itemElement) {
+        console.log('Touch start event triggered');
+        console.log('Target:', e.target);
+        console.log('Closest inventory item:', itemElement);
+        
+        if (!itemElement) {
+            console.log('No inventory item found');
+            return;
+        }
+        e.preventDefault();
+        this.touchStartPosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+        
+        this.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
+        
+        console.log('Active item set:', this.activeItem.data);
+        // Add visual feedback
+        itemElement.classList.add('long-press-active');
+        
+        console.log('Added long-press-active class');
+        // Start timer for long press
+        this.touchTimer = setTimeout(() => {
+            this.showMenu(e.touches[0]);
+        }, 500); // 500ms for long press
+    
+        console.log('Touch start handler completed');
     }
     handleTouchStart(e, itemElement) {
         console.log('Touch start event triggered');
@@ -822,6 +876,9 @@ class InventoryItemMenu {
     }
     
     handleTouchEnd(e, itemElement) {
+        this.cancelLongPress();
+    }
+    handleMouseUp(e, itemElement) {
         this.cancelLongPress();
     }
     
