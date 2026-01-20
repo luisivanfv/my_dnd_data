@@ -407,11 +407,12 @@ class SmartPoller {
     }
     
     async fetchUpdates() {
-        // Your update fetching logic
-        // Example with Supabase:
-        return await getFromDatabase('Updates', 'is_read', false, {
-            orderBy: { column: 'created_at', ascending: false }
-        });
+        const url = window.location.href;
+        if(url.includes('charactersheet') && getUrlParameter('name')) {
+            console.log("We're on a character sheet, we might want to update something!");
+            await updateCharacterSheet();
+            //await queryDatabase();
+        }
     }
     
     handleUpdates(updates) {

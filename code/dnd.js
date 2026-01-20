@@ -89,6 +89,9 @@ function getArmorClass(dexterity, inventory, itemList) {
     });
     return 10 + dexMod;
 }
+async function updateCharacterSheet() {
+    console.log('And here we update!');
+}
 async function loadCharacterSheets() {
     const characterSheetContainer = document.getElementById('character-sheet-container');
     if (!characterSheetContainer)
