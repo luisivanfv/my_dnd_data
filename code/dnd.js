@@ -578,7 +578,10 @@ class InventoryItemMenu {
         `;
         
         // Create menu
+        console.warn('Originally');
+        console.warn(this.menuElement);
         createMenu(this, null);
+        console.warn(this.menuElement);
         console.warn('This should be set:');
         console.log(this.menuElement);
         
@@ -855,7 +858,9 @@ class InventoryItemMenu {
         //this.toggleEquip(itemData);
         this.activeItem = itemData;
         console.log('Item data SET for double tap:', itemData);
+        console.warn(this.menuElement);
         createMenu(this, itemData);
+        console.warn(this.menuElement);
         this.showMenu(e);
     }
     handleClick(e, itemElement) {
