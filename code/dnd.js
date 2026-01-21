@@ -215,6 +215,7 @@ async function generateSheet(character) {
                         itemToPush['iconUrl'] = itemType.icon.split('??')[0];
                         itemToPush['iconAlt'] = itemType.icon.split('??')[1];
                         itemToPush['itemType'] = itemType.description;
+                        itemToPush['modifierUsed'] = itemType.modifierUsed;
                     }
                 });
                 const itemActions = [];
@@ -1039,6 +1040,20 @@ class InventoryItemMenu {
         
         // Add use options
         const useOptions = item.actions;
+        const proficiencyBonus = getProficiencyBonusForLevel(window.character.level); 
+        // We are asuming they have proficiency
+        // and I will remember to subtract - 4 - proficiencyBonus if they don't for some reason
+        let toHitModifier = 0;
+        let addedDamageThroughModifier = 0;
+        const dexMod = getMod(window.character.dex);
+        const strMod = getMod(window.character.dex);
+        if(item.modifierUsed == 'str') {
+            toHitModifier = item.finesse ? Math.max(dexMod, strMod) + proficiencyBonus : getMod(strMod) + proficiencyBonus;
+            addedDamageThroughModifier = item.finesse ? Math.max(dexMod, strMod) : getMod(strMod);
+        } else {
+            toHitModifier = dexMod + proficiencyBonus;
+            addedDamageThroughModifier = dexMod;
+        }
         
         if (useOptions.length === 0) {
             const noUses = document.createElement('div');
@@ -1054,10 +1069,27 @@ class InventoryItemMenu {
             
             useOptions.forEach((option, index) => {
                 const useOption = document.createElement('div');
+                const dicePortion = 
+                    option.damageCalculation.includes('+') 
+                    ? option.damageCalculation.split('+')[0].trim()
+                    : (option.damageCalculation.includes('-')
+                        ? option.damageCalculation.split('-')[0].trim()
+                        : option.damageCalculation);
+                let extraPortion =
+                    option.damageCalculation.includes('+')
+                    ? option.damageCalculation.split('+')[1].trim()
+                    : (option.damageCalculation.includes('-')
+                        ? '-' + option.damageCalculation.split('-')[1].trim()
+                        : '0');
+                extraPortion = parseInt(extraPortion) + addedDamageThroughModifier;
+                const updatedDamageCalculation = `${dicePortion} ${extraPortion > 0 ? `+ ${extraPortion}` : extraPortion}`;
+                const damageTypeName = getDisplayNameForDamageType(option.damageType); // asdf add this
                 useOption.className = 'use-option';
                 useOption.style.background = window.character.color;
                 useOption.innerHTML = `
                     <div class="use-option-title" style="color: ${window.character.textColor};">${option.name || 'Usar'}</div>
+                    ${option.damageCalculation ? `<div style="color: ${window.character.textColor};">+${toHitModifier} para atacar</div>` : ``}
+                    ${option.damageCalculation ? `<div style="color: ${window.character.textColor};">${updatedDamageCalculation} de daño ${damageTypeName}</div>` : ``}
                     ${option.description ? `<div class="use-option-description" style="color: ${window.character.secondaryTextColor};">${option.description}</div>` : ''}
                 `;
                 
