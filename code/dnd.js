@@ -994,11 +994,13 @@ class InventoryItemMenu {
     
     handleMenuAction(action) {
         popup.show(['grey=debug: ', 'yellow=handleMenuAction']);
-        if (!this.activeItem) return;
+        if (!this.activeItem) {
+            this.hideMenu();
+            return;
+        }
         popup.show(['grey=this.activeItem: ', `green=${this.activeItem}`]);
         popup.show(['grey=action: ', `green=${action}`]);
         console.log(this.activeItem);
-        this.hideMenu();
         
         switch(action) {
             case 'use':
