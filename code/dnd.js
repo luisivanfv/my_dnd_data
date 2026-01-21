@@ -1101,6 +1101,8 @@ class InventoryItemMenu {
     
     showInfoModal() {
         const item = this.activeItem;
+        console.log('FULL ITEM:');
+        console.log(item);
         const modal = this.createModal('info', item);
         
         const infoContent = document.createElement('div');
@@ -1108,11 +1110,9 @@ class InventoryItemMenu {
         infoContent.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px;">
                 <div style="font-size: 48px; margin-bottom: 10px;">
-                <img width="30" height="30" 
-                    src="${item.iconUrl.replace('customSize', '40').replace('customColor', window.character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/>
+                <img width="60" height="60" 
+                    src="${item.iconUrl.replace('customSize', '60').replace('customColor', window.character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/>
                 </div>
-                <h3 style="margin: 0; color: #333;">${item.name}</h3>
-                ${item.quantity > 1 ? `<p style="color: #666; margin: 5px 0;">Quantity: ${item.quantity}</p>` : ''}
             </div>
             <div style="background: ${window.character.color}; padding: 15px; border-radius: 8px;">
                 <p style="margin: 0; color: ${window.character.secondaryTextColor}; text-align: center;">
@@ -1214,7 +1214,7 @@ class InventoryItemMenu {
     getModalTitle(type, item) {
         switch(type) {
             case 'use': return `Usar ${item.name}`;
-            case 'info': return `${item.name}`;
+            case 'info': return `${item.name == item.itemType ? item.name : item.name + ' (' + item.itemType + ')'}`;
             case 'delete': return `¿Estás segur@?`;
             default: return 'Acciones';
         }
