@@ -793,7 +793,9 @@ class InventoryItemMenu {
         console.log('handleDoubleTap called for item:', itemElement);
         const itemData = this.getItemData(itemElement);
         console.log('Item data for double tap:', itemData);
-        this.toggleEquip(itemData);
+        //this.toggleEquip(itemData);
+        
+        this.showMenu(e.touches[0]);
     }
     handleClick(e, itemElement) {
         const currentTime = new Date().getTime();
