@@ -408,9 +408,10 @@ function getDisplayNameForDamageType(damageType, uppercase) {
 function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
+    // ${window.character.color}
     thisOutside.menuElement.style.cssText = `
         position: fixed;
-        background: ${window.character.color};
+        background: blue;
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         z-index: 9999;
