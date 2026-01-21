@@ -1075,8 +1075,8 @@ class InventoryItemMenu {
         let toHitModifier = 0;
         let addedDamageThroughModifier = 0;
         console.log('window.character: ', window.character);
-        const dexMod = getMod(window.character.dex);
-        const strMod = getMod(window.character.str);
+        const dexMod = getMod(window.character.dexterity);
+        const strMod = getMod(window.character.strength);
         console.log('dexMod: ', dexMod);
         console.log('strMod: ', strMod);
         console.log('item.finesse: ', item.finesse);
