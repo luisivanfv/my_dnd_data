@@ -864,7 +864,7 @@ class InventoryItemMenu {
         if (itemData && itemData.actions && itemData.actions.length > 0) {
             menuOptions.push({ id: 'use', text: 'Usar', icon: '', color: '' });
         }
-        if (itemData && itemData.equippable) {
+        if (itemData && itemData.equipable) {
             menuOptions.push({ id: 'equip', text: 'Equipar', icon: '', color: '' });
         }
         menuOptions.push({ id: 'info', text: 'Información', icon: '', color: '' });
@@ -901,15 +901,11 @@ class InventoryItemMenu {
         });
     }
     handleDoubleTap(e, itemElement) {
-        console.log('handleDoubleTap called for item:', itemElement);
         const itemData = this.getItemData(itemElement);
         //this.toggleEquip(itemData);
         this.activeItem = itemData;
         console.log('Item data SET for double tap:', itemData);
-        console.warn(this.menuElement);
-        //createMenu(this, itemData);
         this.updateMenuOptions(itemData);
-        console.warn(this.menuElement);
         this.showMenu(e);
     }
     handleClick(e, itemElement) {
@@ -992,8 +988,9 @@ class InventoryItemMenu {
         console.log('Added long-press-active class');
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
+            this.updateMenuOptions(itemData.data);
+            popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
             this.showMenu(e.touches[0]);
-            popup.show(["lightblue=here 2!"]);
         }, 500); // 500ms for long press
     
         console.log('Touch start handler completed');
