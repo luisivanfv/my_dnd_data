@@ -1083,8 +1083,8 @@ class InventoryItemMenu {
         console.log('proficiencyBonus: ', proficiencyBonus);
         console.log('item.modifierUsed: ', item.modifierUsed);
         if(item.modifierUsed == 'str') {
-            toHitModifier = item.finesse ? Math.max(dexMod, strMod) + proficiencyBonus : getMod(strMod) + proficiencyBonus;
-            addedDamageThroughModifier = item.finesse ? Math.max(dexMod, strMod) : getMod(strMod);
+            toHitModifier = item.finesse ? Math.max(dexMod, strMod) + proficiencyBonus : strMod + proficiencyBonus;
+            addedDamageThroughModifier = item.finesse ? Math.max(dexMod, strMod) : strMod;
         } else {
             toHitModifier = dexMod + proficiencyBonus;
             addedDamageThroughModifier = dexMod;
