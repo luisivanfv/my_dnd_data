@@ -991,7 +991,7 @@ class InventoryItemMenu {
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
             popup.show([`lightblue=long touch!`]);
-            //popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
+            popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
             this.updateMenuOptions(itemData.data);
             //popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
             this.showMenu(e.touches[0]);
