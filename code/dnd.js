@@ -993,8 +993,8 @@ class InventoryItemMenu {
     }
     
     handleMenuAction(action) {
+        popup.show(['grey=debug: ', 'yellow=handleMenuAction']);
         if (!this.activeItem) return;
-        
         this.hideMenu();
         
         switch(action) {
