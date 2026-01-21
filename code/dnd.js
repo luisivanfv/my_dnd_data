@@ -200,6 +200,7 @@ async function generateSheet(character) {
     console.log(characterInventory);
     const itemList = await queryDatabase('Items', {}, {});
     const itemTypes = await queryDatabase('ItemTypes', {}, {});
+    const actions = await queryDatabase('Actions', {}, {});
     const inventory = [];
     characterInventory.forEach(inventoryItem => {
         itemList.forEach(item => {
@@ -216,6 +217,22 @@ async function generateSheet(character) {
                         itemToPush['itemType'] = itemType.description;
                     }
                 });
+                const itemActions = [];
+                actions.forEach(action => {
+                    if(action.requiredItemId = item.id) {
+                        itemActions.push({
+                            name: action.name,
+                            description: action.description,
+                            costsAction: action.costsAction,
+                            costsBonusAction: action.costsBonusAction,
+                            costsReaction: action.costsReaction,
+                            costsMovement: action.movement,
+                            damageCalculation: action.damageCalculation,
+                            damageType: action.damageType
+                        });
+                    }
+                });
+                itemToPush['actions'] = itemActions;
                 inventory.push(itemToPush);
             }
         });
@@ -1021,7 +1038,7 @@ class InventoryItemMenu {
         const modal = this.createModal('use', item);
         
         // Add use options
-        const useOptions = item.useOptions || this.getDefaultUseOptions(item);
+        const useOptions = item.actions;
         
         if (useOptions.length === 0) {
             const noUses = document.createElement('div');
@@ -1043,10 +1060,10 @@ class InventoryItemMenu {
                     ${option.description ? `<div class="use-option-description">${option.description}</div>` : ''}
                 `;
                 
-                useOption.addEventListener('click', () => {
+                /*useOption.addEventListener('click', () => {
                     this.handleUseItem(option);
                     this.closeModal(modal);
-                });
+                });*/
                 
                 useOptionsContainer.appendChild(useOption);
             });
@@ -1183,7 +1200,7 @@ class InventoryItemMenu {
         modal.content.className = 'modal-content';
         modal.content.style.background = `${window.character.color}`;
         modal.content.innerHTML = `
-            <div class="modal-header" style="${window.character.textColor};">
+            <div class="modal-header" style="color: ${window.character.textColor};">
                 ${this.getModalTitle(type, item)}
             </div>
             <div class="modal-body" style="${window.character.secondaryTextColor};">
