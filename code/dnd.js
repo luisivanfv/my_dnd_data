@@ -888,6 +888,7 @@ class InventoryItemMenu {
     }
     
     handleMouseDown(e, itemElement) {
+        popup.show(['yellow=handleMouseDown']);
         this.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
@@ -931,6 +932,7 @@ class InventoryItemMenu {
     }
     
     showMenu(event) {
+        popup.show(['pink=showMenu']);
         if (!this.activeItem) return;
         
         // Clear timer
@@ -1093,6 +1095,7 @@ class InventoryItemMenu {
     }
     
     showInfoModal() {
+        popup.show([`lightgreen=${this.activeItem}`]);
         const item = this.activeItem.data;
         const modal = this.createModal('info', item);
         
