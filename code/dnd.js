@@ -1027,8 +1027,7 @@ class InventoryItemMenu {
             noUses.className = 'modal-body';
             noUses.style.textAlign = 'center';
             noUses.innerHTML = `
-                <div style="font-size: 48px; margin: 20px 0;">❓</div>
-                <p>No uses available for this item</p>
+                <p></p>
             `;
             modal.content.querySelector('.modal-body').appendChild(noUses);
         } else {
@@ -1178,6 +1177,7 @@ class InventoryItemMenu {
         modal.overlay.className = 'modal-overlay';
         
         modal.content.className = 'modal-content';
+        modal.content.style.background = `${this.character.color}`;
         modal.content.innerHTML = `
             <div class="modal-header">
                 ${this.getModalTitle(type, item)}
@@ -1316,6 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function createCharacterSheet(characterData) {
     console.log('createCharacterSheet:');
     console.log(characterData);
+    this.character = characterData;
     // Default character structure
     const itemList = await queryDatabase('Items', {}, {});
     const defaults = {
