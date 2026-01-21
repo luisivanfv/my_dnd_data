@@ -410,7 +410,7 @@ function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement.className = 'inventory-item-menu';
     thisOutside.menuElement.style.cssText = `
         position: fixed;
-        background: white;
+        background: ${window.character.color};
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         z-index: 9999;
@@ -469,7 +469,7 @@ function createMenu(thisOutside, activeItem) {
             background: transparent;
             text-align: left;
             font-size: 16px;
-            color: #333;
+            color: ${window.character.textColor};
             transition: background-color 0.2s;
             border-bottom: 1px solid #f5f5f5;
         `;
@@ -1219,10 +1219,12 @@ class InventoryItemMenu {
         return options;
     }
     
-    toggleEquip() {
+    async toggleEquip() {
         const item = this.activeItem;
         console.log(`Toggling equip for: ${item.name}`);
-        // asdf
+        await updateById('Inventories', item.id, { equipped: !item.equipped });
+        this.activeItem = await queryDatabase('Inventories', { id: item.id });
+        console.log(`After toggle: ${activeItem.name}`);
         // Placeholder - implement your equip logic here
         this.showToast(`${item.name} ${item.equipped ? 'unequipped' : 'equipped'}`);
     }
