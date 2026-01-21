@@ -849,6 +849,7 @@ class InventoryItemMenu {
         //this.toggleEquip(itemData);
         this.activeItem = itemData;
         console.log('Item data SET for double tap:', itemData);
+        createMenu(this);
         this.showMenu(e);
     }
     handleClick(e, itemElement) {
