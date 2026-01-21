@@ -998,9 +998,6 @@ class InventoryItemMenu {
             this.hideMenu();
             return;
         }
-        popup.show(['grey=this.activeItem: ', `green=${this.activeItem}`]);
-        popup.show(['grey=action: ', `green=${action}`]);
-        console.log(this.activeItem);
         
         switch(action) {
             case 'use':
@@ -1019,7 +1016,7 @@ class InventoryItemMenu {
     }
     
     showUseModal() {
-        const item = this.activeItem.data;
+        const item = this.activeItem;
         const modal = this.createModal('use', item);
         
         // Add use options
@@ -1104,10 +1101,6 @@ class InventoryItemMenu {
     }
     
     showInfoModal() {
-        popup.show([`lightgreen=${this.activeItem}`]);
-        console.log('----------');
-        console.log(this.activeItem);
-        console.log('----------');
         const item = this.activeItem;
         const modal = this.createModal('info', item);
         
@@ -1131,7 +1124,7 @@ class InventoryItemMenu {
     }
     
     showDeleteModal() {
-        const item = this.activeItem.data;
+        const item = this.activeItem;
         const modal = this.createModal('delete', item);
         
         const deleteContent = document.createElement('div');
@@ -1176,6 +1169,7 @@ class InventoryItemMenu {
     }
     
     createModal(type, item) {
+        console.log('> 1:');
         const modal = {
             overlay: document.createElement('div'),
             content: document.createElement('div')
@@ -1216,10 +1210,10 @@ class InventoryItemMenu {
     
     getModalTitle(type, item) {
         switch(type) {
-            case 'use': return `Use ${item.name}`;
-            case 'info': return `Item Information`;
-            case 'delete': return `Confirm Delete`;
-            default: return 'Item Actions';
+            case 'use': return `Usar ${item.name}`;
+            case 'info': return `${item.name}`;
+            case 'delete': return `¿Estás segur@?`;
+            default: return 'Acciones';
         }
     }
     
