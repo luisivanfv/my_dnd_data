@@ -408,7 +408,7 @@ function getDisplayNameForDamageType(damageType, uppercase) {
 async function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
-    window.character = await getCurrentCharacter();
+    //window.character = await getCurrentCharacter();
     console.warn(window.character);
     console.warn(window.character.color);
     thisOutside.menuElement.style.cssText = `
