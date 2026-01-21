@@ -962,14 +962,14 @@ class InventoryItemMenu {
             data: this.getItemData(itemElement)
         };
         
-        console.log('Active item set:', this.activeItem.data);
+        console.log('Active item set:', this.activeItem);
         // Add visual feedback
         itemElement.classList.add('long-press-active');
         
         console.log('Added long-press-active class');
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
-            this.updateMenuOptions(this.activeItem.data);
+            this.updateMenuOptions(this.activeItem);
             this.showMenu(e.touches[0]);
         }, 500); // 500ms for long press
     
