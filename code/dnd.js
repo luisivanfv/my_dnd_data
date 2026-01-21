@@ -1114,9 +1114,9 @@ class InventoryItemMenu {
                 <h3 style="margin: 0; color: #333;">${item.name}</h3>
                 ${item.quantity > 1 ? `<p style="color: #666; margin: 5px 0;">Quantity: ${item.quantity}</p>` : ''}
             </div>
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <p style="margin: 0; color: #666; text-align: center;">
-                    ${item.description || 'No additional information available.'}
+            <div style="background: ${window.character.color}; padding: 15px; border-radius: 8px;">
+                <p style="margin: 0; color: ${window.character.secondaryTextColor}; text-align: center;">
+                    ${item.description || 'No hay información de este objeto.'}
                 </p>
             </div>
         `;
