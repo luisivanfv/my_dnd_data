@@ -407,6 +407,82 @@ function getDisplayNameForDamageType(damageType, uppercase) {
         return uppercase ? 'de Trueno' : 'de trueno';
     return damageType;
 }
+function createMenu(thisOutside) {
+    thisOutside.menuElement = document.createElement('div');
+    thisOutside.menuElement.className = 'inventory-item-menu';
+    thisOutside.menuElement.style.cssText = `
+        position: fixed;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        display: none;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        min-width: 250px;
+        overflow: hidden;
+    `;
+    
+    // Menu header
+    const menuHeader = document.createElement('div');
+    menuHeader.className = 'menu-header';
+    menuHeader.style.cssText = `
+        padding: 16px;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+    `;
+    menuHeader.textContent = 'Item Actions';
+    thisOutside.menuElement.appendChild(menuHeader);
+    
+    // Menu items container
+    const menuItems = document.createElement('div');
+    menuItems.className = 'menu-items';
+    menuItems.style.cssText = `
+        max-height: 300px;
+        overflow-y: auto;
+    `;
+    
+    // Menu items
+    const menuOptions = [
+        { id: 'use', text: 'Usar', icon: '', color: '' },
+        { id: 'equip', text: 'Equipar', icon: '', color: '' },
+        { id: 'info', text: 'Información', icon: '', color: '' },
+        { id: 'delete', text: 'Eliminar', icon: '', color: '' }
+    ];
+    menuOptions.forEach(option => {
+        const menuItem = document.createElement('button');
+        menuItem.className = 'menu-item';
+        menuItem.dataset.action = option.id;
+        menuItem.style.cssText = `
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-size: 16px;
+            color: #333;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f5f5f5;
+        `;
+        
+        menuItem.innerHTML = `
+            <span class="menu-item-icon" style="font-size: 20px; margin-right: 12px; color: ${option.color}">
+                ${option.icon}
+            </span>
+            <span class="menu-item-text">${option.text}</span>
+        `;
+        
+        menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
+        menuItems.appendChild(menuItem);
+    });
+    
+    thisOutside.menuElement.appendChild(menuItems);
+}
 class InventoryItemMenu {
     constructor() {
         this.activeItem = null;
@@ -494,83 +570,9 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        this.menuElement = document.createElement('div');
-        this.menuElement.className = 'inventory-item-menu';
-        this.menuElement.style.cssText = `
-            position: fixed;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
-            display: none;
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            min-width: 250px;
-            overflow: hidden;
-        `;
-        
-        // Menu header
-        const menuHeader = document.createElement('div');
-        menuHeader.className = 'menu-header';
-        menuHeader.style.cssText = `
-            padding: 16px;
-            border-bottom: 1px solid #eee;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
-        `;
-        menuHeader.textContent = 'Item Actions';
-        this.menuElement.appendChild(menuHeader);
-        
-        // Menu items container
-        const menuItems = document.createElement('div');
-        menuItems.className = 'menu-items';
-        menuItems.style.cssText = `
-            max-height: 300px;
-            overflow-y: auto;
-        `;
-        
-        // Menu items
-        const menuOptions = [
-            { id: 'use', text: 'Usar', icon: '', color: '' },
-            { id: 'equip', text: 'Equipar', icon: '', color: '' },
-            { id: 'info', text: 'Información', icon: '', color: '' },
-            { id: 'delete', text: 'Eliminar', icon: '', color: '' }
-        ];
-        console.log('>>>>>');
-        console.log(this.activeItem);
-        console.log('>>>>>');
-        menuOptions.forEach(option => {
-            const menuItem = document.createElement('button');
-            menuItem.className = 'menu-item';
-            menuItem.dataset.action = option.id;
-            menuItem.style.cssText = `
-                display: flex;
-                align-items: center;
-                width: 100%;
-                padding: 16px;
-                border: none;
-                background: transparent;
-                text-align: left;
-                font-size: 16px;
-                color: #333;
-                transition: background-color 0.2s;
-                border-bottom: 1px solid #f5f5f5;
-            `;
-            
-            menuItem.innerHTML = `
-                <span class="menu-item-icon" style="font-size: 20px; margin-right: 12px; color: ${option.color}">
-                    ${option.icon}
-                </span>
-                <span class="menu-item-text">${option.text}</span>
-            `;
-            
-            menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
-            menuItems.appendChild(menuItem);
-        });
-        
-        this.menuElement.appendChild(menuItems);
+        createMenu(this);
+        console.warn('This should be set:');
+        console.log(this.menuElement);
         
         // Add to DOM
         document.body.appendChild(this.backdrop);
