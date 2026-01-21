@@ -789,7 +789,7 @@ class InventoryItemMenu {
         }
     }
 
-    handleDoubleTap(itemElement) {
+    handleDoubleTap(e, itemElement) {
         console.log('handleDoubleTap called for item:', itemElement);
         const itemData = this.getItemData(itemElement);
         console.log('Item data for double tap:', itemData);
@@ -809,7 +809,7 @@ class InventoryItemMenu {
         const clickLength = currentTime - this.lastTapTime;
         popup.show([`#8A95A8=Debug: `, `white=clickLength: ${clickLength}`]);
         if (clickLength < 300 && clickLength > 0) {
-            this.handleDoubleTap(itemElement);
+            this.handleDoubleTap(e, itemElement);
         }
         this.lastTapTime = currentTime;
     }
