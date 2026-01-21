@@ -851,7 +851,55 @@ class InventoryItemMenu {
             this.handleMouseUp(e, itemElement);
         }
     }
-
+    updateMenuOptions(itemData) {
+        // Get the menu items container
+        const menuItems = this.menuElement.querySelector('.menu-items');
+        if (!menuItems) return;
+        
+        // Clear existing options
+        menuItems.innerHTML = '';
+        
+        // Create new options based on item
+        const menuOptions = [];
+        if (itemData && itemData.actions && itemData.actions.length > 0) {
+            menuOptions.push({ id: 'use', text: 'Usar', icon: '', color: '' });
+        }
+        if (itemData && itemData.equippable) {
+            menuOptions.push({ id: 'equip', text: 'Equipar', icon: '', color: '' });
+        }
+        menuOptions.push({ id: 'info', text: 'Información', icon: '', color: '' });
+        menuOptions.push({ id: 'delete', text: 'Eliminar', icon: '', color: '' });
+        
+        // Add options to menu
+        menuOptions.forEach(option => {
+            const menuItem = document.createElement('button');
+            menuItem.className = 'menu-item';
+            menuItem.dataset.action = option.id;
+            menuItem.style.cssText = `
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 16px;
+                border: none;
+                background: transparent;
+                text-align: left;
+                font-size: 16px;
+                color: #333;
+                transition: background-color 0.2s;
+                border-bottom: 1px solid #f5f5f5;
+            `;
+            
+            menuItem.innerHTML = `
+                <span class="menu-item-icon" style="font-size: 20px; margin-right: 12px; color: ${option.color}">
+                    ${option.icon}
+                </span>
+                <span class="menu-item-text">${option.text}</span>
+            `;
+            
+            menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
+            menuItems.appendChild(menuItem);
+        });
+    }
     handleDoubleTap(e, itemElement) {
         console.log('handleDoubleTap called for item:', itemElement);
         const itemData = this.getItemData(itemElement);
@@ -859,7 +907,8 @@ class InventoryItemMenu {
         this.activeItem = itemData;
         console.log('Item data SET for double tap:', itemData);
         console.warn(this.menuElement);
-        createMenu(this, itemData);
+        //createMenu(this, itemData);
+        this.updateMenuOptions(itemData);
         console.warn(this.menuElement);
         this.showMenu(e);
     }
