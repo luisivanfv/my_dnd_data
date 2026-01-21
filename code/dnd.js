@@ -411,7 +411,6 @@ function createMenu(thisOutside, activeItem) {
     console.warn(window.character);
     thisOutside.menuElement.style.cssText = `
         position: fixed;
-        background: ${window.character.color};
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         z-index: 9999;
@@ -422,6 +421,8 @@ function createMenu(thisOutside, activeItem) {
         min-width: 250px;
         overflow: hidden;
     `;
+    console.warn(window.character);
+    thisOutside.menuElement.style.background = window.character.color;
     
     // Menu header
     /*const menuHeader = document.createElement('div');
@@ -489,7 +490,11 @@ function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement.appendChild(menuItems);
 }
 async function setCharacterToWindow() {
-    window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) });
+    const characterSheetContainer = document.getElementById('character-sheet-container');
+    if (!characterSheetContainer)
+        return;
+    if(getUrlParameter('name') )
+        window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) });
 }
 class InventoryItemMenu {
     constructor() {
@@ -8377,4 +8382,5 @@ window.handleCreatureTurnStart = handleCreatureTurnStart;
 window.handleCreatureTurnEnd = handleCreatureTurnEnd;
 window.handleCreatureDeathDuringTurn = handleCreatureDeathDuringTurn;
 window.currentTurnCreatureId = currentTurnCreatureId;
+await setCharacterToWindow();
 window.inventoryMenu = new InventoryItemMenu();
