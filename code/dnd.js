@@ -795,7 +795,7 @@ class InventoryItemMenu {
         console.log('Item data for double tap:', itemData);
         //this.toggleEquip(itemData);
         
-        this.showMenu(e.touches[0]);
+        this.showMenu(e);
     }
     handleClick(e, itemElement) {
         const currentTime = new Date().getTime();
@@ -930,7 +930,7 @@ class InventoryItemMenu {
         };
     }
     
-    showMenu(position) {
+    showMenu(event) {
         if (!this.activeItem) return;
         
         // Clear timer
@@ -942,8 +942,8 @@ class InventoryItemMenu {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        let left = position.clientX - (menuWidth / 2);
-        let top = position.clientY - (menuHeight / 2);
+        let left = event.clientX - (menuWidth / 2);
+        let top = event.clientY - (menuHeight / 2);
         
         // Keep menu within viewport
         left = Math.max(10, Math.min(left, viewportWidth - menuWidth - 10));
