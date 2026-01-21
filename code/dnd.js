@@ -997,6 +997,7 @@ class InventoryItemMenu {
         if (!this.activeItem) return;
         popup.show(['grey=this.activeItem: ', `green=${this.activeItem}`]);
         popup.show(['grey=action: ', `green=${action}`]);
+        console.log(this.activeItem);
         this.hideMenu();
         
         switch(action) {
