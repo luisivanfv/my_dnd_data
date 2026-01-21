@@ -408,12 +408,11 @@ function getDisplayNameForDamageType(damageType, uppercase) {
 async function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
-    const character = await getCurrentCharacter();
-    console.warn(character);
-    console.warn(character.color);
+    console.warn(window.character);
+    console.warn(window.character.color);
     thisOutside.menuElement.style.cssText = `
         position: fixed;
-        background: ${character.color};
+        background: ${window.character.color};
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         z-index: 9999;
@@ -1452,7 +1451,8 @@ class InventoryItemMenu {
 }
 
 // Also call setupInventoryItems when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await setCharacterToWindow();
     if (window.inventoryMenu) {
         window.inventoryMenu.setupInventoryItems();
     }
