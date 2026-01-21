@@ -852,6 +852,8 @@ class InventoryItemMenu {
         }
     }
     updateMenuOptions(itemData) {
+        popup.show(['green=itemData']);
+        popup.show([`lightblue=${JSON.stringify(itemData)}`]);
         // Get the menu items container
         const menuItems = this.menuElement.querySelector('.menu-items');
         if (!menuItems) return;
@@ -989,7 +991,7 @@ class InventoryItemMenu {
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
             this.updateMenuOptions(itemData.data);
-            popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
+            //popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
             this.showMenu(e.touches[0]);
         }, 500); // 500ms for long press
     
