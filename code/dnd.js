@@ -1076,6 +1076,10 @@ class InventoryItemMenu {
         let addedDamageThroughModifier = 0;
         const dexMod = getMod(window.character.dex);
         const strMod = getMod(window.character.dex);
+        console.log('dexMod: ', dexMod);
+        console.log('strMod: ', strMod);
+        console.log('item.finesse: ', item.finesse);
+        console.log('proficiencyBonus: ', proficiencyBonus);
         if(item.modifierUsed == 'str') {
             toHitModifier = item.finesse ? Math.max(dexMod, strMod) + proficiencyBonus : getMod(strMod) + proficiencyBonus;
             addedDamageThroughModifier = item.finesse ? Math.max(dexMod, strMod) : getMod(strMod);
