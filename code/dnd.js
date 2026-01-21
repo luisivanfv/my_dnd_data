@@ -213,6 +213,7 @@ async function generateSheet(character) {
                     if(item.itemTypeId == itemType.id) {
                         itemToPush['iconUrl'] = itemType.icon.split('??')[0];
                         itemToPush['iconAlt'] = itemType.icon.split('??')[1];
+                        itemToPush['itemType'] = itemType.description;
                     }
                 });
                 inventory.push(itemToPush);
