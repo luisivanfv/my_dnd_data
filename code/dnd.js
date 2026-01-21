@@ -1092,7 +1092,7 @@ class InventoryItemMenu {
     }
     
     toggleEquip() {
-        const item = this.activeItem.data;
+        const item = this.activeItem;
         console.log(`Toggling equip for: ${item.name}`);
         // asdf
         // Placeholder - implement your equip logic here
@@ -1107,7 +1107,10 @@ class InventoryItemMenu {
         infoContent.className = 'modal-body';
         infoContent.innerHTML = `
             <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 48px; margin-bottom: 10px;">📦</div>
+                <div style="font-size: 48px; margin-bottom: 10px;">
+                <img width="30" height="30" 
+                    src="${item.iconUrl.replace('customSize', '40').replace('customColor', window.character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/>
+                </div>
                 <h3 style="margin: 0; color: #333;">${item.name}</h3>
                 ${item.quantity > 1 ? `<p style="color: #666; margin: 5px 0;">Quantity: ${item.quantity}</p>` : ''}
             </div>
@@ -1179,14 +1182,14 @@ class InventoryItemMenu {
         modal.content.className = 'modal-content';
         modal.content.style.background = `${window.character.color}`;
         modal.content.innerHTML = `
-            <div class="modal-header">
+            <div class="modal-header" style="${window.character.textColor};">
                 ${this.getModalTitle(type, item)}
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="${window.character.secondaryTextColor};">
                 <!-- Content will be added dynamically -->
             </div>
             <div class="modal-footer">
-                <button class="modal-button primary close-modal">OK</button>
+                <button class="modal-button primary close-modal" style="background: ${window.character.secondaryColor}; color: ${window.character.secondaryTextColor};">OK</button>
             </div>
         `;
         
