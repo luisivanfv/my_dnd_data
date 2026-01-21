@@ -1105,6 +1105,9 @@ class InventoryItemMenu {
     
     showInfoModal() {
         popup.show([`lightgreen=${this.activeItem}`]);
+        console.log('----------');
+        console.log(activeItem);
+        console.log('----------');
         const item = this.activeItem.data;
         const modal = this.createModal('info', item);
         
