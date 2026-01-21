@@ -378,6 +378,35 @@ async function updateById(table, id, updates) {
         throw error;
     }
 }
+function getDisplayNameForDamageType(damageType, uppercase) {
+    if(damageType == 'acid')
+        return uppercase ? 'Ácido' : 'ácido';
+    if(damageType == 'bludgeoning')
+        return uppercase ? 'Aplastante' : 'aplastante';
+    if(damageType == 'cold')
+        return uppercase ? 'Frío' : 'frío';
+    if(damageType == 'fire')
+        return uppercase ? 'de Fuego' : 'de fuego';
+    if(damageType == 'force')
+        return uppercase ? 'de Fuerza' : 'de fuerza';
+    if(damageType == 'lightning')
+        return uppercase ? 'Eléctrico' : 'eléctrico';
+    if(damageType == 'necrotic')
+        return uppercase ? 'Necrótico' : 'necrótico';
+    if(damageType == 'piercing')
+        return uppercase ? 'Punzante' : 'punzante';
+    if(damageType == 'poison')
+        return uppercase ? 'de Veneno' : 'de veneno';
+    if(damageType == 'psychic')
+        return uppercase ? 'Psíquico' : 'psíquico';
+    if(damageType == 'radiant')
+        return uppercase ? 'Radiante' : 'radiante';
+    if(damageType == 'slashing')
+        return uppercase ? 'Cortante' : 'cortante';
+    if(damageType == 'thunder')
+        return uppercase ? 'de Trueno' : 'de trueno';
+    return damageType;
+}
 class InventoryItemMenu {
     constructor() {
         this.activeItem = null;
@@ -1083,7 +1112,7 @@ class InventoryItemMenu {
                         : '0');
                 extraPortion = parseInt(extraPortion) + addedDamageThroughModifier;
                 const updatedDamageCalculation = `${dicePortion} ${extraPortion > 0 ? `+ ${extraPortion}` : extraPortion}`;
-                const damageTypeName = getDisplayNameForDamageType(option.damageType); // asdf add this
+                const damageTypeName = getDisplayNameForDamageType(option.damageType, false);
                 useOption.className = 'use-option';
                 useOption.style.background = window.character.color;
                 useOption.innerHTML = `
