@@ -496,7 +496,7 @@ async function setCharacterToWindow() {
     if (!characterSheetContainer)
         return;
     if(getUrlParameter('name') )
-        window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) });
+        window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) })[0];
 }
 class InventoryItemMenu {
     constructor() {
@@ -584,7 +584,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        //await setCharacterToWindow();
+        await setCharacterToWindow();
         createMenu(this, null);
         
         // Add to DOM
