@@ -792,9 +792,9 @@ class InventoryItemMenu {
     handleDoubleTap(e, itemElement) {
         console.log('handleDoubleTap called for item:', itemElement);
         const itemData = this.getItemData(itemElement);
-        console.log('Item data for double tap:', itemData);
         //this.toggleEquip(itemData);
-        
+        this.activeItem = itemData;
+        console.log('Item data SET for double tap:', itemData);
         this.showMenu(e);
     }
     handleClick(e, itemElement) {
