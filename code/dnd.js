@@ -533,12 +533,14 @@ class InventoryItemMenu {
         
         // Menu items
         const menuOptions = [
-            { id: 'use', text: 'Use', icon: '⚗️', color: '#3498db' },
-            { id: 'equip', text: 'Equip', icon: '⚔️', color: '#2ecc71' },
-            { id: 'info', text: 'Information', icon: 'ℹ️', color: '#9b59b6' },
-            { id: 'delete', text: 'Delete', icon: '🗑️', color: '#e74c3c' }
+            { id: 'use', text: 'Usar', icon: '', color: '' },
+            { id: 'equip', text: 'Equipar', icon: '', color: '' },
+            { id: 'info', text: 'Información', icon: '', color: '' },
+            { id: 'delete', text: 'Eliminar', icon: '', color: '' }
         ];
-        
+        console.log('>>>>>');
+        console.log(this.activeItem);
+        console.log('>>>>>');
         menuOptions.forEach(option => {
             const menuItem = document.createElement('button');
             menuItem.className = 'menu-item';
@@ -1220,16 +1222,6 @@ class InventoryItemMenu {
         const deleteContent = document.createElement('div');
         deleteContent.className = 'modal-body';
         deleteContent.innerHTML = `
-            <div class="delete-icon">🗑️</div>
-            <h3 style="text-align: center; color: #333; margin: 0 0 10px 0;">
-                Delete ${item.name}?
-            </h3>
-            <p class="delete-warning">
-                This action cannot be undone!
-            </p>
-            <p style="text-align: center; color: #666; margin: 0;">
-                ${item.quantity > 1 ? `You will lose ${item.quantity} items.` : 'This item will be permanently removed.'}
-            </p>
         `;
         
         modal.content.querySelector('.modal-body').appendChild(deleteContent);
@@ -1303,7 +1295,7 @@ class InventoryItemMenu {
         switch(type) {
             case 'use': return `Usar ${item.name}`;
             case 'info': return `${item.name == item.itemType ? item.name : item.name + ' (' + item.itemType + ')'}`;
-            case 'delete': return `¿Estás segur@?`;
+            case 'delete': return `¿Eliminar ${item.name}?`;
             default: return 'Acciones';
         }
     }
