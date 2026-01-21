@@ -477,7 +477,7 @@ function createMenu(thisOutside) {
             <span class="menu-item-text">${option.text}</span>
         `;
         
-        menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
+        menuItem.addEventListener('click', () => thisOutside.handleMenuAction(option.id));
         menuItems.appendChild(menuItem);
     });
     
