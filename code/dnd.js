@@ -865,6 +865,10 @@ class InventoryItemMenu {
             element: itemElement,
             data: this.getItemData(itemElement)
         };
+        window.activeItem = {
+            element: itemElement,
+            data: this.getItemData(itemElement)
+        };
         
         console.log('Active item set:', this.activeItem.data);
         // Add visual feedback
