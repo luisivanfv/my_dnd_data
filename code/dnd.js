@@ -974,10 +974,11 @@ class InventoryItemMenu {
             y: e.touches[0].clientY
         };
         
-        this.activeItem = {
+        /*this.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
-        };
+        };*/
+        this.activeItem = this.getItemData(itemElement);
         window.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
