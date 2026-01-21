@@ -1108,7 +1108,7 @@ class InventoryItemMenu {
         console.log('----------');
         console.log(this.activeItem);
         console.log('----------');
-        const item = this.activeItem.data;
+        const item = this.activeItem;
         const modal = this.createModal('info', item);
         
         const infoContent = document.createElement('div');
