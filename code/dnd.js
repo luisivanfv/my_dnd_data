@@ -601,7 +601,6 @@ class InventoryItemMenu {
             }
             
             .inventory-item.long-press-active {
-                background-color: #e3f2fd !important;
                 transform: scale(0.98);
                 transition: all 0.2s;
             }
