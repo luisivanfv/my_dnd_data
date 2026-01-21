@@ -196,8 +196,6 @@ async function generateSheet(character) {
     stealthBonus += getMod(character.dex);
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
-    console.log('characterInventory:');
-    console.log(characterInventory);
     const itemList = await queryDatabase('Items', {}, {});
     const itemTypes = await queryDatabase('ItemTypes', {}, {});
     const actions = await queryDatabase('Actions', {}, {});
@@ -425,7 +423,7 @@ function createMenu(thisOutside, activeItem) {
     `;
     
     // Menu header
-    const menuHeader = document.createElement('div');
+    /*const menuHeader = document.createElement('div');
     menuHeader.className = 'menu-header';
     menuHeader.style.cssText = `
         padding: 16px;
@@ -435,7 +433,7 @@ function createMenu(thisOutside, activeItem) {
         text-align: center;
     `;
     menuHeader.textContent = 'Item Actions';
-    thisOutside.menuElement.appendChild(menuHeader);
+    thisOutside.menuElement.appendChild(menuHeader);*/
     
     // Menu items container
     const menuItems = document.createElement('div');
@@ -446,8 +444,6 @@ function createMenu(thisOutside, activeItem) {
     `;
     
     // Menu items
-    console.warn('activeItem used for menu options:');
-    console.warn(activeItem);
     const menuOptions = [];
     if (activeItem) {
         if(activeItem.actions.length > 0)
@@ -560,7 +556,6 @@ class InventoryItemMenu {
     }
     
     createMenuElements() {
-        popup.show(['blue=createMenuElements'], 2);
         // Create backdrop
         this.backdrop = document.createElement('div');
         this.backdrop.className = 'menu-backdrop';
@@ -578,12 +573,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        console.warn('Originally');
-        console.warn(this.menuElement);
         createMenu(this, null);
-        console.warn(this.menuElement);
-        console.warn('This should be set:');
-        console.log(this.menuElement);
         
         // Add to DOM
         document.body.appendChild(this.backdrop);
@@ -852,8 +842,6 @@ class InventoryItemMenu {
         }
     }
     updateMenuOptions(itemData) {
-        popup.show(['green=itemData']);
-        popup.show([`lightblue=${JSON.stringify(itemData)}`]);
         // Get the menu items container
         const menuItems = this.menuElement.querySelector('.menu-items');
         if (!menuItems) return;
@@ -912,7 +900,6 @@ class InventoryItemMenu {
     }
     handleClick(e, itemElement) {
         const currentTime = new Date().getTime();
-        popup.show([`#8A95A8=Debug: `, 'white=handleClick']);
         this.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
@@ -920,17 +907,12 @@ class InventoryItemMenu {
         
         // For desktop, check for double click
         const clickLength = currentTime - this.lastTapTime;
-        popup.show([`#8A95A8=Debug: `, `white=clickLength: ${clickLength}`]);
         if (clickLength < 300 && clickLength > 0) {
             this.handleDoubleTap(e, itemElement);
         }
         this.lastTapTime = currentTime;
     }
     handleClickStart(e, itemElement) {
-        console.log('Touch start event triggered');
-        console.log('Target:', e.target);
-        console.log('Closest inventory item:', itemElement);
-        
         if (!itemElement) {
             console.log('No inventory item found');
             return;
@@ -945,8 +927,6 @@ class InventoryItemMenu {
             element: itemElement,
             data: this.getItemData(itemElement)
         };
-        
-        console.log('Active item set:', this.activeItem.data);
         // Add visual feedback
         itemElement.classList.add('long-press-active');
         
@@ -954,7 +934,6 @@ class InventoryItemMenu {
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
             this.showMenu(e.touches[0]);
-            popup.show(["lightblue=here!"]);
         }, 500); // 500ms for long press
     
         console.log('Touch start handler completed');
@@ -991,10 +970,7 @@ class InventoryItemMenu {
         console.log('Added long-press-active class');
         // Start timer for long press
         this.touchTimer = setTimeout(() => {
-            popup.show([`lightblue=long touch!`]);
-            popup.show([`lightblue=${JSON.stringify(this.activeItem.data)}`]);
             this.updateMenuOptions(this.activeItem.data);
-            //popup.show([`lightblue=${JSON.stringify(itemData.data)}`]);
             this.showMenu(e.touches[0]);
         }, 500); // 500ms for long press
     
@@ -1009,7 +985,6 @@ class InventoryItemMenu {
     }
     
     handleMouseDown(e, itemElement) {
-        popup.show(['yellow=handleMouseDown']);
         this.activeItem = {
             element: itemElement,
             data: this.getItemData(itemElement)
@@ -1019,7 +994,6 @@ class InventoryItemMenu {
         
         this.touchTimer = setTimeout(() => {
             this.showMenu(e);
-            popup.show(["lightblue=here 3!"]);
         }, 500);
     }
     
@@ -1053,7 +1027,6 @@ class InventoryItemMenu {
     }
     
     showMenu(event) {
-        popup.show(['pink=showMenu']);
         if (!this.activeItem) return;
         
         // Clear timer
@@ -1110,7 +1083,6 @@ class InventoryItemMenu {
     }
     
     handleMenuAction(action) {
-        popup.show(['grey=debug: ', 'yellow=handleMenuAction']);
         if (!this.activeItem) {
             this.hideMenu();
             return;
@@ -1464,8 +1436,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 async function createCharacterSheet(characterData) {
-    console.log('createCharacterSheet:');
-    console.log(characterData);
     window.character = characterData;
     // Default character structure
     const itemList = await queryDatabase('Items', {}, {});
