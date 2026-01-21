@@ -1055,10 +1055,10 @@ class InventoryItemMenu {
             useOptions.forEach((option, index) => {
                 const useOption = document.createElement('div');
                 useOption.className = 'use-option';
-                useOption.style.background = window.character.secondaryColor;
+                useOption.style.background = window.character.color;
                 useOption.innerHTML = `
                     <div class="use-option-title" style="color: ${window.character.textColor};">${option.name || 'Usar'}</div>
-                    ${option.description ? `<div class="use-option-description" style="${window.character.secondaryTextColor};">${option.description}</div>` : ''}
+                    ${option.description ? `<div class="use-option-description" style="color: ${window.character.secondaryTextColor};">${option.description}</div>` : ''}
                 `;
                 
                 /*useOption.addEventListener('click', () => {
