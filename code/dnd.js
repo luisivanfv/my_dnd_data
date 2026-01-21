@@ -487,6 +487,9 @@ function createMenu(thisOutside, activeItem) {
     
     thisOutside.menuElement.appendChild(menuItems);
 }
+async function setCharacterToWindow() {
+    window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) });
+}
 class InventoryItemMenu {
     constructor() {
         this.activeItem = null;
@@ -555,7 +558,7 @@ class InventoryItemMenu {
         console.log('Mutation observer started');
     }
     
-    createMenuElements() {
+    async createMenuElements() {
         // Create backdrop
         this.backdrop = document.createElement('div');
         this.backdrop.className = 'menu-backdrop';
@@ -573,6 +576,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
+        await setCharacterToWindow();
         createMenu(this, null);
         
         // Add to DOM
