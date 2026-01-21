@@ -584,7 +584,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        await setCharacterToWindow();
+        //await setCharacterToWindow();
         createMenu(this, null);
         
         // Add to DOM
