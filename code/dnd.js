@@ -405,9 +405,10 @@ function getDisplayNameForDamageType(damageType, uppercase) {
         return uppercase ? 'de Trueno' : 'de trueno';
     return damageType;
 }
-function createMenu(thisOutside, activeItem) {
+async function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
+    window.character = await getCurrentCharacter();
     console.warn(window.character);
     console.warn(window.character.color);
     thisOutside.menuElement.style.cssText = `
@@ -498,6 +499,13 @@ async function setCharacterToWindow() {
     if(getUrlParameter('name') )
         window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) })[0];
 }
+async function getCurrentCharacter() {
+    const characterSheetContainer = document.getElementById('character-sheet-container');
+    if (!characterSheetContainer)
+        return;
+    if(getUrlParameter('name') )
+        return await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) })[0];
+}
 class InventoryItemMenu {
     constructor() {
         this.activeItem = null;
@@ -584,8 +592,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        await setCharacterToWindow();
-        createMenu(this, null);
+        await createMenu(this, null);
         
         // Add to DOM
         document.body.appendChild(this.backdrop);
