@@ -407,9 +407,7 @@ function getDisplayNameForDamageType(damageType, uppercase) {
         return uppercase ? 'de Trueno' : 'de trueno';
     return damageType;
 }
-function createMenu(thisOutside) {
-    console.log('this.activeItem');
-    console.log(this.activeItem);
+function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
     thisOutside.menuElement.style.cssText = `
@@ -448,12 +446,20 @@ function createMenu(thisOutside) {
     `;
     
     // Menu items
-    const menuOptions = [
-        { id: 'use', text: 'Usar', icon: '', color: '' },
-        { id: 'equip', text: 'Equipar', icon: '', color: '' },
-        { id: 'info', text: 'Información', icon: '', color: '' },
-        { id: 'delete', text: 'Eliminar', icon: '', color: '' }
-    ];
+    console.warn('activeItem used for menu options:');
+    console.warn(activeItem);
+    const menuOptions = [];
+    if (activeItem) {
+        if(activeItem.actions.length > 0)
+            menuOptions.push({ id: 'use', text: 'Usar', icon: '', color: '' });
+        if(activeItem.equippable)
+            menuOptions.push({ id: 'equip', text: 'Equipar', icon: '', color: '' });
+    } else {
+        menuOptions.push({ id: 'use', text: 'Usar', icon: '', color: '' });
+        menuOptions.push({ id: 'equip', text: 'Equipar', icon: '', color: '' });
+    }
+    menuOptions.push({ id: 'info', text: 'Información', icon: '', color: '' });
+    menuOptions.push({ id: 'delete', text: 'Eliminar', icon: '', color: '' });
     menuOptions.forEach(option => {
         const menuItem = document.createElement('button');
         menuItem.className = 'menu-item';
@@ -572,7 +578,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        createMenu(this);
+        createMenu(this, null);
         console.warn('This should be set:');
         console.log(this.menuElement);
         
@@ -849,7 +855,7 @@ class InventoryItemMenu {
         //this.toggleEquip(itemData);
         this.activeItem = itemData;
         console.log('Item data SET for double tap:', itemData);
-        createMenu(this);
+        createMenu(this, itemData);
         this.showMenu(e);
     }
     handleClick(e, itemElement) {
