@@ -1074,8 +1074,9 @@ class InventoryItemMenu {
         // and I will remember to subtract - 4 - proficiencyBonus if they don't for some reason
         let toHitModifier = 0;
         let addedDamageThroughModifier = 0;
+        console.log('window.character: ', window.character);
         const dexMod = getMod(window.character.dex);
-        const strMod = getMod(window.character.dex);
+        const strMod = getMod(window.character.str);
         console.log('dexMod: ', dexMod);
         console.log('strMod: ', strMod);
         console.log('item.finesse: ', item.finesse);
