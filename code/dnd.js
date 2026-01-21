@@ -1177,7 +1177,7 @@ class InventoryItemMenu {
         modal.overlay.className = 'modal-overlay';
         
         modal.content.className = 'modal-content';
-        modal.content.style.background = `${this.character.color}`;
+        modal.content.style.background = `${window.character.color}`;
         modal.content.innerHTML = `
             <div class="modal-header">
                 ${this.getModalTitle(type, item)}
@@ -1316,7 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function createCharacterSheet(characterData) {
     console.log('createCharacterSheet:');
     console.log(characterData);
-    this.character = characterData;
+    window.character = characterData;
     // Default character structure
     const itemList = await queryDatabase('Items', {}, {});
     const defaults = {
