@@ -219,7 +219,7 @@ async function generateSheet(character) {
                 });
                 const itemActions = [];
                 actions.forEach(action => {
-                    if(action.requiredItemId = item.id) {
+                    if(action.requiredItemId == item.id) {
                         itemActions.push({
                             name: action.name,
                             description: action.description,
@@ -1055,9 +1055,10 @@ class InventoryItemMenu {
             useOptions.forEach((option, index) => {
                 const useOption = document.createElement('div');
                 useOption.className = 'use-option';
+                useOption.style.background = window.character.secondaryColor;
                 useOption.innerHTML = `
-                    <div class="use-option-title">${option.name || 'Use Item'}</div>
-                    ${option.description ? `<div class="use-option-description">${option.description}</div>` : ''}
+                    <div class="use-option-title" style="color: ${window.character.textColor};">${option.name || 'Usar'}</div>
+                    ${option.description ? `<div class="use-option-description" style="${window.character.secondaryTextColor};">${option.description}</div>` : ''}
                 `;
                 
                 /*useOption.addEventListener('click', () => {
