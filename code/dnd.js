@@ -995,6 +995,8 @@ class InventoryItemMenu {
     handleMenuAction(action) {
         popup.show(['grey=debug: ', 'yellow=handleMenuAction']);
         if (!this.activeItem) return;
+        popup.show(['grey=this.activeItem: ', `green=${this.activeItem}`]);
+        popup.show(['grey=action: ', `green=${action}`]);
         this.hideMenu();
         
         switch(action) {
