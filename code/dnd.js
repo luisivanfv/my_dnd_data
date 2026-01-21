@@ -8382,5 +8382,4 @@ window.handleCreatureTurnStart = handleCreatureTurnStart;
 window.handleCreatureTurnEnd = handleCreatureTurnEnd;
 window.handleCreatureDeathDuringTurn = handleCreatureDeathDuringTurn;
 window.currentTurnCreatureId = currentTurnCreatureId;
-await setCharacterToWindow();
 window.inventoryMenu = new InventoryItemMenu();
