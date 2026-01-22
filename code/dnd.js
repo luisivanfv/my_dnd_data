@@ -1949,6 +1949,22 @@ function getSortText(sortingStyle) {
         default: return `<img width="24" height="24" src="https://img.icons8.com/sf-black/24/${iconColor}/list.png" alt="list"/>`;
     }
 }
+function getTotalItemWeight(inventory) {
+    let weight = 0;
+    inventory.forEach(item => {
+        weight += item.quantity * item.weight;
+    });
+    return weight;
+}
+function getCarryCapacity(str) {
+    return str * 60;
+}
+function getColorForCarryCapacity(totalItemWeight, carryCapacity, textColor) {
+    const percentage = totalItemWeight * 100.0 / carryCapacity;
+    if(percentage > 100)
+        return '#c21a00'
+    return textColor;
+}
 async function createCharacterSheet(characterData) {
     window.character = characterData;
     // Default character structure
@@ -2158,11 +2174,14 @@ async function createCharacterSheet(characterData) {
                 </div>
                 <div class="item-name" style="color: ${character.textColor}; flex-grow: 1;">${item.name || `Item ${index + 1}`}</div>
                 ${showQuantity && item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">x${item.quantity}</div>` : ''}
-                ${showWeight && item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1)).toFixed(2)} kg</div>` : ''}
+                ${showWeight && item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1))} kg</div>` : ''}
                 ${showPrice && item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px; display: flex; align-items: center; gap: 2px;">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
             </div>
         `;
     }
+    const totalItemWeight = getTotalItemWeight(character.inventory);
+    const carryCapacity = getCarryCapacity(character.str);
+    const colorForCarryCapacity = getColorForCarryCapacity(totalItemWeight, carryCapacity, character.textColor);
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -2283,7 +2302,12 @@ async function createCharacterSheet(characterData) {
                         <!-- Inventory Items with Sorting Button -->
                         <div class="items-section" style="background: ${character.color}; position: relative;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
+                                ${currentSortingStyle == 'weight' ? `<h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
+                                <button id="weight-inventory-disabled-button" class="sort-button" 
+                                    data-sorting="${currentSortingStyle}"
+                                    style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
+                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}/${carryCapacity} kg</span>
+                                </button>` : ''}
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
                                     style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
