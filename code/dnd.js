@@ -1699,6 +1699,11 @@ async function updateInventoryDisplay(characterId, sortingStyle) {
     const characterName = getUrlParameter('name');
     const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
     
+    // Update window.character to reflect the change
+    if (window.character) {
+        window.character.currentInventorySorting = sortingStyle;
+    }
+    
     // Generate the inventory HTML with the new sorting
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id }, {});
     const itemList = await queryDatabase('Items', {}, {});
@@ -1748,7 +1753,7 @@ async function updateInventoryDisplay(characterId, sortingStyle) {
     const sortedInventory = await sortInventory(inventory, sortingStyle);
     
     // Generate HTML for the sorted inventory
-    const inventoryHtml = await generateInventoryHtml(sortedInventory, character, sortingStyle);
+    const inventoryHtml = await generateInventoryHtml(sortedInventory, character, currentSortingStyle);
     
     // Update the inventory container
     const inventoryContainer = document.getElementById('inventory-items-container');
@@ -8964,6 +8969,23 @@ function createHpEditHandler(data, cell, textColor) {
 function addInventorySortingStyles() {
     const style = document.createElement('style');
     style.textContent = `
+        .inventory-item {
+            transition: all 0.3s ease;
+        }
+        
+        .item-quantity, .item-weight, .item-price {
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+        
+        .item-quantity.hidden, .item-weight.hidden, .item-price.hidden {
+            opacity: 0;
+            width: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
         .sort-button {
             transition: all 0.2s ease;
         }
@@ -8979,6 +9001,7 @@ function addInventorySortingStyles() {
         
         .category-section {
             margin-bottom: 15px;
+            transition: all 0.3s ease;
         }
         
         .category-header {
@@ -8986,35 +9009,7 @@ function addInventorySortingStyles() {
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-        
-        .inventory-item {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        .inventory-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .item-quantity, .item-weight, .item-price {
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-left: 5px;
-            font-weight: bold;
-        }
-        
-        .item-icon {
-            flex-shrink: 0;
-        }
-        
-        .item-name {
-            flex-grow: 1;
-            margin-left: 8px;
+            transition: all 0.3s ease;
         }
     `;
     document.head.appendChild(style);
