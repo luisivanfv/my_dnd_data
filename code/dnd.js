@@ -105,6 +105,8 @@ async function updateCharacterSheet() {
     if (window.inventoryMenu) {
         console.log('Re-setting up inventory events after sheet update');
         setTimeout(() => {
+            // Make sure to refresh the inventory data
+            window.inventoryMenu.activeItem = null;
             window.inventoryMenu.setupInventoryItems();
         }, 100);
     }
@@ -1037,7 +1039,7 @@ class InventoryItemMenu {
     
     getItemData(itemElement) {
         // Extract item data from element attributes or dataset
-        return {
+        const data = {
             id: itemElement.dataset.itemId || null,
             name: itemElement.dataset.itemName || itemElement.querySelector('.item-name')?.textContent || 'Unknown Item',
             quantity: parseInt(itemElement.dataset.itemQuantity) || 1,
@@ -1045,6 +1047,14 @@ class InventoryItemMenu {
             // Add more properties as needed
             ...JSON.parse(itemElement.dataset.itemData || '{}')
         };
+        
+        // Make sure equipped is parsed correctly (it might be a string "true"/"false")
+        if (itemElement.dataset.equipped !== undefined) {
+            data.equipped = itemElement.dataset.equipped === 'true' || 
+                            itemElement.dataset.equipped === true;
+        }
+        
+        return data;
     }
     
     showMenu(event) {
@@ -1245,21 +1255,44 @@ class InventoryItemMenu {
         const item = this.activeItem;
         console.log(`Toggling equip for: ${item.name}`);
         console.log(item);
+        
         let idToGet = 0;
         window.inventory.forEach(invItem => {
             if(invItem.itemId == item.id)
                 idToGet = invItem.id;
         });
+        
         console.warn('item.id: ', item.id);
         console.warn('window.character.id: ', window.character.id);
         console.warn('idToGet: ', idToGet);
+        
+        // 1. Update the database
         await updateById('Inventories', idToGet, { equipped: !item.equipped });
-        const updatedItem = await queryDatabase('Inventories', { id: idToGet }, {})[0];
-        console.log(`After toggle:`);
-        console.log(updatedItem);
-        //this.activeItem = updatedItem;
-        // Placeholder - implement your equip logic here
-        this.showToast(`${item.name} ${item.equipped ? 'unequipped' : 'equipped'}`);
+        
+        // 2. Query the updated row PROPERLY - await the promise
+        const updatedItems = await queryDatabase('Inventories', { id: idToGet }, {});
+        const updatedItem = updatedItems[0]; // queryDatabase returns an array
+        
+        if (updatedItem) {
+            console.log(`After toggle:`, updatedItem);
+            
+            // 3. Update the window.inventory array to reflect the change
+            const inventoryIndex = window.inventory.findIndex(invItem => invItem.id === idToGet);
+            if (inventoryIndex !== -1) {
+                window.inventory[inventoryIndex].equipped = updatedItem.equipped;
+            }
+            
+            // 4. Update the character sheet to show the new equipped state
+            await updateCharacterSheet();
+            
+            this.showToast(`${item.name} ${updatedItem.equipped ? 'equipped' : 'unequipped'}`);
+        } else {
+            console.error('Could not retrieve updated item from database');
+            this.showToast(`Error updating ${item.name}`, 'error');
+        }
+        
+        // Hide the menu after action
+        this.hideMenu();
     }
     
     showInfoModal() {
@@ -1716,7 +1749,7 @@ async function createCharacterSheet(characterData) {
                                 data-item-id="${item.id}"
                                 data-item-name="${item.name}"
                                 data-item-quantity="${item.quantity}"
-                                data-equipped="${item.equipped}"
+                                data-equipped="${item.equipped ? 'true' : 'false'}"
                                 data-item-data='${JSON.stringify(item)}'
                                 style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px;">
                                 <div class="item-icon" style="margin-right: 10px;"><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
