@@ -405,7 +405,7 @@ function getDisplayNameForDamageType(damageType, uppercase) {
         return uppercase ? 'de Trueno' : 'de trueno';
     return damageType;
 }
-async function createMenu(thisOutside, activeItem) {
+function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
     console.warn(window.character);
@@ -577,7 +577,7 @@ class InventoryItemMenu {
         console.log('Mutation observer started');
     }
     
-    async createMenuElements() {
+    createMenuElements() {
         // Create backdrop
         this.backdrop = document.createElement('div');
         this.backdrop.className = 'menu-backdrop';
@@ -595,7 +595,7 @@ class InventoryItemMenu {
         `;
         
         // Create menu
-        await createMenu(this, null);
+        createMenu(this, null);
         
         // Add to DOM
         document.body.appendChild(this.backdrop);
