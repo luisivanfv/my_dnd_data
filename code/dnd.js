@@ -102,12 +102,15 @@ async function updateCharacterSheet() {
         tabButton.click();
     }
     
+    // Setup sort button
+    setTimeout(() => {
+        setupSortButton(character.id);
+    }, 100);
+    
     // Re-setup inventory item event listeners
     if (window.inventoryMenu) {
         console.log('Re-setting up inventory events after sheet update');
         setTimeout(() => {
-            // Make sure to refresh the inventory data
-            window.inventoryMenu.activeItem = null;
             window.inventoryMenu.setupInventoryItems();
         }, 100);
     }
@@ -516,6 +519,27 @@ async function getCurrentCharacter() {
     }
 }
 async function sortInventory(inventory, sortingStyle = 'default') {
+    console.log('Sorting inventory with style:', sortingStyle);
+    console.log('Inventory items:', inventory);
+    
+    // Check if inventory is valid
+    if (!inventory || !Array.isArray(inventory)) {
+        console.error('Invalid inventory:', inventory);
+        return [];
+    }
+    
+    // Filter out any invalid items
+    const validInventory = inventory.filter(item => {
+        if (!item) return false;
+        if (!item.name) {
+            console.warn('Item missing name property:', item);
+            return false;
+        }
+        return true;
+    });
+    
+    console.log('Valid items:', validInventory.length, 'out of', inventory.length);
+    
     // Fetch necessary data for sorting
     const itemTypes = await queryDatabase('ItemTypes', {}, {});
     const itemCategories = await queryDatabase('ItemCategories', {}, {});
@@ -536,14 +560,16 @@ async function sortInventory(inventory, sortingStyle = 'default') {
     
     // Helper to get category priority for an item
     const getCategoryPriority = (item) => {
+        if (!item || !item.itemTypeId) return 999;
         const itemType = itemTypeMap.get(item.itemTypeId);
-        if (!itemType) return 999; // Default high number for unknown types
+        if (!itemType) return 999;
         const category = categoryMap.get(itemType.categoryId);
         return category ? category.priority : 999;
     };
     
     // Helper to get category display name for an item
     const getCategoryDisplayName = (item) => {
+        if (!item || !item.itemTypeId) return 'Other';
         const itemType = itemTypeMap.get(item.itemTypeId);
         if (!itemType) return 'Other';
         const category = categoryMap.get(itemType.categoryId);
@@ -553,14 +579,17 @@ async function sortInventory(inventory, sortingStyle = 'default') {
     // Sort based on the selected style
     switch(sortingStyle) {
         case 'price':
-            return inventory.sort((a, b) => {
+            return validInventory.sort((a, b) => {
+                // Ensure we have valid items
+                if (!a || !b) return 0;
+                
                 // Handle items without price (sort to bottom)
-                const priceA = a.avgPrice !== null ? a.avgPrice : Infinity;
-                const priceB = b.avgPrice !== null ? b.avgPrice : Infinity;
+                const priceA = (a.avgPrice !== null && a.avgPrice !== undefined) ? a.avgPrice : Infinity;
+                const priceB = (b.avgPrice !== null && b.avgPrice !== undefined) ? b.avgPrice : Infinity;
                 
                 // If both have no price, sort by name
                 if (priceA === Infinity && priceB === Infinity) {
-                    return a.name.localeCompare(b.name);
+                    return (a.name || '').localeCompare(b.name || '');
                 }
                 
                 // If only one has no price, it goes to bottom
@@ -571,18 +600,21 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 if (priceA !== priceB) {
                     return priceA - priceB;
                 }
-                return a.name.localeCompare(b.name);
+                return (a.name || '').localeCompare(b.name || '');
             });
             
         case 'weight':
-            return inventory.sort((a, b) => {
+            return validInventory.sort((a, b) => {
+                // Ensure we have valid items
+                if (!a || !b) return 0;
+                
                 // Handle items without weight (sort to bottom)
-                const weightA = a.weight !== null ? a.weight : Infinity;
-                const weightB = b.weight !== null ? b.weight : Infinity;
+                const weightA = (a.weight !== null && a.weight !== undefined) ? a.weight : Infinity;
+                const weightB = (b.weight !== null && b.weight !== undefined) ? b.weight : Infinity;
                 
                 // If both have no weight, sort by name
                 if (weightA === Infinity && weightB === Infinity) {
-                    return a.name.localeCompare(b.name);
+                    return (a.name || '').localeCompare(b.name || '');
                 }
                 
                 // If only one has no weight, it goes to bottom
@@ -593,20 +625,23 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 if (weightA !== weightB) {
                     return weightA - weightB;
                 }
-                return a.name.localeCompare(b.name);
+                return (a.name || '').localeCompare(b.name || '');
             });
             
         case 'default':
         default:
             // Group items by category first
             const groupedByCategory = {};
-            inventory.forEach(item => {
+            validInventory.forEach(item => {
+                if (!item) return;
                 const categoryName = getCategoryDisplayName(item);
                 if (!groupedByCategory[categoryName]) {
                     groupedByCategory[categoryName] = [];
                 }
                 groupedByCategory[categoryName].push(item);
             });
+            
+            console.log('Grouped by category:', groupedByCategory);
             
             // Get unique categories with their priorities
             const categories = Object.keys(groupedByCategory).map(categoryName => ({
@@ -617,25 +652,35 @@ async function sortInventory(inventory, sortingStyle = 'default') {
             // Sort categories by priority
             categories.sort((a, b) => a.priority - b.priority);
             
+            console.log('Sorted categories:', categories);
+            
             // Sort items within each category and flatten
             const sortedInventory = [];
             categories.forEach(category => {
                 const categoryItems = groupedByCategory[category.name];
+                console.log(`Sorting category "${category.name}" with items:`, categoryItems);
                 
                 // Sort within category: equipped first, then by name
                 categoryItems.sort((a, b) => {
+                    // Ensure we have valid items
+                    if (!a || !b) return 0;
+                    
                     // First by equipped status (equipped comes first)
-                    if (a.equipped !== b.equipped) {
-                        return a.equipped ? -1 : 1;
+                    const equippedA = Boolean(a.equipped);
+                    const equippedB = Boolean(b.equipped);
+                    if (equippedA !== equippedB) {
+                        return equippedA ? -1 : 1;
                     }
                     // Then by name
-                    return a.name.localeCompare(b.name);
+                    return (a.name || '').localeCompare(b.name || '');
                 });
                 
+                console.log(`Sorted items for "${category.name}":`, categoryItems);
                 // Add to final array
                 sortedInventory.push(...categoryItems);
             });
             
+            console.log('Final sorted inventory:', sortedInventory);
             return sortedInventory;
     }
 }
