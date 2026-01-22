@@ -2028,7 +2028,8 @@ async function createCharacterSheet(characterData) {
     
     // Merge with provided data
     const character = { ...defaults, ...characterData };
-    
+    console.error('character 1');
+    console.error(character);
     // Calculate ability modifiers
     const calculateModifier = (score) => Math.floor((score - 10) / 2);
     
