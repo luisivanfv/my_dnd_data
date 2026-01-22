@@ -560,6 +560,10 @@ async function sortInventory(inventory, sortingStyle = 'default') {
             displayName: category.displayName
         });
     });
+    console.warn('itemTypeMap');
+    console.warn(itemTypeMap);
+    console.warn('categoryMap');
+    console.warn(categoryMap);
     
     // Helper to get category priority for an item
     const getCategoryPriority = (item) => {
@@ -572,10 +576,18 @@ async function sortInventory(inventory, sortingStyle = 'default') {
     
     // Helper to get category display name for an item
     const getCategoryDisplayName = (item) => {
+        console.log('>>>>>>>>>>>>');
+        console.log('item');
+        console.log(item);
         if (!item || !item.itemTypeId) return 'Other';
         const itemType = itemTypeMap.get(item.itemTypeId);
+        console.log('itemType');
+        console.log(itemType);
         if (!itemType) return 'Other';
         const category = categoryMap.get(itemType.categoryId);
+        console.log('category');
+        console.log(category);
+        console.log('>>>>>>>>>>>>');
         return category ? category.displayName : 'Other';
     };
     
