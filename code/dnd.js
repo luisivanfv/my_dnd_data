@@ -45,6 +45,7 @@ window.initializeExternalScript = async function() {
         addEncounterTableStyles();
         convertToEncounterTable();
         initLazyPreviews();
+        addInventorySortingStyles();
         document.body.classList.remove('loading');
         document.body.classList.add('loaded');
 };
@@ -512,6 +513,130 @@ async function getCurrentCharacter() {
     if(getUrlParameter('name') ) {
         console.log('getCurrentCharacter...');
         return await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) })[0];
+    }
+}
+async function sortInventory(inventory, sortingStyle = 'default') {
+    // Fetch necessary data for sorting
+    const itemTypes = await queryDatabase('ItemTypes', {}, {});
+    const itemCategories = await queryDatabase('ItemCategories', {}, {});
+    
+    // Create lookup maps for quick access
+    const itemTypeMap = new Map();
+    itemTypes.forEach(type => {
+        itemTypeMap.set(type.id, type);
+    });
+    
+    const categoryMap = new Map();
+    itemCategories.forEach(category => {
+        categoryMap.set(category.id, {
+            priority: category.priority,
+            displayName: category.displayName
+        });
+    });
+    
+    // Helper to get category priority for an item
+    const getCategoryPriority = (item) => {
+        const itemType = itemTypeMap.get(item.itemTypeId);
+        if (!itemType) return 999; // Default high number for unknown types
+        const category = categoryMap.get(itemType.categoryId);
+        return category ? category.priority : 999;
+    };
+    
+    // Helper to get category display name for an item
+    const getCategoryDisplayName = (item) => {
+        const itemType = itemTypeMap.get(item.itemTypeId);
+        if (!itemType) return 'Other';
+        const category = categoryMap.get(itemType.categoryId);
+        return category ? category.displayName : 'Other';
+    };
+    
+    // Sort based on the selected style
+    switch(sortingStyle) {
+        case 'price':
+            return inventory.sort((a, b) => {
+                // Handle items without price (sort to bottom)
+                const priceA = a.avgPrice !== null ? a.avgPrice : Infinity;
+                const priceB = b.avgPrice !== null ? b.avgPrice : Infinity;
+                
+                // If both have no price, sort by name
+                if (priceA === Infinity && priceB === Infinity) {
+                    return a.name.localeCompare(b.name);
+                }
+                
+                // If only one has no price, it goes to bottom
+                if (priceA === Infinity) return 1;
+                if (priceB === Infinity) return -1;
+                
+                // Sort by price, then by name
+                if (priceA !== priceB) {
+                    return priceA - priceB;
+                }
+                return a.name.localeCompare(b.name);
+            });
+            
+        case 'weight':
+            return inventory.sort((a, b) => {
+                // Handle items without weight (sort to bottom)
+                const weightA = a.weight !== null ? a.weight : Infinity;
+                const weightB = b.weight !== null ? b.weight : Infinity;
+                
+                // If both have no weight, sort by name
+                if (weightA === Infinity && weightB === Infinity) {
+                    return a.name.localeCompare(b.name);
+                }
+                
+                // If only one has no weight, it goes to bottom
+                if (weightA === Infinity) return 1;
+                if (weightB === Infinity) return -1;
+                
+                // Sort by weight, then by name
+                if (weightA !== weightB) {
+                    return weightA - weightB;
+                }
+                return a.name.localeCompare(b.name);
+            });
+            
+        case 'default':
+        default:
+            // Group items by category first
+            const groupedByCategory = {};
+            inventory.forEach(item => {
+                const categoryName = getCategoryDisplayName(item);
+                if (!groupedByCategory[categoryName]) {
+                    groupedByCategory[categoryName] = [];
+                }
+                groupedByCategory[categoryName].push(item);
+            });
+            
+            // Get unique categories with their priorities
+            const categories = Object.keys(groupedByCategory).map(categoryName => ({
+                name: categoryName,
+                priority: Math.min(...groupedByCategory[categoryName].map(item => getCategoryPriority(item)))
+            }));
+            
+            // Sort categories by priority
+            categories.sort((a, b) => a.priority - b.priority);
+            
+            // Sort items within each category and flatten
+            const sortedInventory = [];
+            categories.forEach(category => {
+                const categoryItems = groupedByCategory[category.name];
+                
+                // Sort within category: equipped first, then by name
+                categoryItems.sort((a, b) => {
+                    // First by equipped status (equipped comes first)
+                    if (a.equipped !== b.equipped) {
+                        return a.equipped ? -1 : 1;
+                    }
+                    // Then by name
+                    return a.name.localeCompare(b.name);
+                });
+                
+                // Add to final array
+                sortedInventory.push(...categoryItems);
+            });
+            
+            return sortedInventory;
     }
 }
 class InventoryItemMenu {
@@ -1289,8 +1414,7 @@ class InventoryItemMenu {
             
             // 4. Update the character sheet to show the new equipped state
             await updateCharacterSheet();
-            
-            this.showToast(`${item.name} ${updatedItem.equipped ? 'equipped' : 'unequipped'}`);
+            //this.showToast(`${item.name} ${updatedItem.equipped ? 'equipped' : 'unequipped'}`);
         } else {
             console.error('Could not retrieve updated item from database');
             this.showToast(`Error updating ${item.name}`, 'error');
@@ -1508,6 +1632,75 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.inventoryMenu.setupInventoryItems();
     }
 });
+// Function to handle sort button click
+function setupSortButton(characterId) {
+    const sortButton = document.getElementById('inventory-sort-button');
+    if (!sortButton) return;
+    
+    sortButton.addEventListener('click', async () => {
+        const currentSorting = sortButton.dataset.sorting;
+        let nextSorting;
+        
+        // Cycle through sorting styles
+        switch(currentSorting) {
+            case 'default':
+                nextSorting = 'price';
+                break;
+            case 'price':
+                nextSorting = 'weight';
+                break;
+            case 'weight':
+                nextSorting = 'default';
+                break;
+            default:
+                nextSorting = 'default';
+        }
+        
+        // Update button appearance
+        sortButton.dataset.sorting = nextSorting;
+        document.getElementById('sort-icon').textContent = getSortIcon(nextSorting);
+        document.getElementById('sort-text').textContent = getSortText(nextSorting);
+        
+        // Save sorting preference to database
+        try {
+            await updateById('Players', characterId, { 
+                currentInventorySorting: nextSorting 
+            });
+            
+            // Update window.character to reflect the change
+            if (window.character) {
+                window.character.currentInventorySorting = nextSorting;
+            }
+            
+            // Re-render the character sheet with new sorting
+            await updateCharacterSheet();
+            
+        } catch (error) {
+            console.error('Error updating sorting preference:', error);
+            // Revert button state on error
+            sortButton.dataset.sorting = currentSorting;
+            document.getElementById('sort-icon').textContent = getSortIcon(currentSorting);
+            document.getElementById('sort-text').textContent = getSortText(currentSorting);
+        }
+    });
+}
+function getSortIcon(sortingStyle) {
+    switch(sortingStyle) {
+        case 'default': return '📊'; // Chart icon for category sorting
+        case 'price': return '💰'; // Money icon for price sorting
+        case 'weight': return '⚖️'; // Scale icon for weight sorting
+        default: return '📊';
+    }
+}
+
+function getSortText(sortingStyle) {
+    switch(sortingStyle) {
+        case 'default': return 'Por categoría';
+        case 'price': return 'Por precio';
+        case 'weight': return 'Por peso';
+        default: return 'Por categoría';
+    }
+}
 async function createCharacterSheet(characterData) {
     window.character = characterData;
     // Default character structure
@@ -1626,8 +1819,93 @@ async function createCharacterSheet(characterData) {
     });
     // Create the character sheet HTML
     const activeTab = character.activeTab;
-    console.log('Inventory:');
-    console.log(character.inventory);
+    // Get the current sorting style from character
+    const currentSortingStyle = character.currentInventorySorting || 'default';
+    
+    // Sort the inventory
+    const sortedInventory = await sortInventory(inventory, currentSortingStyle);
+    
+    // Group by category for display (only for default sorting)
+    let inventoryHtml = '';
+    
+    if (currentSortingStyle === 'default') {
+        // Group items by category for default sorting
+        const itemTypes = await queryDatabase('ItemTypes', {}, {});
+        const itemCategories = await queryDatabase('ItemCategories', {}, {});
+        
+        const itemTypeMap = new Map();
+        itemTypes.forEach(type => {
+            itemTypeMap.set(type.id, type);
+        });
+        
+        const categoryMap = new Map();
+        itemCategories.forEach(category => {
+            categoryMap.set(category.id, {
+                displayName: category.displayName,
+                priority: category.priority
+            });
+        });
+        
+        // Helper to get category for an item
+        const getCategoryForItem = (item) => {
+            const itemType = itemTypeMap.get(item.itemTypeId);
+            if (!itemType) return { displayName: 'Other', priority: 999 };
+            const category = categoryMap.get(itemType.categoryId);
+            return category || { displayName: 'Other', priority: 999 };
+        };
+        
+        // Group items by category
+        const itemsByCategory = {};
+        sortedInventory.forEach(item => {
+            const category = getCategoryForItem(item);
+            if (!itemsByCategory[category.displayName]) {
+                itemsByCategory[category.displayName] = {
+                    items: [],
+                    priority: category.priority
+                };
+            }
+            itemsByCategory[category.displayName].items.push(item);
+        });
+        
+        // Get categories sorted by priority
+        const sortedCategories = Object.keys(itemsByCategory)
+            .map(name => ({ name, ...itemsByCategory[name] }))
+            .sort((a, b) => a.priority - b.priority);
+        
+        // Generate HTML with category headers
+        inventoryHtml = sortedCategories.map(category => `
+            <div class="category-section">
+                <h4 class="category-header" style="color: ${character.textColor}; background: ${character.color}; padding: 5px; border-radius: 4px; margin: 10px 0 5px 0;">
+                    ${category.name}
+                </h4>
+                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index)).join('')}
+            </div>
+        `).join('');
+    } else {
+        // For price/weight sorting, no category headers
+        inventoryHtml = sortedInventory.map((item, index) => 
+            createInventoryItemHtml(item, character, index)
+        ).join('');
+    }
+    
+    // Helper function to create inventory item HTML
+    function createInventoryItemHtml(item, character, index) {
+        return `
+            <div class="inventory-item" 
+                data-item-id="${item.id}"
+                data-item-name="${item.name}"
+                data-item-quantity="${item.quantity}"
+                data-equipped="${item.equipped}"
+                data-item-data='${JSON.stringify(item)}'
+                style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px;">
+                <div class="item-icon" style="margin-right: 10px;"><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
+                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
+                ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
+                ${item.weight && item.quantity ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${(item.weight * item.quantity).toFixed(2)} kg</div>` : ''}
+                ${item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor};">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
+            </div>
+        `;
+    }
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -1743,26 +2021,22 @@ async function createCharacterSheet(characterData) {
                         <!-- Currency -->
                         <div class="currency-section" style="background: ${character.color};">
                             <h3 style="text-align: center; color: ${character.secondaryTextColor}">${character.gold} <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
-                            </div>
                         </div>
                         
-                        <!-- Inventory Items -->
-                        <div class="items-section" style="background: ${character.color};">
-                            <h3 style="color: ${character.textColor};">Inventario</h3>
-                            ${character.inventory.map((item, index) => `
-                            <div class="inventory-item" 
-                                data-item-id="${item.id}"
-                                data-item-name="${item.name}"
-                                data-item-quantity="${item.quantity}"
-                                data-equipped="${item.equipped ? 'true' : 'false'}"
-                                data-item-data='${JSON.stringify(item)}'
-                                style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px;">
-                                <div class="item-icon" style="margin-right: 10px;"><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
-                                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
-                                ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
-                                ${item.weight && item.quantity ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${item.weight * item.quantity} kg</div>` : ''}
+                        <!-- Inventory Items with Sorting Button -->
+                        <div class="items-section" style="background: ${character.color}; position: relative;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
+                                <button id="inventory-sort-button" class="sort-button" 
+                                    data-sorting="${currentSortingStyle}"
+                                    style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                    <span id="sort-icon">${getSortIcon(currentSortingStyle)}</span>
+                                    <span id="sort-text">${getSortText(currentSortingStyle)}</span>
+                                </button>
                             </div>
-                        `).join('')}
+                            <div id="inventory-items-container">
+                                ${inventoryHtml}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1853,7 +2127,6 @@ async function createCharacterSheet(characterData) {
     // Create container and inject HTML
     const container = document.createElement('div');
     container.innerHTML = sheetHTML;
-    
     // Add tab switching functionality
     const tabButtons = container.querySelectorAll('.tab-button');
     const tabContents = container.querySelectorAll('.tab-content');
@@ -1875,7 +2148,9 @@ async function createCharacterSheet(characterData) {
             }
         });
     });
-    
+    setTimeout(() => {
+        setupSortButton(characterData.id);
+    }, 100);
     return container;
 }
 
@@ -8436,7 +8711,66 @@ function createHpEditHandler(data, cell, textColor) {
             }
         });
     };
+}// Add this to your existing style function or create a new one
+function addInventorySortingStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .sort-button {
+            transition: all 0.2s ease;
+        }
+        
+        .sort-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .sort-button:active {
+            transform: scale(0.95);
+        }
+        
+        .category-section {
+            margin-bottom: 15px;
+        }
+        
+        .category-header {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .inventory-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .inventory-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .item-quantity, .item-weight, .item-price {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .item-icon {
+            flex-shrink: 0;
+        }
+        
+        .item-name {
+            flex-grow: 1;
+            margin-left: 8px;
+        }
+    `;
+    document.head.appendChild(style);
 }
+
 // Export the function for manual use
 window.convertToEncounterTable = convertToEncounterTable;
 window.addRowToDOM = addRowToDOM; // Make it available globally
