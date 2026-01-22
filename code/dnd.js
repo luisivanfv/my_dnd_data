@@ -1939,8 +1939,8 @@ function getSortText(sortingStyle) {
     switch(sortingStyle) {
         case 'default': return `<img width="24" height="24" src="https://img.icons8.com/sf-black/24/${iconColor}/list.png" alt="list"/>`;
         case 'price': return `<img width="24" height="24" src="https://img.icons8.com/material-sharp/24/${iconColor}/coins.png" alt="coins"/>`;
-        case 'weight': return 'Por peso';
-        default: return `<img width="24" height="24" src="https://img.icons8.com/glyph-neue/24/${iconColor}/weight.png" alt="weight"/>`;
+        case 'weight': return `<img width="24" height="24" src="https://img.icons8.com/glyph-neue/24/${iconColor}/weight.png" alt="weight"/>`;
+        default: return `<img width="24" height="24" src="https://img.icons8.com/sf-black/24/${iconColor}/list.png" alt="list"/>`;
     }
 }
 async function createCharacterSheet(characterData) {
@@ -2120,7 +2120,7 @@ async function createCharacterSheet(characterData) {
                 <h4 class="category-header" style="color: ${character.textColor}; background: ${character.color}; padding: 5px; border-radius: 4px; margin: 10px 0 5px 0;">
                     ${category.name}
                 </h4>
-                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index)).join('')}
+                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index, currentSortingStyle)).join('')}
             </div>
         `).join('');
     } else {
@@ -2131,7 +2131,12 @@ async function createCharacterSheet(characterData) {
     }
     
     // Helper function to create inventory item HTML
-    function createInventoryItemHtml(item, character, index) {
+    function createInventoryItemHtml(item, character, index, sortingStyle = 'default') {
+        // Determine what to show based on sorting style
+        const showPrice = sortingStyle === 'price';
+        const showWeight = sortingStyle === 'weight';
+        const showQuantity = true; // Always show quantity
+        
         return `
             <div class="inventory-item" 
                 data-item-id="${item.id}"
@@ -2139,12 +2144,14 @@ async function createCharacterSheet(characterData) {
                 data-item-quantity="${item.quantity}"
                 data-equipped="${item.equipped}"
                 data-item-data='${JSON.stringify(item)}'
-                style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px;">
-                <div class="item-icon" style="margin-right: 10px;"><img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/></div>
-                <div class="item-name" style="color: ${character.textColor};">${item.name || `Item ${index + 1}`}</div>
-                ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor};">x${item.quantity}</div>` : ''}
-                ${item.weight && item.quantity ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor};">${(item.weight * item.quantity).toFixed(2)} kg</div>` : ''}
-                ${item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor};">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
+                style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px; padding: 8px; border-radius: 4px; display: flex; align-items: center;">
+                <div class="item-icon" style="margin-right: 10px; flex-shrink: 0;">
+                    <img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/>
+                </div>
+                <div class="item-name" style="color: ${character.textColor}; flex-grow: 1;">${item.name || `Item ${index + 1}`}</div>
+                ${showQuantity && item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">x${item.quantity}</div>` : ''}
+                ${showWeight && item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1)).toFixed(2)} kg</div>` : ''}
+                ${showPrice && item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px; display: flex; align-items: center; gap: 2px;">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
             </div>
         `;
     }
