@@ -1871,7 +1871,7 @@ async function createCharacterSheet(characterData) {
     const currentSortingStyle = character.currentInventorySorting || 'default';
     
     // Sort the inventory
-    const sortedInventory = await sortInventory(inventory, currentSortingStyle);
+    const sortedInventory = await sortInventory(character.inventory, currentSortingStyle);
     
     // Group by category for display (only for default sorting)
     let inventoryHtml = '';
