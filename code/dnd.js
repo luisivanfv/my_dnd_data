@@ -492,11 +492,13 @@ async function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement.appendChild(menuItems);
 }
 async function setCharacterToWindow() {
+    console.log('Starting character setting');
     const characterSheetContainer = document.getElementById('character-sheet-container');
     if (!characterSheetContainer)
         return;
     if(getUrlParameter('name') )
         window.character = await queryDatabase('Players', { name: capitalizeFirstLetter(getUrlParameter('name')) })[0];
+    console.log('Ending character setting');
 }
 async function getCurrentCharacter() {
     const characterSheetContainer = document.getElementById('character-sheet-container');
