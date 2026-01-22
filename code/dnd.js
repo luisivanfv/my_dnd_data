@@ -1957,7 +1957,7 @@ function getTotalItemWeight(inventory) {
     return weight;
 }
 function getCarryCapacity(str) {
-    return str * 60;
+    return str * 6;
 }
 function getColorForCarryCapacity(totalItemWeight, carryCapacity, textColor) {
     const percentage = totalItemWeight * 100.0 / carryCapacity;
@@ -2297,17 +2297,27 @@ async function createCharacterSheet(characterData) {
                     <div class="inventory-section">
                         <!-- Currency -->
                         <div class="currency-section" style="background: ${character.color};">
-                            <h3 style="text-align: center; color: ${character.secondaryTextColor}">${character.gold} <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
+                            <h3 style="text-align: center; color: ${character.secondaryTextColor}">
+                                ${character.gold}
+                                <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/>
+                            </h3>
                         </div>
                         
                         <!-- Inventory Items with Sorting Button -->
                         <div class="items-section" style="background: ${character.color}; position: relative;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                ${currentSortingStyle != 'test' ? `<div class="currency-section" style="background: ${character.color};">
-                            <h3 style="text-align: center; color: ${character.secondaryTextColor}">${character.gold} <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/></h3>
-                        </div>
+                                <div class="currency-section" style="background: ${character.color};">
+                                <h3 style="text-align: center; color: ${character.secondaryTextColor}">
+                                    ${character.gold}
+                                    <img width="20" height="20" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="cheap-2"/>
+                                </h3>
+                            </div>
+                                ${
+                                    currentSortingStyle != 'test' 
+                                    ? `
                                 <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}</span>${slashIcon}
-                                <span id="sort-text" style="color: ${colorForCarryCapacity};">${carryCapacity} kg</span>` : ''}
+                                <span id="sort-text" style="color: ${colorForCarryCapacity};">${carryCapacity} kg</span>` 
+                                : ''}
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
                                     style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
