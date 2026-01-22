@@ -906,7 +906,7 @@ class InventoryItemMenu {
                 <span class="menu-item-text">${option.text}</span>
             `;
             
-            menuItem.addEventListener('click', () => this.handleMenuAction(option.id));
+            menuItem.addEventListener('click', async () => await this.handleMenuAction(option.id));
             menuItems.appendChild(menuItem);
         });
     }
@@ -1102,7 +1102,7 @@ class InventoryItemMenu {
         this.activeItem = null;
     }
     
-    handleMenuAction(action) {
+    async handleMenuAction(action) {
         if (!this.activeItem) {
             this.hideMenu();
             return;
@@ -1113,7 +1113,7 @@ class InventoryItemMenu {
                 this.showUseModal();
                 break;
             case 'equip':
-                this.toggleEquip();
+                await this.toggleEquip();
                 break;
             case 'info':
                 this.showInfoModal();
