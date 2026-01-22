@@ -1692,57 +1692,237 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.inventoryMenu.setupInventoryItems();
     }
 });
-// Function to handle sort button click
-function setupSortButton(characterId) {
+async function updateInventoryDisplay(characterId, sortingStyle) {
+    console.log('Updating inventory display with sorting:', sortingStyle);
+    
+    // Get fresh character data
+    const characterName = getUrlParameter('name');
+    const character = (await queryDatabase('Players', { name: capitalizeFirstLetter(characterName) }, {}))[0];
+    
+    // Generate the inventory HTML with the new sorting
+    const characterInventory = await queryDatabase('Inventories', { playerId: character.id }, {});
+    const itemList = await queryDatabase('Items', {}, {});
+    const itemTypes = await queryDatabase('ItemTypes', {}, {});
+    const actions = await queryDatabase('Actions', {}, {});
+    
+    const inventory = [];
+    characterInventory.forEach(inventoryItem => {
+        itemList.forEach(item => {
+            if(inventoryItem.itemId == item.id) {
+                const itemToPush = {
+                    ...item,
+                    quantity: inventoryItem.quantity,
+                    equipped: inventoryItem.equipped
+                };
+                itemTypes.forEach(itemType => {
+                    if(item.itemTypeId == itemType.id) {
+                        itemToPush['iconUrl'] = itemType.icon.split('??')[0];
+                        itemToPush['iconAlt'] = itemType.icon.split('??')[1];
+                        itemToPush['itemType'] = itemType.description;
+                        itemToPush['modifierUsed'] = itemType.modifierUsed;
+                        itemToPush['itemTypeId'] = itemType.id;
+                    }
+                });
+                const itemActions = [];
+                actions.forEach(action => {
+                    if(action.requiredItemId == item.id) {
+                        itemActions.push({
+                            name: action.name,
+                            description: action.description,
+                            costsAction: action.costsAction,
+                            costsBonusAction: action.costsBonusAction,
+                            costsReaction: action.costsReaction,
+                            costsMovement: action.movement,
+                            damageCalculation: action.damageCalculation,
+                            damageType: action.damageType
+                        });
+                    }
+                });
+                itemToPush['actions'] = itemActions;
+                inventory.push(itemToPush);
+            }
+        });
+    });
+    
+    // Sort the inventory
+    const sortedInventory = await sortInventory(inventory, sortingStyle);
+    
+    // Generate HTML for the sorted inventory
+    const inventoryHtml = await generateInventoryHtml(sortedInventory, character, sortingStyle);
+    
+    // Update the inventory container
+    const inventoryContainer = document.getElementById('inventory-items-container');
+    if (inventoryContainer) {
+        inventoryContainer.innerHTML = inventoryHtml;
+        
+        // Re-setup inventory item event listeners
+        if (window.inventoryMenu) {
+            setTimeout(() => {
+                window.inventoryMenu.setupInventoryItems();
+            }, 50);
+        }
+    } else {
+        console.error('Inventory container not found');
+    }
+}
+
+async function generateInventoryHtml(inventory, character, sortingStyle) {
+    // Fetch category data for grouping (only for default sorting)
+    const itemTypes = await queryDatabase('ItemTypes', {}, {});
+    const itemCategories = await queryDatabase('ItemCategories', {}, {});
+    
+    const itemTypeMap = new Map();
+    itemTypes.forEach(type => {
+        itemTypeMap.set(type.id, type);
+    });
+    
+    const categoryMap = new Map();
+    itemCategories.forEach(category => {
+        categoryMap.set(category.id, {
+            displayName: category.displayName,
+            priority: category.priority
+        });
+    });
+    
+    // Helper to get category for an item
+    const getCategoryForItem = (item) => {
+        if (!item || !item.itemTypeId) return { displayName: 'Other', priority: 999 };
+        const itemType = itemTypeMap.get(item.itemTypeId);
+        if (!itemType) return { displayName: 'Other', priority: 999 };
+        const category = categoryMap.get(itemType.categoryId);
+        return category || { displayName: 'Other', priority: 999 };
+    };
+    
+    let html = '';
+    
+    if (sortingStyle === 'default') {
+        // Group items by category for default sorting
+        const itemsByCategory = {};
+        inventory.forEach(item => {
+            const category = getCategoryForItem(item);
+            if (!itemsByCategory[category.displayName]) {
+                itemsByCategory[category.displayName] = {
+                    items: [],
+                    priority: category.priority
+                };
+            }
+            itemsByCategory[category.displayName].items.push(item);
+        });
+        
+        // Get categories sorted by priority
+        const sortedCategories = Object.keys(itemsByCategory)
+            .map(name => ({ name, ...itemsByCategory[name] }))
+            .sort((a, b) => a.priority - b.priority);
+        
+        // Generate HTML with category headers
+        html = sortedCategories.map(category => `
+            <div class="category-section">
+                <h4 class="category-header" style="color: ${character.textColor}; background: ${character.color}; padding: 5px; border-radius: 4px; margin: 10px 0 5px 0;">
+                    ${category.name}
+                </h4>
+                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index)).join('')}
+            </div>
+        `).join('');
+    } else {
+        // For price/weight sorting, no category headers
+        html = inventory.map((item, index) => 
+            createInventoryItemHtml(item, character, index)
+        ).join('');
+    }
+    
+    return html;
+}
+
+function createInventoryItemHtml(item, character, index) {
+    return `
+        <div class="inventory-item" 
+            data-item-id="${item.id}"
+            data-item-name="${item.name}"
+            data-item-quantity="${item.quantity}"
+            data-equipped="${item.equipped}"
+            data-item-data='${JSON.stringify(item)}'
+            style="background: ${item.equipped ? character.secondaryColor : character.darkColor}; margin-bottom: 5px; padding: 8px; border-radius: 4px; display: flex; align-items: center;">
+            <div class="item-icon" style="margin-right: 10px; flex-shrink: 0;">
+                <img width="20" height="20" src="${item.iconUrl.replace('customSize', '20').replace('customColor', character.textColor.replace('#', ''))}" alt="${item.iconAlt}"/>
+            </div>
+            <div class="item-name" style="color: ${character.textColor}; flex-grow: 1;">${item.name || `Item ${index + 1}`}</div>
+            ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">x${item.quantity}</div>` : ''}
+            ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1)).toFixed(2)} kg</div>` : ''}
+            ${item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px; display: flex; align-items: center; gap: 2px;">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
+        </div>
+    `;
+}
+async function handleSortButtonClick(characterId) {
     const sortButton = document.getElementById('inventory-sort-button');
     if (!sortButton) return;
     
-    sortButton.addEventListener('click', async () => {
-        const currentSorting = sortButton.dataset.sorting;
-        let nextSorting;
+    const currentSorting = sortButton.dataset.sorting;
+    let nextSorting;
+    
+    // Cycle through sorting styles
+    switch(currentSorting) {
+        case 'default':
+            nextSorting = 'price';
+            break;
+        case 'price':
+            nextSorting = 'weight';
+            break;
+        case 'weight':
+            nextSorting = 'default';
+            break;
+        default:
+            nextSorting = 'default';
+    }
+    
+    // Update button appearance immediately for better UX
+    sortButton.dataset.sorting = nextSorting;
+    const sortIcon = document.getElementById('sort-icon');
+    const sortText = document.getElementById('sort-text');
+    
+    if (sortIcon) sortIcon.textContent = getSortIcon(nextSorting);
+    if (sortText) sortText.textContent = getSortText(nextSorting);
+    
+    // Save sorting preference to database
+    try {
+        console.log('Updating sorting preference to:', nextSorting);
+        await updateById('Players', characterId, { 
+            currentInventorySorting: nextSorting 
+        });
         
-        // Cycle through sorting styles
-        switch(currentSorting) {
-            case 'default':
-                nextSorting = 'price';
-                break;
-            case 'price':
-                nextSorting = 'weight';
-                break;
-            case 'weight':
-                nextSorting = 'default';
-                break;
-            default:
-                nextSorting = 'default';
+        // Update window.character to reflect the change
+        if (window.character) {
+            window.character.currentInventorySorting = nextSorting;
         }
         
-        // Update button appearance
-        sortButton.dataset.sorting = nextSorting;
-        document.getElementById('sort-icon').textContent = getSortIcon(nextSorting);
-        document.getElementById('sort-text').textContent = getSortText(nextSorting);
+        // Instead of regenerating the entire sheet, just re-sort and re-render the inventory
+        await updateInventoryDisplay(characterId, nextSorting);
         
-        // Save sorting preference to database
-        try {
-            await updateById('Players', characterId, { 
-                currentInventorySorting: nextSorting 
-            });
-            
-            // Update window.character to reflect the change
-            if (window.character) {
-                window.character.currentInventorySorting = nextSorting;
-            }
-            
-            // Re-render the character sheet with new sorting
-            await updateCharacterSheet();
-            
-        } catch (error) {
-            console.error('Error updating sorting preference:', error);
-            // Revert button state on error
-            sortButton.dataset.sorting = currentSorting;
-            document.getElementById('sort-icon').textContent = getSortIcon(currentSorting);
-            document.getElementById('sort-text').textContent = getSortText(currentSorting);
-        }
+    } catch (error) {
+        console.error('Error updating sorting preference:', error);
+        // Revert button state on error
+        sortButton.dataset.sorting = currentSorting;
+        if (sortIcon) sortIcon.textContent = getSortIcon(currentSorting);
+        if (sortText) sortText.textContent = getSortText(currentSorting);
+    }
+}
+// Function to handle sort button click
+function setupSortButton(characterId) {
+    const sortButton = document.getElementById('inventory-sort-button');
+    if (!sortButton) {
+        console.log('Sort button not found');
+        return;
+    }
+    
+    // Remove any existing event listeners
+    const newSortButton = sortButton.cloneNode(true);
+    sortButton.parentNode.replaceChild(newSortButton, sortButton);
+    
+    // Add new event listener
+    newSortButton.addEventListener('click', () => {
+        handleSortButtonClick(characterId);
     });
+    
+    console.log('Sort button setup for character:', characterId);
 }
 function getSortIcon(sortingStyle) {
     switch(sortingStyle) {
@@ -2089,7 +2269,7 @@ async function createCharacterSheet(characterData) {
                                 <h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
-                                    style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                    style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
                                     <span id="sort-icon">${getSortIcon(currentSortingStyle)}</span>
                                     <span id="sort-text">${getSortText(currentSortingStyle)}</span>
                                 </button>
