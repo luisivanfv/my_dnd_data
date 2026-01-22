@@ -1753,7 +1753,7 @@ async function updateInventoryDisplay(characterId, sortingStyle) {
     const sortedInventory = await sortInventory(inventory, sortingStyle);
     
     // Generate HTML for the sorted inventory
-    const inventoryHtml = await generateInventoryHtml(sortedInventory, character, currentSortingStyle);
+    const inventoryHtml = await generateInventoryHtml(sortedInventory, character, sortingStyle);
     
     // Update the inventory container
     const inventoryContainer = document.getElementById('inventory-items-container');
