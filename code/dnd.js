@@ -2180,8 +2180,9 @@ async function createCharacterSheet(characterData) {
         `;
     }
     const totalItemWeight = getTotalItemWeight(character.inventory);
-    const carryCapacity = getCarryCapacity(character.str);
+    const carryCapacity = getCarryCapacity(character.strength);
     const colorForCarryCapacity = getColorForCarryCapacity(totalItemWeight, carryCapacity, character.textColor);
+    const slashIcon = `<img width="24" height="24" src="https://img.icons8.com/ios/24/${character.textColor}/vertical-line.png" alt="vertical-line"/>`;
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
@@ -2302,11 +2303,11 @@ async function createCharacterSheet(characterData) {
                         <!-- Inventory Items with Sorting Button -->
                         <div class="items-section" style="background: ${character.color}; position: relative;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                ${currentSortingStyle == 'weight' ? `<h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
+                                ${currentSortingStyle != 'test' ? `<h3 style="color: ${character.textColor}; margin: 0;">Inventario</h3>
                                 <button id="weight-inventory-disabled-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
                                     style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
-                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}/${carryCapacity} kg</span>
+                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}${slashIcon}${carryCapacity} kg</span>
                                 </button>` : ''}
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
