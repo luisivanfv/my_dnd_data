@@ -604,7 +604,7 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 
                 // If both have no price, sort by name
                 if (priceA === Infinity && priceB === Infinity) {
-                    return (a.name || '').localeCompare(b.name || '');
+                    return (b.name || '').localeCompare(a.name || '');
                 }
                 
                 // If only one has no price, it goes to bottom
@@ -613,9 +613,9 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 
                 // Sort by price, then by name
                 if (priceA !== priceB) {
-                    return priceA - priceB;
+                    return priceB - priceA;
                 }
-                return (a.name || '').localeCompare(b.name || '');
+                return (b.name || '').localeCompare(a.name || '');
             });
             
         case 'weight':
@@ -629,7 +629,7 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 
                 // If both have no weight, sort by name
                 if (weightA === Infinity && weightB === Infinity) {
-                    return (a.name || '').localeCompare(b.name || '');
+                    return (b.name || '').localeCompare(a.name || '');
                 }
                 
                 // If only one has no weight, it goes to bottom
@@ -638,9 +638,9 @@ async function sortInventory(inventory, sortingStyle = 'default') {
                 
                 // Sort by weight, then by name
                 if (weightA !== weightB) {
-                    return weightA - weightB;
+                    return weightB - weightA;
                 }
-                return (a.name || '').localeCompare(b.name || '');
+                return (b.name || '').localeCompare(a.name || '');
             });
             
         case 'default':
@@ -1925,20 +1925,22 @@ function setupSortButton(characterId) {
     console.log('Sort button setup for character:', characterId);
 }
 function getSortIcon(sortingStyle) {
-    switch(sortingStyle) {
+    /*switch(sortingStyle) {
         case 'default': return '📊'; // Chart icon for category sorting
         case 'price': return '💰'; // Money icon for price sorting
         case 'weight': return '⚖️'; // Scale icon for weight sorting
         default: return '📊';
-    }
+    }*/
+    return `<img width="24" height="24" src="https://img.icons8.com/ios-filled/24/${window.character.darkColor.replace('#', '')}/down--v1.png" alt="down--v1"/>`;
 }
 
 function getSortText(sortingStyle) {
+    const iconColor = window.character.darkColor.replace('#', '');
     switch(sortingStyle) {
-        case 'default': return 'Por categoría';
-        case 'price': return 'Por precio';
+        case 'default': return `<img width="24" height="24" src="https://img.icons8.com/sf-black/24/${iconColor}/list.png" alt="list"/>`;
+        case 'price': return `<img width="24" height="24" src="https://img.icons8.com/material-sharp/24/${iconColor}/coins.png" alt="coins"/>`;
         case 'weight': return 'Por peso';
-        default: return 'Por categoría';
+        default: return `<img width="24" height="24" src="https://img.icons8.com/glyph-neue/24/${iconColor}/weight.png" alt="weight"/>`;
     }
 }
 async function createCharacterSheet(characterData) {
@@ -2270,8 +2272,8 @@ async function createCharacterSheet(characterData) {
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
                                     style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
-                                    <span id="sort-icon">${getSortIcon(currentSortingStyle)}</span>
                                     <span id="sort-text">${getSortText(currentSortingStyle)}</span>
+                                    <span id="sort-icon">${getSortIcon(currentSortingStyle)}</span>
                                 </button>
                             </div>
                             <div id="inventory-items-container">
