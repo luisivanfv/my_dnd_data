@@ -196,6 +196,7 @@ async function generateSheet(character) {
     stealthBonus += getMod(character.dex);
     survivalBonus += getMod(character.wis);
     const characterInventory = await queryDatabase('Inventories', { playerId: character.id}, {});
+    window.inventory = characterInventory;
     const itemList = await queryDatabase('Items', {}, {});
     const itemTypes = await queryDatabase('ItemTypes', {}, {});
     const actions = await queryDatabase('Actions', {}, {});
@@ -1244,10 +1245,16 @@ class InventoryItemMenu {
         const item = this.activeItem;
         console.log(`Toggling equip for: ${item.name}`);
         console.log(item);
-        await updateById('Inventories', item.id, { equipped: !item.equipped });
+        let idToGet = 0;
+        window.inventory.forEach(invItem => {
+            if(invItem.itemId == item.id)
+                idToGet = invItem.id;
+        });
         console.warn('item.id: ', item.id);
         console.warn('window.character.id: ', window.character.id);
-        const updatedItem = await queryDatabase('Inventories', { itemId: item.id, playerId: window.character.id }, {})[0];
+        console.warn('idToGet: ', idToGet);
+        await updateById('Inventories', idToGet, { equipped: !item.equipped });
+        const updatedItem = await queryDatabase('Inventories', { id: idToGet }, {})[0];
         console.log(`After toggle:`);
         console.log(updatedItem);
         //this.activeItem = updatedItem;
@@ -1977,7 +1984,7 @@ async function queryDatabase(table, filters = {}, options = {}) {
     }
     
     const result = await builder.execute();
-    console.warn(JSON.stringify(result));
+    //console.warn(JSON.stringify(result));
     return options.returnJSON ? JSON.parse(JSON.stringify(result)) : result;
 }
 async function fetchCampaigns() {
