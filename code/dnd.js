@@ -1245,9 +1245,10 @@ class InventoryItemMenu {
         console.log(`Toggling equip for: ${item.name}`);
         console.log(item);
         await updateById('Inventories', item.id, { equipped: !item.equipped });
-        this.activeItem = await queryDatabase('Inventories', { id: item.id })[0];
+        const updatedItem = await queryDatabase('Inventories', { itemId: item.id, playerId: window.character.id })[0];
         console.log(`After toggle:`);
-        console.log(this.activeItem);
+        console.log(updatedItem);
+        //this.activeItem = updatedItem;
         // Placeholder - implement your equip logic here
         this.showToast(`${item.name} ${item.equipped ? 'unequipped' : 'equipped'}`);
     }
