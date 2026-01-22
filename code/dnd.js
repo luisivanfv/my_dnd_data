@@ -1247,7 +1247,7 @@ class InventoryItemMenu {
         await updateById('Inventories', item.id, { equipped: !item.equipped });
         console.warn('item.id: ', item.id);
         console.warn('window.character.id: ', window.character.id);
-        const updatedItem = await queryDatabase('Inventories', { itemId: item.id, playerId: window.character.id })[0];
+        const updatedItem = await queryDatabase('Inventories', { itemId: item.id, playerId: window.character.id }, {})[0];
         console.log(`After toggle:`);
         console.log(updatedItem);
         //this.activeItem = updatedItem;
@@ -1977,7 +1977,7 @@ async function queryDatabase(table, filters = {}, options = {}) {
     }
     
     const result = await builder.execute();
-    
+    console.warn(JSON.stringify(result));
     return options.returnJSON ? JSON.parse(JSON.stringify(result)) : result;
 }
 async function fetchCampaigns() {
