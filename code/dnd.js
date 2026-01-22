@@ -2182,7 +2182,7 @@ async function createCharacterSheet(characterData) {
     const totalItemWeight = getTotalItemWeight(character.inventory);
     const carryCapacity = getCarryCapacity(character.strength);
     const colorForCarryCapacity = getColorForCarryCapacity(totalItemWeight, carryCapacity, character.textColor);
-    const slashIcon = `<img width="24" height="24" src="https://img.icons8.com/ios/24/${character.textColor}/vertical-line.png" alt="vertical-line"/>`;
+    const slashIcon = `<img width="24" height="24" src="https://img.icons8.com/ios/24/${character.textColor.replace('#', '')}/vertical-line.png" alt="vertical-line"/>`;
     let sheetHTML = `
         <div class="character-sheet mobile-sheet">
             <!-- Character header -->
