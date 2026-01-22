@@ -1879,8 +1879,8 @@ async function handleSortButtonClick(characterId) {
     const sortIcon = document.getElementById('sort-icon');
     const sortText = document.getElementById('sort-text');
     
-    if (sortIcon) sortIcon.textContent = getSortIcon(nextSorting);
-    if (sortText) sortText.textContent = getSortText(nextSorting);
+    if (sortIcon) sortIcon.innerHTML = getSortIcon(nextSorting);
+    if (sortText) sortText.innerHTML = getSortText(nextSorting);
     
     // Save sorting preference to database
     try {
