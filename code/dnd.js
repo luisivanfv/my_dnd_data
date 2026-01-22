@@ -259,6 +259,7 @@ async function generateSheet(character) {
         alignment: 'Neutral',
         experience: 0,
         gold: character.gold,
+        currentSortingStyle: character.currentSortingStyle,
         // Ability scores
         strength: character.str,
         dexterity: character.dex,
@@ -2067,6 +2068,7 @@ async function createCharacterSheet(characterData) {
     // Create the character sheet HTML
     const activeTab = character.activeTab;
     // Get the current sorting style from character
+    popup.show(`green=${character.currentInventorySorting}`);
     const currentSortingStyle = character.currentInventorySorting || 'default';
     
     // Sort the inventory
