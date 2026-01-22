@@ -2134,7 +2134,7 @@ async function createCharacterSheet(characterData) {
     } else {
         // For price/weight sorting, no category headers
         inventoryHtml = sortedInventory.map((item, index) => 
-            createInventoryItemHtml(item, character, index)
+            createInventoryItemHtml(item, character, index, currentSortingStyle)
         ).join('');
     }
     
