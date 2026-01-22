@@ -409,6 +409,7 @@ function createMenu(thisOutside, activeItem) {
     thisOutside.menuElement = document.createElement('div');
     thisOutside.menuElement.className = 'inventory-item-menu';
     const backgroundColor = window.character ? window.character.color : 'lightgrey';
+    const textColor = window.character ? window.character.textColor : 'black';
     thisOutside.menuElement.style.cssText = `
         position: fixed;
         background: ${backgroundColor};
@@ -471,7 +472,7 @@ function createMenu(thisOutside, activeItem) {
             background: transparent;
             text-align: left;
             font-size: 16px;
-            color: ${window.character.textColor};
+            color: ${textColor};
             transition: background-color 0.2s;
             border-bottom: 1px solid #f5f5f5;
         `;
