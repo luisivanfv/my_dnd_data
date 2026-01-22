@@ -423,7 +423,6 @@ function createMenu(thisOutside, activeItem) {
         overflow: hidden;
     `;
     console.warn(thisOutside.menuElement.style.cssText);
-    thisOutside.menuElement.style.background = window.character.color;
     
     // Menu header
     /*const menuHeader = document.createElement('div');
