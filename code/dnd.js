@@ -2307,7 +2307,8 @@ async function createCharacterSheet(characterData) {
                                 <button id="weight-inventory-disabled-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
                                     style="background: ${character.secondaryColor}; color: ${character.secondaryTextColor}; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; transition: all 0.2s;">
-                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}${slashIcon}${carryCapacity} kg</span>
+                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${totalItemWeight}</span>${slashIcon}
+                                    <span id="sort-text" style="color: ${colorForCarryCapacity};">${carryCapacity} kg</span>
                                 </button>` : ''}
                                 <button id="inventory-sort-button" class="sort-button" 
                                     data-sorting="${currentSortingStyle}"
