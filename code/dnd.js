@@ -243,6 +243,9 @@ async function generateSheet(character) {
             }
         });
     });
+    console.warn('Initial inventory:');
+    console.log(inventory);
+    console.warn('--------------------');
     return createCharacterSheet({
         id: character.id,
         allItems: itemList,
