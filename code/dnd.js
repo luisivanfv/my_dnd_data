@@ -2069,8 +2069,8 @@ async function createCharacterSheet(characterData) {
     // Create the character sheet HTML
     const activeTab = character.activeTab;
     // Get the current sorting style from character
-    popup.show([`green=${character.currentInventorySorting}`]);
-    const currentSortingStyle = character.currentInventorySorting || 'default';
+    popup.show([`green=${character.currentSortingStyle}`]);
+    const currentSortingStyle = character.currentSortingStyle || 'default';
     
     // Sort the inventory
     const sortedInventory = await sortInventory(character.inventory, currentSortingStyle);
