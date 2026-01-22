@@ -1825,20 +1825,20 @@ async function generateInventoryHtml(inventory, character, sortingStyle) {
                 <h4 class="category-header" style="color: ${character.textColor}; background: ${character.color}; padding: 5px; border-radius: 4px; margin: 10px 0 5px 0;">
                     ${category.name}
                 </h4>
-                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index)).join('')}
+                ${category.items.map((item, index) => createInventoryItemHtml(item, character, index, sortingStyle)).join('')}
             </div>
         `).join('');
     } else {
         // For price/weight sorting, no category headers
         html = inventory.map((item, index) => 
-            createInventoryItemHtml(item, character, index)
+            createInventoryItemHtml(item, character, index, sortingStyle)
         ).join('');
     }
     
     return html;
 }
 
-function createInventoryItemHtml(item, character, index) {
+function createInventoryItemHtml(item, character, index, sortingStyle) {
     return `
         <div class="inventory-item" 
             data-item-id="${item.id}"
@@ -1852,8 +1852,8 @@ function createInventoryItemHtml(item, character, index) {
             </div>
             <div class="item-name" style="color: ${character.textColor}; flex-grow: 1;">${item.name || `Item ${index + 1}`}</div>
             ${item.quantity && item.quantity > 1 ? `<div class="item-quantity" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">x${item.quantity}</div>` : ''}
-            ${item.weight ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1)).toFixed(2)} kg</div>` : ''}
-            ${item.avgPrice ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px; display: flex; align-items: center; gap: 2px;">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
+            ${item.weight && sortingStyle == 'weight' ? `<div class="item-weight" style="background: ${character.color}; color: ${character.textColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px;">${(item.weight * (item.quantity || 1))} kg</div>` : ''}
+            ${item.avgPrice && sortingStyle == 'price' ? `<div class="item-price" style="background: ${character.color}; color: ${character.secondaryTextColor}; padding: 2px 6px; border-radius: 10px; font-size: 12px; margin-left: 5px; display: flex; align-items: center; gap: 2px;">${item.avgPrice} <img width="12" height="12" src="https://img.icons8.com/glyph-neue/64/${character.textColor.replace('#', '')}/cheap-2.png" alt="gold"/></div>` : ''}
         </div>
     `;
 }
