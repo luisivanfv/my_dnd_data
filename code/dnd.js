@@ -1265,9 +1265,11 @@ class InventoryItemMenu {
         console.warn('item.id: ', item.id);
         console.warn('window.character.id: ', window.character.id);
         console.warn('idToGet: ', idToGet);
+        const newEquipmentStatus = item.equipped ? false : true;
+        console.warn('newEquipmentStatus: ', newEquipmentStatus);
         
         // 1. Update the database
-        await updateById('Inventories', idToGet, { equipped: !item.equipped });
+        await updateById('Inventories', idToGet, { equipped: newEquipmentStatus });
         
         // 2. Query the updated row PROPERLY - await the promise
         const updatedItems = await queryDatabase('Inventories', { id: idToGet }, {});
