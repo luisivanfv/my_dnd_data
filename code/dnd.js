@@ -1245,6 +1245,8 @@ class InventoryItemMenu {
         console.log(`Toggling equip for: ${item.name}`);
         console.log(item);
         await updateById('Inventories', item.id, { equipped: !item.equipped });
+        console.warn('item.id: ', item.id);
+        console.warn('window.character.id: ', window.character.id);
         const updatedItem = await queryDatabase('Inventories', { itemId: item.id, playerId: window.character.id })[0];
         console.log(`After toggle:`);
         console.log(updatedItem);
