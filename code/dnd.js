@@ -357,21 +357,24 @@ async function loadCharacterSheets() {
 }
 async function updateById(table, id, updates) {
     try {
+        // Use the already initialized supabaseClient
         if (!window.supabaseClient) {
-            await initializeSupabase();
+            console.error('Supabase client not initialized');
+            throw new Error('Supabase client not initialized');
         }
         
-        const supabase = window.supabaseClient;
-        
-        const { data, error } = await supabase
+        const { data, error } = await window.supabaseClient
             .from(table)
-            .update({
-                ...updates
-            })
+            .update(updates)
             .eq('id', id)
-            .select(); // Returns the updated row
+            .select();
         
-        if (error) throw error;
+        if (error) {
+            console.error(`Supabase error updating ${table}:`, error);
+            throw error;
+        }
+        
+        console.log(`Successfully updated ${table} id ${id}:`, data);
         return data?.[0] || null;
         
     } catch (error) {
