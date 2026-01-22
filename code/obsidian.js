@@ -431,7 +431,7 @@ class SmartPoller {
                 // Get current character data
                 const characterName = value;
                 const character = await this.getCharacterData(characterName);
-                
+                window.character = character;
                 // Check if data has actually changed
                 if (this.hasCharacterChanged(character)) {
                     console.log('Character data changed, updating sheet');
